@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>Deterministic Model Verification tools for discrete-time models</h3>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Smoothness Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
+                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Column to analyze</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="column_select_smoothness_analysis"
+                                               name="column_select_smoothness_analysis"
+                                               placeholder="just one column"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>K value</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="k_value_smoothness_analysis"
+                                               name="k_value_smoothness_analysis"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">File to analyze</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="files_input_smoothness_analysis" name="files_input"
+                                               required="required">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <button class="btn btn-primary" type="reset">Reset</button>
+                                        <input type="button" id="submit_smoothness_analysis" class="btn btn-success"
+                                               value="Submit"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Time step Convergence Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
+                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Column to analyze</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="column_select_timestep" name="column_select_timestep"
+                                               placeholder="just one column"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">Files to analyze</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="files_input_timestep" name="files_input"
+                                               required="required"
+                                               multiple>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <button class="btn btn-primary" type="reset">Reset</button>
+                                        <input type="button" id="submit_timestep_analysis" class="btn btn-success"
+                                               value="Submit"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Existence and Uniqueness <br/>Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
+                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">Files to analyze</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="files_input_unique_analysis" name="files_input"
+                                               required="required"
+                                               multiple>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <button class="btn btn-primary" type="reset">Reset</button>
+                                        <input type="button" id="submit_uniquness_analysis" class="btn btn-success"
+                                               value="Submit"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Your Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <br/>
+
+                            <form action="#" method="POST" name="form_plot"
+                                  class="form-horizontal form-label-left input_mask">
+                                <select name="simulation" class="select2_group form-control" required="">
+                                    <option value="">Choose..</option>
+                                </select>
+
+                                <div class="ln_solid"></div>
+
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <input type="button" id="reload_simulation" class="btn btn-success"
+                                               value="Check status!"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="divPlot col-md-3 col-xs-12" style="visibility: hidden;">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Show Plot</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_plot"
+                                  class="form-horizontal form-label-left input_mask"
+                                  enctype="multipart/form-data">
+                                <select id="type_plot" name="type_plot" class="select2_group form-control" required="">
+                                    <optgroup label="Details">
+                                        <option id="opt_trends" value="fig_trends">Trends</option>
+                                        <option id="opt_pearson_rmse" value="fig_pearson_corr_RMSE">Pearson Correlation
+                                            coeff and RMSE
+                                        </option>
+                                        <option id="opt_behavior" value="behavior_and_variation_PV">PV behavior and
+                                            variation PV
+                                        </option>
+                                        <option id="opt_smooth" value="Smoothness_Analysis">Smoothness Analysis</option>
+                                    </optgroup>
+                                </select>
+                            </form>
+                            <hr/>
+                            <p class="infosim"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divPrintPlot col-md-9 col-xs-12" style="visibility: hidden;">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Plot</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <br/>
+                            <img class="printPlot" src="" style="height: 100%;width: 100%;"/>
+                            <input type="hidden" name="selectIdSimulation" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /page content -->
+    <script>
+        let media_path = "{{ media_path }}";
+        let appname = "{{ appname }}";
+        let user_username = "Anonymous";
+        let url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_run_time_step_analysis = "{% url 'run-time_step_analysis' %}";
+        {#let url_run_uniqueness_analysis = "{% url 'run-uniqueness_analysis' %}";#}
+        {#let url_run_smoothness_analysis = "{% url 'run-smoothness_analysis' %}";#}
+        let url_read_info = "{% url 'read-info-simulation-verify' %}";
+        let csrf_token = "{{ csrf_token }}"
+    </script>
+    <script src="{% static 'js/function_verify.js' %}" type="text/javascript"></script>
+
+{% endblock content %}
