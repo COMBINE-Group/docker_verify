@@ -3,11 +3,18 @@ import os
 import shutil
 from pathlib import Path
 from time import localtime, strftime
-
+from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from scipy import special
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
+
+def rolling_window(a, window):
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
 
 def copy_files(path, name_files):
@@ -251,6 +258,103 @@ def calculate_corr(filename_output, files, col, start=0, end=0, starttime=0, end
 
 def RMSE(predictions, targets):
     return np.sqrt(((predictions - targets).astype('double') ** 2).mean())
+
+
+def save_and_convert_files(files: list, path: str):
+    fs = FileSystemStorage()
+
+    list_files_uploaded = []
+    for f in files:
+        fs.save(os.path.join(path, f.name), f)
+        list_files_uploaded.append(f.name)
+
+    new_list_files = []
+    for i, f in enumerate(list_files_uploaded):
+        df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False,
+                         low_memory=False)
+        if df.shape[1] == 1:
+            df = pd.read_csv(f, comment='#', sep=',', header=None, engine='c', na_filter=False,
+                             low_memory=False)
+            df.to_csv(os.path.join(path, f'file_convert_{i + 1}.csv'), sep='\t', mode='w',
+                      header=False, index=False)
+            new_list_files.append(os.path.join(path, f'file_convert_{i + 1}.csv'))
+        else:
+            new_list_files.append(os.path.join(path, f))
+
+    return new_list_files
+
+
+def existence_and_unique_analysis(csv_files):
+    if not check_number_rows_csv(csv_files):
+        return [-1]  # the number of lines in the files is different
+    else:
+        df_tmp = pd.read_csv(csv_files[0], sep=';', header=None, engine='c', na_filter=False, low_memory=False)
+        n_col = len(df_tmp.axes[1])
+        sd_list = []
+        mean_list = []
+        list_of_dataframes = []
+        for filename in csv_files:
+            list_of_dataframes.append(
+                pd.read_csv(filename, sep=';', header=None, engine='c', na_filter=False, low_memory=False))
+
+        merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
+
+        for ii in range(len(merged_df)):
+            for jj in np.arange(0, n_col):
+                tmp = []
+                for xx in range(0, len(list_of_dataframes)):
+                    tmp.append(merged_df.iloc[ii, jj + (n_col * xx)])
+                sd_list.append(np.array(tmp).std())
+                mean_list.append(np.array(tmp).mean())
+
+        if max(sd_list) == 0:
+            return [0]  # the files are the same
+        else:
+            return [1, min(sd_list)]  # the files are NOT the same
+
+
+def run_smoothness_analysis(ll, arr_t, k_elem):
+    with open('STARTED.process', 'w') as fp:
+        pass
+
+    new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
+    new_array_time = [arr_t[jj:jj + k_elem] for jj in range(0, len(arr_t), k_elem)]
+    array_result = np.zeros(len(ll))
+    axis_x = []
+    i = k_elem
+
+    if len(new_array[-1]) == 1:  # delete last item if its length == 1
+        new_array.pop(-1)
+
+    if len(new_array_time[-1]) == 1:  # delete last item if its length == 1
+        new_array_time.pop(-1)
+
+    # TODO verify if this for loop is correct for plot
+    for l_time in new_array_time:
+        axis_x.append(np.median(l_time))
+
+    for l_list in new_array:
+        diff_array = np.diff(l_list)
+        mean = np.abs(np.mean(diff_array))
+        if mean != 0:
+            # ddof is Delta Degrees of Freedom, 1 means the the standard deviation is calculate on sample
+            value = np.std(diff_array / mean, ddof=1)
+            array_result[i] = value
+        else:
+            array_result[i] = 0
+        i += 1
+    plot_smoothness_analysis(axis_x, array_result)
+    os.remove('STARTED.process')
+    with open('FINISHED.process', 'w') as fp:
+        pass
+
+
+def plot_smoothness_analysis(axis_x, arr_result):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set(title='Smoothness Analysis', xlabel='Time(secs)')
+    ax.plot(axis_x, np.array(arr_result))
+    fig.savefig(os.path.join(os.getcwd(), '%s.png' % 'Smoothness_Analysis'))
 
 
 def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, starttime):
