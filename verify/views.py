@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render
-from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder
+from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
+    get_plot_trends_convergence_corr
 from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 import pandas as pd
@@ -79,7 +80,8 @@ def time_step_analysis(request):
                 if col > 1:
                     col = col - 1
 
-                thread = threading.Thread(target=run_plot_par('fig', new_list_files, col, starttime))
+                thread = threading.Thread(
+                    target=get_plot_trends_convergence_corr('fig', new_list_files, col, starttime))
                 thread.start()
 
                 os.chdir(settings.BASE_DIR_VERIFY)
