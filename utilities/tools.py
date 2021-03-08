@@ -270,18 +270,17 @@ def save_and_convert_files(files: list, path: str):
 
     new_list_files = []
     for i, f in enumerate(list_files_uploaded):
-        df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False,
-                         low_memory=False)
+        df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
+        sep = '\s+'
         if df.shape[1] == 1:
-            df = pd.read_csv(f, comment='#', sep=',', header=None, engine='c', na_filter=False,
-                             low_memory=False)
-            df.to_csv(os.path.join(path, f'file_convert_{i + 1}.csv'), sep='\t', mode='w',
-                      header=False, index=False)
+            df = pd.read_csv(f, comment='#', sep=',', header=None, engine='c', na_filter=False, low_memory=False)
+            df.to_csv(os.path.join(path, f'file_convert_{i + 1}.csv'), sep='\t', mode='w', header=False, index=False)
             new_list_files.append(os.path.join(path, f'file_convert_{i + 1}.csv'))
+            sep = ','
         else:
             new_list_files.append(os.path.join(path, f))
 
-    return new_list_files
+    return new_list_files, sep
 
 
 def existence_and_unique_analysis(csv_files):

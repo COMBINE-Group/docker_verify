@@ -115,16 +115,10 @@ def smoothness_analysis(request):
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
                 create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+                new_list_files, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
 
-
-                # alla funzione passiamo,
-                # 1. l'array già estratto dal file
-                # 2. il valore di k
-
-                df = pd.read_csv(new_list_files[0], skiprows=int(request.POST['number_skip_row']), sep='\t',
-                                 header=None, engine='c',
-                                 na_filter=False, low_memory=False)
+                df = pd.read_csv(new_list_files[0], comment='#', sep=sep, header=None, engine='c', na_filter=False,
+                                 low_memory=False)
                 col = int(request.POST['column_select'])
                 if col > 1:
                     col = col - 1
