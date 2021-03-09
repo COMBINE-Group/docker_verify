@@ -27,31 +27,6 @@
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Skip rows</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="number" name="number_skip_row_sobol"
-                                               required="required" min="0"
-                                               max="20" step="1" value="0">
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character </label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="char_sep_sobol" class="form-control" required>
-                                            <option value="tab">Tab</option>
-                                            <option value="comma">Comma</option>
-                                            <option value="semicol">Semicolon</option>
-                                            <option value="space">Space</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Number of combinations</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -103,42 +78,7 @@
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Skip rows</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="number" name="number_skip_row_analyze"
-                                               required="required" min="0"
-                                               max="20" step="1" value="0">
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character </label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="char_sep_analyze" class="form-control" required>
-                                            <option value="tab">Tab</option>
-                                            <option value="comma">Comma</option>
-                                            <option value="semicol">Semicolon</option>
-                                            <option value="space">Space</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Seed</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="seed_analyze"
-                                               name="seed_analyze"
-                                               class="form-control" required>
-                                    </div>
-                                </div>
-                                <br/>
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Number of combinations</label>
@@ -146,6 +86,16 @@
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <input type="text" id="number_combinations_sobol"
                                                name="number_combinations_sobol"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Seed</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="seed_analyze"
+                                               name="seed_analyze"
                                                class="form-control" required>
                                     </div>
                                 </div>
@@ -260,7 +210,7 @@
         let appname = "{{ appname }}";
         let user_username = "Anonymous";
         let url_check_simulations = "{% url 'check-simulations-verify' %}";
-        let url_run_sobol_analysis = "{% url 'sobol-analysis' %}";
+        let url_run_sobol_analysis = "{% url 'sobol_generates_sample' %}";
         let url_run_sobol_analyze = "{% url 'sobol-analyze' %}";
         let url_read_info = "{% url 'read-info-simulation-verify' %}";
         let csrf_token = "{{ csrf_token }}"

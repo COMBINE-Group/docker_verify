@@ -12,8 +12,6 @@ $(document).ready(function () {
         //nascondo i div per i plot
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
-        let number_skip_row = $("input[name=number_skip_row_sobol]").val()
-        let char_sep = $('select[name=char_sep_sobol]').val();
         let number_combinations = $("#number_combinations_sobol").val()
         let seed = $("#seed").val()
 
@@ -33,8 +31,6 @@ $(document).ready(function () {
                 data.append("file", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("number_skip_row", number_skip_row)
-            data.append("char_sep", char_sep)
             data.append("number_combinations", number_combinations)
             data.append("seed", seed)
             data.append("name_analysis", 'sobol_generates_samples')
@@ -87,8 +83,6 @@ $(document).ready(function () {
         //nascondo i div per i plot
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
-        let number_skip_row = $("input[name=number_skip_row_analyze]").val()
-        let char_sep = $('select[name=char_sep_analyze]').val();
         let seed = $("#seed_analyze").val()
         let number_combinations = $("#number_combinations_sobol").val()
 
@@ -112,8 +106,6 @@ $(document).ready(function () {
                 data.append("files_output_model", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("number_skip_row", number_skip_row)
-            data.append("char_sep", char_sep)
             data.append("seed", seed)
             data.append("number_combinations", number_combinations)
             data.append("name_analysis", 'sobol_analyze')

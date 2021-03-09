@@ -9,6 +9,8 @@ from scipy import special
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from SALib.sample import saltelli
+from SALib.analyze import sobol
 
 
 def rolling_window(a, window):
@@ -147,8 +149,7 @@ def get_col_max(ts, anarray, col, starttime=0, endtime=float('inf')):
 
 
 def get_plot_trends_convergence_corr(filename_output, files, column, starttime):
-    with open('STARTED.process', 'w') as fp:
-        pass
+    os.mknod('STARTED.process')
     res_list = parse_files(filename_output, files, column, starttime=starttime)
 
     # plots pv values and time-to peak values
@@ -160,8 +161,7 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime):
     calculate_corr(filename_output, files, column)
 
     os.remove('STARTED.process')
-    with open('FINISHED.process', 'w') as fp:
-        pass
+    os.mknod('FINISHED.process')
 
 
 def plot_trends(filename_output, files, start, end, col):
@@ -313,8 +313,7 @@ def existence_and_unique_analysis(csv_files):
 
 
 def run_smoothness_analysis(ll, arr_t, k_elem):
-    with open('STARTED.process', 'w') as fp:
-        pass
+    os.mknod('STARTED.process')
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
     new_array_time = [arr_t[jj:jj + k_elem] for jj in range(0, len(arr_t), k_elem)]
@@ -344,8 +343,7 @@ def run_smoothness_analysis(ll, arr_t, k_elem):
         i += 1
     plot_smoothness_analysis(axis_x, array_result)
     os.remove('STARTED.process')
-    with open('FINISHED.process', 'w') as fp:
-        pass
+    os.mknod('FINISHED.process')
 
 
 def plot_smoothness_analysis(axis_x, arr_result):
@@ -428,4 +426,55 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse):
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
     fig.savefig(os.path.join(os.getcwd(), '%s_pearson_corr_RMSE.png' % filename_output))
+
+
+# SOBOL ANALYSIS
+def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
+    if flag:
+        os.mknod('STARTED_sobol_analysis.process')
+    else:
+        os.mknod('STARTED_sobol_gen_params.process')
+
+    df_params = pd.read_csv(csv_file, sep='\t', header=None, engine='c', na_filter=False, low_memory=False)
+
+    # Number of parameters to sample
+    parameter_count = df_params.shape[0]
+
+    # Number of samples to draw for each parameter
+    sample_count = int(n_comb)
+    names = df_params.iloc[:, 0].tolist()
+
+    params = df_params.to_dict('index')
+
+    # Define the model inputs
+    problem = {
+        'num_vars': parameter_count,
+        'names': names,
+        'bounds': df_params.iloc[:, 1:].values.tolist()
+    }
+
+    # Generate samples
+    param_values = saltelli.sample(problem, sample_count, seed=seed)
+
+    if flag:
+        # Perform analysis
+        s_i = sobol.analyze(problem, y)
+
+        # Print the first-order sensitivity indices
+        print(s_i['S1'])
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set(title='Sobol Analysis')
+        ax.plot(names, s_i['S1'])
+        fig.savefig(os.path.join(os.getcwd(), 'Sobol_Analysis.png'))
+
+        os.remove('STARTED_sobol_analysis.process')
+        os.mknod('FINISHED_sobol_analysis.process')
+    else:
+        os.remove('STARTED_sobol_gen_params.process')
+        os.mknod('FINISHED_sobol_gen_params.process')
+
+    return param_values
+
 # LHS--PRCC TOOLS ANALYSIS

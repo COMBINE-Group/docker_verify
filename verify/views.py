@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.shortcuts import render
 from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
-    get_plot_trends_convergence_corr, save_and_convert_files, existence_and_unique_analysis, run_smoothness_analysis
+    get_plot_trends_convergence_corr, save_and_convert_files, existence_and_unique_analysis, run_smoothness_analysis, \
+    run_sobol_analysis
 from django.http import JsonResponse
 import shutil
 import os
 import threading
 import pandas as pd
+import numpy as np
 
 
 def verify_lhs_prcc(response):
@@ -138,3 +140,38 @@ def smoothness_analysis(request):
         else:
             return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                  'mess': 'There was a problem during execution!'})
+
+
+def sobol_generates_sample(request):
+    if request.method == 'POST':
+        if len(request.FILES.getlist('file')) == 1:
+            if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+
+                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                new_list_files, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+
+                n_combinations = request.POST['number_combinations']
+
+                params = run_sobol_analysis(new_list_files[0], int(n_combinations), int(request.POST['seed']))
+
+                np.savetxt('out.txt', params)
+                path = os.path.join(os.getcwd(), 'out.txt')
+                path_out = path.split('/')[-6:]
+                out = '/'.join(path_out)
+
+                link = request.scheme + '://' + request.get_host() + '/' + out
+                os.chdir(settings.BASE_DIR_VERIFY)
+
+                return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                     'mess': '', 'data': link})
+            else:
+                return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                     'mess': 'There was a problem during execution!'})
+        else:
+            return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                 'mess': 'No files selected!'})
+
+
+def sobol_analyze(request):
+    JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                  'mess': 'There was a problem during execution!'})

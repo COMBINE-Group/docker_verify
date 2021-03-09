@@ -9,8 +9,8 @@ urlpatterns = [
     path('runSmoothness_analysis/', views.smoothness_analysis, name='run-smoothness_analysis'),
     path('checkSimulationVerify/', views.check_simulations, name='check-simulations-verify'),
     path('readInfoSimulationVerify/', views.read_info_simulation, name='read-info-simulation-verify'),
-    # path('runSobol_analysis/', views.sobol_analysis, name='sobol-analysis'),
-    # path('runSobol_analyze/', views.sobol_analyze, name='sobol-analyze'),
+    path('runSobol_analysis/', views.sobol_generates_sample, name='sobol_generates_sample'),
+    path('runSobol_analyze/', views.sobol_analyze, name='sobol-analyze'),
     path('verify_lhs-prcc/', views.verify_lhs_prcc, name='verify_lhs_prcc'),
 
 ]
