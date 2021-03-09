@@ -173,5 +173,33 @@ def sobol_generates_sample(request):
 
 
 def sobol_analyze(request):
-    JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                  'mess': 'There was a problem during execution!'})
+    if request.method == 'POST':
+        if len(request.FILES.getlist('files_parameter_input')) == 1 and \
+                len(request.FILES.getlist('files_output_model')) == 1:
+            if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+
+                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+
+                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_parameter_input'),
+                                                                  os.getcwd())
+                list_files_uploaded_1, sep = save_and_convert_files(request.FILES.getlist('files_output_model'),
+                                                                    os.getcwd())
+
+                n_combinations = request.POST['number_combinations']
+                df = pd.read_csv(os.path.join(os.getcwd(), list_files_uploaded_1[0]), header=None, engine='c',
+                                 na_filter=False, low_memory=False)
+
+                # DA ESTRARRE DA new_list_files_1[0]
+                yy = df.squeeze().to_numpy()
+
+                params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
+                                            flag=True, y=yy)
+
+                return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                     'mess': '', 'data': ''})
+            else:
+                return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                     'mess': 'There was a problem during execution!'})
+        else:
+            return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                 'mess': 'You have choosed more than 1 files'})
