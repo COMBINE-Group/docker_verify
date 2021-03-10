@@ -215,6 +215,6 @@
         let url_read_info = "{% url 'read-info-simulation-verify' %}";
         let csrf_token = "{{ csrf_token }}"
     </script>
-    <script src="{% static 'js/function_verify_sobol.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/function_verify_sobol.js' %}" type="module"></script>
 
 {% endblock content %}

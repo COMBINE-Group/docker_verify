@@ -1,3 +1,7 @@
+import { checkYourSimulation } from './common_function.js';
+import { showPlot } from './common_function.js';
+import {swalError} from './common_function.js';
+
 $(document).ready(function () {
     checkYourSimulation();
 
@@ -7,27 +11,20 @@ $(document).ready(function () {
         checkYourSimulation();
     });
 
-
     $("#submit_sobol_analysis").click(function () {
-        //nascondo i div per i plot
+        //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
+
         let number_combinations = $("#number_combinations_sobol").val()
         let seed = $("#seed").val()
+        let filesInputSobol = $("#files_input_sobol")
 
-        if ($("#files_input_sobol")[0].files.length === 0) {
-            swal({
-                title: '<i>No files selected</i>',
-                type: 'error',
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
+        if (filesInputSobol[0].files.length === 0) {
+            swalError("No files selected")
         } else {
             let data = new FormData();
-            $.each($("#files_input_sobol")[0].files, function (i, file) {
+            $.each(filesInputSobol[0].files, function (i, file) {
                 data.append("file", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
@@ -80,29 +77,24 @@ $(document).ready(function () {
 
 
     $("#submit_sobol_analyze").click(function () {
-        //nascondo i div per i plot
+        //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
+
         let seed = $("#seed_analyze").val()
         let number_combinations = $("#number_combinations_sobol").val()
+        let filesParameterInput = $("#files_parameter_input")
+        let filesOutputModel = $("#files_output_model")
 
-        if ($("#files_parameter_input")[0].files.length === 0 || $("#files_output_model")[0].files.length === 0) {
-            swal({
-                title: '<i>No files selected</i>',
-                type: 'error',
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
+        if (filesParameterInput[0].files.length === 0 || [0].files.length === 0) {
+            swalError("No files selected")
         } else {
             let data = new FormData();
-            $.each($("#files_parameter_input")[0].files, function (i, file) {
+            $.each(filesParameterInput[0].files, function (i, file) {
                 data.append("files_parameter_input", file);
             });
 
-            $.each($("#files_output_model")[0].files, function (i, file) {
+            $.each(filesOutputModel[0].files, function (i, file) {
                 data.append("files_output_model", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
@@ -151,7 +143,7 @@ $(document).ready(function () {
         }
     });
 
-    // Gestisce l'azione del cambio della simulazione
+    // handles the change of the simulations
     $('select[name=simulation]').on('change', function () {
         let tagSelect = $('select[name=type_plot] option:eq(0)');
         tagSelect.prop("selected", true);
@@ -160,20 +152,18 @@ $(document).ready(function () {
         let type_plot = tagSelect.val();
 
         if (id_sim_pat !== '') {
-            //setto id della simulazione per recuperare i relativi grafici
+            //set id simulation
             $('input[name=selectIdSimulation]').val(id_sim_pat);
 
-            //resetto il link dell'img
             $(".printPlot").attr("src", '');
 
-            //mostro div per i plot
             $(".divPlot").removeAttr("style");
 
             showPlot(id_sim_pat, type_plot)
         }
     });
 
-    //gestisce l'azione del cambio dei plot
+    // handles the change of the plots
     $('select[name=type_plot]').on('change', function () {
 
         let type_plot = $('select[name=type_plot]').val();
@@ -182,44 +172,4 @@ $(document).ready(function () {
         showPlot(id_sim_pat, type_plot);
     });
 });
-
-function checkYourSimulation() {
-    swal({
-        title: '<i>Search Simulations</i>',
-        type: 'info',
-        showCloseButton: true,
-        showCancelButton: false,
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        allowEscapeKey: true
-    });
-
-    $.post(url_check_simulations, {
-        'csrfmiddlewaretoken': csrf_token,
-        'name_analysis': '_sobol_analysis'
-    }, function (data) {
-
-        if (data.status === 1) {
-            $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
-        }
-
-        swal({
-            title: '<i>' + data.title + '</i>',
-            type: data.type,
-            html: data.mess,
-            showCloseButton: true,
-            showCancelButton: false,
-            showConfirmButton: true,
-            allowOutsideClick: false,
-            allowEscapeKey: true
-        })
-
-    }, "json");
-}
-
-function showPlot(id_sim, type_plot) {
-    let path_plot = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim + '/' + type_plot + '.png';
-    $(".printPlot").attr("src", path_plot);
-    $(".divPrintPlot").removeAttr("style");
-}
 

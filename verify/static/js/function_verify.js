@@ -1,3 +1,7 @@
+import {checkYourSimulation} from './common_function.js';
+import {showPlot} from './common_function.js';
+import {swalError} from './common_function.js';
+
 $(document).ready(function () {
     checkYourSimulation();
 
@@ -8,23 +12,17 @@ $(document).ready(function () {
     });
 
     $("#submit_uniquness_analysis").click(function () {
-        //nascondo i div per i plot
+        //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
+        let filesInputUniqueAnalysis = $("#files_input_unique_analysis")
 
-        if ($("#files_input_unique_analysis")[0].files.length === 0) {
-            swal({
-                title: '<i>No files selected</i>',
-                type: 'error',
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
+        if (filesInputUniqueAnalysis[0].files.length === 0) {
+            swalError("No files selected")
+
         } else {
             let data = new FormData();
-            $.each($("#files_input_unique_analysis")[0].files, function (i, file) {
+            $.each(filesInputUniqueAnalysis[0].files, function (i, file) {
                 data.append("file", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
@@ -72,47 +70,25 @@ $(document).ready(function () {
     });
 
     $("#submit_smoothness_analysis").click(function () {
-        //nascondo i div per i plot
+        //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
+
         let column_select = $("#column_select_smoothness_analysis").val()
         let k_select = $("#k_value_smoothness_analysis").val()
+        let filesInputSmoothnessAnalysis = $("#files_input_smoothness_analysis")
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
-            swal({
-                title: '<i>The "Column to analyze" fields are empty, or it is not numeric</i>',
-                type: 'error',
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
+            swalError("The \"K value\" fields are empty, or it is not numeric")
         } else {
             if (!k_select.trim() || !$.isNumeric(k_select)) {
-                swal({
-                    title: '<i>The "K value" fields are empty, or it is not numeric</i>',
-                    type: 'error',
-                    showCloseButton: true,
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
-                });
+                swalError("The \"K value\" fields are empty, or it is not numeric")
             } else {
-                if ($("#files_input_smoothness_analysis")[0].files.length === 0) {
-                    swal({
-                        title: '<i>No files selected</i>',
-                        type: 'error',
-                        showCloseButton: true,
-                        showCancelButton: false,
-                        showConfirmButton: true,
-                        allowOutsideClick: false,
-                        allowEscapeKey: true
-                    });
+                if (filesInputSmoothnessAnalysis[0].files.length === 0) {
+                    swalError("No files selected")
                 } else {
                     let data = new FormData();
-                    $.each($("#files_input_smoothness_analysis")[0].files, function (i, file) {
+                    $.each(filesInputSmoothnessAnalysis[0].files, function (i, file) {
                         data.append("file", file);
                     });
                     data.append("csrfmiddlewaretoken", csrf_token)
@@ -165,36 +141,23 @@ $(document).ready(function () {
 
 
     $("#submit_timestep_analysis").click(function () {
-        //nascondo i div per i plot
+        //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
+
         let column_select = $("#column_select_timestep").val()
+        let filesInputTimestep = $("#files_input_timestep")
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
-            swal({
-                title: '<i>The "Column to analyze" field is empty or it not numeric!</i>',
-                type: 'error',
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            });
+            swalError("The 'Column to analyze' field is empty or it is not numeric!")
         } else {
-            if ($("#files_input_timestep")[0].files.length === 0) {
-                swal({
-                    title: '<i>No files selected</i>',
-                    type: 'error',
-                    showCloseButton: true,
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
-                });
+            if (filesInputTimestep[0].files.length === 0) {
+                swalError("No files selected")
+
             } else {
                 let data = new FormData();
                 data.append("column_select", column_select)
-                $.each($("#files_input_timestep")[0].files, function (i, file) {
+                $.each(filesInputTimestep[0].files, function (i, file) {
                     data.append("file", file);
                 });
                 data.append("csrfmiddlewaretoken", csrf_token)
@@ -242,17 +205,17 @@ $(document).ready(function () {
         }
     });
 
-    // Gestisce l'azione del cambio della simulazione
+    // handles the change of the simulations
     $('select[name=simulation]').on('change', function () {
 
         let id_sim_pat = this.value;
 
         if (id_sim_pat !== '') {
-            //setto id della simulazione per recuperare i relativi grafici
+            //set id simulation
             $('input[name=selectIdSimulation]').val(id_sim_pat);
 
             let pat_smoothness_plot = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim_pat + '/' + 'Smoothness_Analysis.png'
-            console.log(pat_smoothness_plot)
+
             let http = new XMLHttpRequest();
             http.open('HEAD', pat_smoothness_plot, false);
             http.send();
@@ -282,18 +245,16 @@ $(document).ready(function () {
             let tagSelect = $('select[name=type_plot]').find(":selected");
             tagSelect.prop("selected", true);
             let type_plot = tagSelect.val();
-            console.log(type_plot)
-            //resetto il link dell'img
+
             $(".printPlot").attr("src", '');
 
-            //mostro div per i plot
             $(".divPlot").removeAttr("style");
 
             showPlot(id_sim_pat, type_plot)
         }
     });
 
-    //gestisce l'azione del cambio dei plot
+    // handles the change of the plots
     $('select[name=type_plot]').on('change', function () {
 
         let type_plot = $('select[name=type_plot]').val();
@@ -303,40 +264,3 @@ $(document).ready(function () {
     });
 });
 
-function checkYourSimulation() {
-    swal({
-        title: '<i>Search Simulations</i>',
-        type: 'info',
-        showCloseButton: true,
-        showCancelButton: false,
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        allowEscapeKey: true
-    });
-
-    $.post(url_check_simulations, {'csrfmiddlewaretoken': csrf_token, 'name_analysis': ''}, function (data) {
-
-        if (data.status === 1) {
-            $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
-        }
-
-        swal({
-            title: '<i>' + data.title + '</i>',
-            type: data.type,
-            html: data.mess,
-            showCloseButton: true,
-            showCancelButton: false,
-            showConfirmButton: true,
-            allowOutsideClick: false,
-            allowEscapeKey: true
-        })
-
-    }, "json");
-}
-
-function showPlot(id_sim, type_plot) {
-    let path_plot = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim + '/' + type_plot + '.png';
-
-    $(".printPlot").attr("src", path_plot);
-    $(".divPrintPlot").removeAttr("style");
-}
