@@ -30,8 +30,30 @@
                                         <label>Number of samples</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="number_combinations_lhs"
-                                               name="number_combinations_lhs"
+                                        <input type="text" id="number_samples_lhs"
+                                               name="number_samples_lhs"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Seed</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="seed"
+                                               name="seed"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Iterations</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="iterations"
+                                               name="iterations"
                                                class="form-control" required>
                                     </div>
                                 </div>
@@ -195,12 +217,10 @@
         var appname = "{{ appname }}";
         var user_username = "{{ user.username }}";
         var url_check_simulations = "{% url 'check-simulations-verify' %}";
-        var url_run_time_step_analysis = "{% url 'run-time_step_analysis' %}";
-        var url_run_uniqueness_analysis = "{% url 'run-uniqueness_analysis' %}";
-        var url_run_smoothness_analysis = "{% url 'run-smoothness_analysis' %}";
+        var url_run_lhs_analysis = "{% url 'run_lhs' %}";
         var url_read_info = "{% url 'read-info-simulation-verify' %}";
         var csrf_token = "{{ csrf_token }}"
     </script>
-    <script src="{% static 'js/function_verify.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/function_verify_lhs_prcc.js' %}" type="module"></script>
 
 {% endblock content %}

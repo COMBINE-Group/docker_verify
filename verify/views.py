@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import render
 from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
     get_plot_trends_convergence_corr, save_and_convert_files, existence_and_unique_analysis, run_smoothness_analysis, \
-    run_sobol_analysis
+    run_sobol_analysis, run_lhs_analysis
 from django.http import JsonResponse
 import shutil
 import os
@@ -195,6 +195,37 @@ def sobol_analyze(request):
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
                                             flag=True, y=yy)
 
+                os.chdir(settings.BASE_DIR_VERIFY)
+
+                return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                     'mess': '', 'data': ''})
+            else:
+                return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                     'mess': 'There was a problem during execution!'})
+        else:
+            return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                 'mess': 'You have choosed more than 1 files'})
+
+
+def lhs_analysis(request):
+    if request.method == 'POST':
+        if len(request.FILES.getlist('files_input_lhs')) == 1:
+            if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+
+                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+
+                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_input_lhs'), os.getcwd())
+                df_param = pd.read_csv(list_files_uploaded[0], sep=sep, engine='c', na_filter=False,
+                                       low_memory=False)
+                tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
+                inputs_space = dict(zip(df_param['param'], tuple_min_max_vf))
+
+                matrix_lhs = run_lhs_analysis(inputs_space, int(request.POST['number_combinations']),
+                                              int(request.POST['seed']), int(request.POST['iterations']))
+
+                matrix_lhs.to_csv('matrix_lhs.csv')
+
+                os.chdir(settings.BASE_DIR_VERIFY)
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
             else:

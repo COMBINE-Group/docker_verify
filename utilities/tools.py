@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from SALib.sample import saltelli
 from SALib.analyze import sobol
+from skopt.sampler import Lhs
+from skopt.space import Space
 
 
 def rolling_window(a, window):
@@ -477,4 +479,13 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
 
     return param_values
 
+
 # LHS--PRCC TOOLS ANALYSIS
+def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int):
+    input_space = list(df_param.values())
+    space = Space(input_space)
+    lhs = Lhs(criterion="maximin", iterations=iterations)
+    matrix = pd.DataFrame(lhs.generate(dimensions=space.dimensions, n_samples=n_samples, random_state=seed))
+    matrix.columns = list(df_param.keys())
+
+    return matrix

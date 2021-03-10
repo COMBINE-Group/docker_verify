@@ -12,5 +12,6 @@ urlpatterns = [
     path('runSobol_analysis/', views.sobol_generates_sample, name='sobol_generates_sample'),
     path('runSobol_analyze/', views.sobol_analyze, name='sobol-analyze'),
     path('verify_lhs-prcc/', views.verify_lhs_prcc, name='verify_lhs_prcc'),
+    path('runLHS/', views.lhs_analysis, name='run_lhs'),
 
 ]
