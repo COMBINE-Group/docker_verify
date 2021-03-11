@@ -437,7 +437,7 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
     else:
         os.mknod('STARTED_sobol_gen_params.process')
 
-    df_params = pd.read_csv(csv_file, sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
+    df_params = pd.read_csv(csv_file, sep='\s+', engine='c', na_filter=False, low_memory=False)
 
     # Number of parameters to sample
     parameter_count = df_params.shape[0]
@@ -445,8 +445,6 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
     # Number of samples to draw for each parameter
     sample_count = int(n_comb)
     names = df_params.iloc[:, 0].tolist()
-
-    params = df_params.to_dict('index')
 
     # Define the model inputs
     problem = {
@@ -477,7 +475,7 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
         os.remove('STARTED_sobol_gen_params.process')
         os.mknod('FINISHED_sobol_gen_params.process')
 
-    return param_values
+    return param_values, names
 
 
 # LHS--PRCC TOOLS ANALYSIS

@@ -152,9 +152,9 @@ def sobol_generates_sample(request):
 
                 n_combinations = request.POST['number_combinations']
 
-                params = run_sobol_analysis(new_list_files[0], int(n_combinations), int(request.POST['seed']))
+                params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations), int(request.POST['seed']))
 
-                np.savetxt('out.csv', params, delimiter=',', fmt='%f')
+                np.savetxt('out.csv', params, delimiter=',', fmt='%f', header=','.join(param_name), comments='')
                 path = os.path.join(os.getcwd(), 'out.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
