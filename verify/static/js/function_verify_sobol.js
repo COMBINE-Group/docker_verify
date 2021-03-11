@@ -17,7 +17,7 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let number_combinations = $("#number_combinations_sobol").val()
-        let seed = $("#seed").val()
+        let seed = $("#seed_analysis").val()
         let filesInputSobol = $("#files_input_sobol")
 
         if (filesInputSobol[0].files.length === 0) {

@@ -264,6 +264,7 @@ def RMSE(predictions, targets):
 
 def save_and_convert_files(files: list, path: str):
     fs = FileSystemStorage()
+    sep = '\s+'
 
     list_files_uploaded = []
     for f in files:
@@ -273,12 +274,11 @@ def save_and_convert_files(files: list, path: str):
     new_list_files = []
     for i, f in enumerate(list_files_uploaded):
         df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
-        sep = '\s+'
+
         if df.shape[1] == 1:
             df = pd.read_csv(f, comment='#', sep=',', header=None, engine='c', na_filter=False, low_memory=False)
             df.to_csv(os.path.join(path, f'file_convert_{i + 1}.csv'), sep='\t', mode='w', header=False, index=False)
             new_list_files.append(os.path.join(path, f'file_convert_{i + 1}.csv'))
-            sep = ','
         else:
             new_list_files.append(os.path.join(path, f))
 
@@ -437,7 +437,7 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
     else:
         os.mknod('STARTED_sobol_gen_params.process')
 
-    df_params = pd.read_csv(csv_file, sep='\t', header=None, engine='c', na_filter=False, low_memory=False)
+    df_params = pd.read_csv(csv_file, sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
 
     # Number of parameters to sample
     parameter_count = df_params.shape[0]
@@ -482,10 +482,15 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
 
 # LHS--PRCC TOOLS ANALYSIS
 def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int):
+    os.mknod('STARTED_lhs_analysis.process')
+
     input_space = list(df_param.values())
     space = Space(input_space)
     lhs = Lhs(criterion="maximin", iterations=iterations)
     matrix = pd.DataFrame(lhs.generate(dimensions=space.dimensions, n_samples=n_samples, random_state=seed))
     matrix.columns = list(df_param.keys())
+
+    os.remove('STARTED_lhs_analysis.process')
+    os.mknod('FINISHED_lhs_analysis.process')
 
     return matrix

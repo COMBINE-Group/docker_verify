@@ -154,8 +154,8 @@ def sobol_generates_sample(request):
 
                 params = run_sobol_analysis(new_list_files[0], int(n_combinations), int(request.POST['seed']))
 
-                np.savetxt('out.txt', params)
-                path = os.path.join(os.getcwd(), 'out.txt')
+                np.savetxt('out.csv', params, delimiter=',', fmt='%f')
+                path = os.path.join(os.getcwd(), 'out.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
 
@@ -189,7 +189,6 @@ def sobol_analyze(request):
                 df = pd.read_csv(os.path.join(os.getcwd(), list_files_uploaded_1[0]), header=None, engine='c',
                                  na_filter=False, low_memory=False)
 
-                # DA ESTRARRE DA new_list_files_1[0]
                 yy = df.squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
@@ -209,25 +208,30 @@ def sobol_analyze(request):
 
 def lhs_analysis(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('files_input_lhs')) == 1:
+        if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
                 create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
 
-                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_input_lhs'), os.getcwd())
+                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
                 df_param = pd.read_csv(list_files_uploaded[0], sep=sep, engine='c', na_filter=False,
                                        low_memory=False)
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
-                inputs_space = dict(zip(df_param['param'], tuple_min_max_vf))
+                inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
 
                 matrix_lhs = run_lhs_analysis(inputs_space, int(request.POST['number_combinations']),
                                               int(request.POST['seed']), int(request.POST['iterations']))
 
-                matrix_lhs.to_csv('matrix_lhs.csv')
+                matrix_lhs.to_csv('matrix_lhs.csv', index=False)
+                path = os.path.join(os.getcwd(), 'matrix_lhs.csv')
+                path_out = path.split('/')[-6:]
+                out = '/'.join(path_out)
+
+                link = request.scheme + '://' + request.get_host() + '/' + out
 
                 os.chdir(settings.BASE_DIR_VERIFY)
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
-                                     'mess': '', 'data': ''})
+                                     'mess': '', 'data': link})
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                      'mess': 'There was a problem during execution!'})

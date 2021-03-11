@@ -19,7 +19,7 @@ $(document).ready(function () {
         let number_combinations = $("#number_samples_lhs").val()
         let seed_lhs = $("#seed_lhs").val()
         let filesInputLHS = $("#files_input_lhs")
-        let iterations = $("#iterations")
+        let iterations = $("#iterations").val()
 
         if (filesInputLHS[0].files.length === 0) {
             swalError("No files selected")
