@@ -9,6 +9,7 @@ from scipy import special
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import pingouin as pg
 from SALib.sample import saltelli
 from SALib.analyze import sobol
 from skopt.sampler import Lhs
@@ -488,3 +489,47 @@ def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int,
     os.mknod(os.path.join(path_sim, 'FINISHED_lhs_analysis.process'))
 
     return matrix
+
+
+def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, request):
+
+    # define the columns for combinations
+    col_time = [[], []]
+    col_time[0] = list(lhs_matrix.columns)
+    col_time[1] = list(matrix_output.columns)
+    response = ''
+    df_lhs_output = pd.DataFrame
+
+    if request.POST['type_prcc'] == 'true':
+        # PRCC over time
+        if len(lhs_matrix) == matrix_output.shape[1]:
+
+            time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
+
+            matrix_output = matrix_output.iloc[:, time_points]
+            matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
+            # reset index to avoid problems with concat
+            lhs_matrix.reset_index(drop=True, inplace=True)
+            matrix_output.reset_index(drop=True, inplace=True)
+
+            df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
+        else:
+            shutil.rmtree(path_sim)
+            mess = 'The number of rows of LHS matrix and the' \
+                   'number of columns of File to Analyze are different'
+            response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+    else:
+        # PRCC for specific value
+        if len(lhs_matrix) == len(matrix_output):
+            df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
+        else:
+            shutil.rmtree(path_sim)
+            mess = 'The number of rows of LHS matrix and File to Analyze are different'
+            response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+
+    if response == '':
+        output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
+        output.to_csv(os.path.join(path_sim, 'prcc.csv'))
+        response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
+
+    return response

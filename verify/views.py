@@ -2,14 +2,13 @@ from django.conf import settings
 from django.shortcuts import render
 from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
     get_plot_trends_convergence_corr, save_and_convert_files, existence_and_unique_analysis, run_smoothness_analysis, \
-    run_sobol_analysis, run_lhs_analysis
+    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis
 from django.http import JsonResponse
 import shutil
 import os
 import threading
 import pandas as pd
 import numpy as np
-import pingouin as pg
 
 
 def verify_lhs_prcc(response):
@@ -256,42 +255,7 @@ def prcc_analysis(request):
                 lhs_matrix = pd.read_csv(matrix_lhs[0])
                 matrix_output = pd.read_csv(matrix_from_output[0])
 
-                # define the columns for combinations
-                col_time = [[], []]
-                col_time[0] = list(lhs_matrix.columns)
-                col_time[1] = list(matrix_output.columns)
-
-                if request.POST['type_prcc'] == 'true':
-                    # PRCC over time
-                    if len(lhs_matrix) == matrix_output.shape[1]:
-
-                        time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
-
-                        matrix_output = matrix_output.iloc[:, time_points]
-                        matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
-                        # reset index to avoid problems with concat
-                        lhs_matrix.reset_index(drop=True, inplace=True)
-                        matrix_output.reset_index(drop=True, inplace=True)
-
-                        df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
-                    else:
-                        shutil.rmtree(path_sim)
-                        mess = 'The number of rows of LHS matrix and the' \
-                               'number of columns of File to Analyze are different'
-                        return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
-                else:
-                    # PRCC for specific value
-                    if len(lhs_matrix) == len(matrix_output):
-                        df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
-                    else:
-                        shutil.rmtree(path_sim)
-                        mess = 'The number of rows of LHS matrix and File to Analyze are different'
-                        return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
-
-                output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
-                output.to_csv(os.path.join(path_sim, 'prcc.csv'))
-
-                return JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
+                return run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request)
 
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
