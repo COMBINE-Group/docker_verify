@@ -58,8 +58,9 @@ def time_step_analysis(request):
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
                 starttime = 0
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
+                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
 
                 col = int(request.POST['column_select'])
                 if col > 1:
@@ -68,8 +69,6 @@ def time_step_analysis(request):
                 thread = threading.Thread(
                     target=get_plot_trends_convergence_corr('fig', new_list_files, col, starttime))
                 thread.start()
-
-                os.chdir(settings.BASE_DIR_VERIFY)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': ''})
@@ -86,14 +85,13 @@ def uniqueness_analysis(request):
         if len(request.FILES.getlist('file')) >= 2:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
+                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
                 result = existence_and_unique_analysis(new_list_files)
 
                 # delete unused folders
-                folder_analysis_to_delete = os.getcwd()
-                os.chdir(settings.BASE_DIR_VERIFY)
-                shutil.rmtree(folder_analysis_to_delete)
+                shutil.rmtree(path_sim)
 
                 if result[0] == 0:
                     return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>the files are the same</u>',
@@ -117,10 +115,11 @@ def smoothness_analysis(request):
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
-                new_list_files, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
+                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
 
-                df = pd.read_csv(new_list_files[0], comment='#', sep=sep, header=None, engine='c', na_filter=False,
+                df = pd.read_csv(new_list_files[0], comment='#', header=None, engine='c', na_filter=False,
                                  low_memory=False)
                 col = int(request.POST['column_select'])
                 if col > 1:
@@ -148,8 +147,9 @@ def sobol_generates_sample(request):
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
-                new_list_files, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
+                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
 
                 n_combinations = request.POST['number_combinations']
 
@@ -162,7 +162,6 @@ def sobol_generates_sample(request):
                 out = '/'.join(path_out)
 
                 link = request.scheme + '://' + request.get_host() + '/' + out
-                os.chdir(settings.BASE_DIR_VERIFY)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': link})
@@ -180,12 +179,11 @@ def sobol_analyze(request):
                 len(request.FILES.getlist('files_output_model')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
 
-                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_parameter_input'),
-                                                                  os.getcwd())
-                list_files_uploaded_1, sep = save_and_convert_files(request.FILES.getlist('files_output_model'),
-                                                                    os.getcwd())
+                list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_parameter_input'), path_sim)
+                list_files_uploaded_1 = save_and_convert_files(request.FILES.getlist('files_output_model'), path_sim)
 
                 n_combinations = request.POST['number_combinations']
                 df = pd.read_csv(os.path.join(os.getcwd(), list_files_uploaded_1[0]), header=None, engine='c',
@@ -195,8 +193,6 @@ def sobol_analyze(request):
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
                                             flag=True, y=yy)
-
-                os.chdir(settings.BASE_DIR_VERIFY)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
@@ -213,7 +209,8 @@ def lhs_analysis(request):
         if len(request.FILES.getlist('files_input_lhs')) == 1:
             if check_content_type(request.FILES.getlist('files_input_lhs'), 'text/csv,application/octet-stream'):
 
-                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
 
                 list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_input_lhs'), path_sim)
                 df_param = pd.read_csv(list_files_uploaded[0], engine='c', na_filter=False, low_memory=False)
@@ -224,7 +221,7 @@ def lhs_analysis(request):
                 matrix_lhs = run_lhs_analysis(inputs_space, int(request.POST['number_combinations']),
                                               int(request.POST['seed']), int(request.POST['iterations']), path_sim)
 
-                matrix_lhs.to_csv(os.path.join(path_sim,'matrix_lhs.csv'), index=False)
+                matrix_lhs.to_csv(os.path.join(path_sim, 'matrix_lhs.csv'), index=False)
                 path = os.path.join(path_sim, 'matrix_lhs.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
