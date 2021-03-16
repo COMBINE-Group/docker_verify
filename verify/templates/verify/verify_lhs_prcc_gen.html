@@ -92,21 +92,19 @@
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label> Column to analyze </label>
+                                        <label for="step_times_points">Step times points</label>
                                     </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="column_select_prcc"
-                                               name="column_select_prcc"
-                                               class="form-control" required>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="number" id="step_times_points" name="step_times_points" min="1" value="1">
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="files_input">Files to analyze</label>
+                                        <label for="files_input">File to analyze</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="files_input_prcc" name="files_input"
+                                        <input type="file" id="file_input_prcc" name="file_input_prcc"
                                                required="required"
                                                multiple>
                                     </div>
@@ -114,18 +112,25 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="files_input">Output LHS</label>
+                                        <label for="files_input">LHS Matrix</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="files_output_lhs_prcc" name="files_input"
+                                        <input type="file" id="file_matrix_lhs" name="file_matrix_lhs"
                                                required="required">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="type_prcc">PRCC over time</label>
+                                        <input type="checkbox" id="type_prcc" name="type_prcc">
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <input type="button" id="submit_uniquness_analysis" class="btn btn-success"
+                                        <input type="button" id="submit_prcc_analysis" class="btn btn-success"
                                                value="Submit"/>
                                     </div>
                                 </div>
@@ -218,6 +223,7 @@
         var user_username = "{{ user.username }}";
         var url_check_simulations = "{% url 'check-simulations-verify' %}";
         var url_run_lhs_analysis = "{% url 'run_lhs' %}";
+        var url_run_prcc_analysis = "{% url 'run_prcc' %}";
         var url_read_info = "{% url 'read-info-simulation-verify' %}";
         var csrf_token = "{{ csrf_token }}"
     </script>

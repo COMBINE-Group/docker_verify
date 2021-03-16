@@ -1,5 +1,5 @@
-import { checkYourSimulation } from './common_function.js';
-import { showPlot } from './common_function.js';
+import {checkYourSimulation} from './common_function.js';
+import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
 $(document).ready(function () {
@@ -26,7 +26,7 @@ $(document).ready(function () {
         } else {
             let data = new FormData();
             $.each(filesInputLHS[0].files, function (i, file) {
-                data.append("file", file);
+                data.append("files_input_lhs", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("number_combinations", number_combinations)
@@ -55,11 +55,15 @@ $(document).ready(function () {
                         async: false,
                         cache: false,
                         success: function (result) {
+                            let html = ''
+                            if (result.status === 1){
+                                html = '<a target="_blank" href="' + result.data + ' ">Download</a>'
+                            }
 
                             swal({
                                 title: '<i>' + result.title + '</i>',
                                 type: result.type,
-                                html: '<a target="_blank" href="' + result.data + ' ">Download</a>',
+                                html: html,
                                 showCloseButton: true,
                                 showCancelButton: false,
                                 showConfirmButton: true,
@@ -78,31 +82,33 @@ $(document).ready(function () {
     });
 
 
-    $("#submit_sobol_analyze").click(function () {
+    $("#submit_prcc_analysis").click(function () {
         //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
-        let seed = $("#seed_analyze").val()
-        let number_combinations = $("#number_combinations_sobol").val()
-        let filesParameterInput = $("#files_parameter_input")
-        let filesOutputModel = $("#files_output_model")
+        let fileInputPrcc = $("#file_input_prcc")
+        let fileMatrixLhs = $("#file_matrix_lhs")
+        let step_time_points = $("#step_times_points").val()
+        let type_prcc = $("#type_prcc").is(':checked')
+        console.log(type_prcc)
 
-        if (filesParameterInput[0].files.length === 0 || [0].files.length === 0) {
+        if (fileInputPrcc[0].files.length === 0 && fileMatrixLhs[0].files.length === 0) {
             swalError("No files selected")
         } else {
             let data = new FormData();
-            $.each(filesParameterInput[0].files, function (i, file) {
-                data.append("files_parameter_input", file);
+            $.each(fileInputPrcc[0].files, function (i, file) {
+                data.append("file_input_prcc", file);
             });
 
-            $.each(filesOutputModel[0].files, function (i, file) {
-                data.append("files_output_model", file);
+            $.each(fileMatrixLhs[0].files, function (i, file) {
+                data.append("file_matrix_lhs", file);
             });
+
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("seed", seed)
-            data.append("number_combinations", number_combinations)
-            data.append("name_analysis", 'sobol_analyze')
+            data.append("name_analysis", 'prcc_analysis')
+            data.append("step_time_points", step_time_points)
+            data.append("type_prcc", type_prcc)
 
             swal({
                 title: 'Running',
@@ -116,7 +122,7 @@ $(document).ready(function () {
 
                     $.ajax({
                         type: 'POST',
-                        url: url_run_sobol_analyze,
+                        url: url_run_prcc_analysis,
                         data: data,
                         processData: false,
                         contentType: false,
@@ -125,9 +131,8 @@ $(document).ready(function () {
                         cache: false,
                         success: function (result) {
                             swal({
-                                title: '<i>' + result.data + '</i>',
+                                title: '<i>' + result.mess + '</i>',
                                 type: result.type,
-                                html: result.msg,
                                 showCloseButton: true,
                                 showCancelButton: false,
                                 showConfirmButton: true,

@@ -9,6 +9,7 @@ import os
 import threading
 import pandas as pd
 import numpy as np
+import pingouin as pg
 
 
 def verify_lhs_prcc(response):
@@ -152,7 +153,8 @@ def sobol_generates_sample(request):
 
                 n_combinations = request.POST['number_combinations']
 
-                params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations), int(request.POST['seed']))
+                params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations),
+                                                        int(request.POST['seed']))
 
                 np.savetxt('out.csv', params, delimiter=',', fmt='%f', header=','.join(param_name), comments='')
                 path = os.path.join(os.getcwd(), 'out.csv')
@@ -208,14 +210,14 @@ def sobol_analyze(request):
 
 def lhs_analysis(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('file')) == 1:
-            if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+        if len(request.FILES.getlist('files_input_lhs')) == 1:
+            if check_content_type(request.FILES.getlist('files_input_lhs'), 'text/csv,application/octet-stream'):
 
                 create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
 
-                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('file'), os.getcwd())
-                df_param = pd.read_csv(list_files_uploaded[0], sep=sep, engine='c', na_filter=False,
-                                       low_memory=False)
+                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_input_lhs'), os.getcwd())
+                df_param = pd.read_csv(list_files_uploaded[0], sep=sep, engine='c', na_filter=False, low_memory=False)
+
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
                 inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
 
@@ -238,3 +240,63 @@ def lhs_analysis(request):
         else:
             return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                  'mess': 'You have choosed more than 1 files'})
+
+
+def prcc_analysis(request):
+    if request.method == 'POST':
+        if len(request.FILES.getlist('file_input_prcc')) == 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
+            if check_content_type(request.FILES.getlist('file_input_prcc'), 'text/csv,application/octet-stream') and \
+                    check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
+
+                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                try:
+                    matrix_from_output = save_and_convert_files(request.FILES.getlist('file_input_prcc'), os.getcwd())
+                    matrix_lhs = save_and_convert_files(request.FILES.getlist('file_matrix_lhs'), os.getcwd())
+                except Exception as e:
+                    # TODO delete the foleder simulation
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
+
+                lhs_matrix = pd.read_csv(matrix_lhs[0])
+                matrix_output = pd.read_csv(matrix_from_output[0])
+
+                # define the columns for combinations
+                col_time = [[], []]
+                col_time[0] = list(lhs_matrix.columns)
+                col_time[1] = list(matrix_output.columns)
+
+                if request.POST['type_prcc'] == 'true':
+                    # PRCC over time
+                    if len(lhs_matrix) == matrix_output.shape[1]:
+
+                        time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
+
+                        matrix_output = matrix_output.iloc[:, time_points]
+                        matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
+                        # reset index to avoid problems with concat
+                        lhs_matrix.reset_index(drop=True, inplace=True)
+                        matrix_output.reset_index(drop=True, inplace=True)
+
+                        df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
+                    else:
+                        # TODO delete the foleder simulation
+                        mess = 'The number of rows of LHS matrix are different ' \
+                               'from number of columns of File to Analyze'
+                        return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+                else:
+                    # PRCC for specific value
+                    if len(lhs_matrix) == len(matrix_output):
+                        df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
+                    else:
+                        # TODO delete the foleder simulation
+                        mess = 'The number of rows of LHS matrix and File to Analyze are different'
+                        return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+
+                output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
+                output.to_csv('prcc.csv')
+
+            else:
+                return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                     'mess': 'There was a problem during execution!'})
+        else:
+            return JsonResponse(
+                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have choosed more than 1 files'})
