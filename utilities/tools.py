@@ -475,8 +475,8 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
 
 
 # LHS--PRCC TOOLS ANALYSIS
-def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int):
-    os.mknod('STARTED_lhs_analysis.process')
+def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int, path_sim: str):
+    os.mknod(os.path.join(path_sim, 'STARTED_lhs_analysis.process'))
 
     input_space = list(df_param.values())
     space = Space(input_space)
@@ -484,7 +484,7 @@ def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int)
     matrix = pd.DataFrame(lhs.generate(dimensions=space.dimensions, n_samples=n_samples, random_state=seed))
     matrix.columns = list(df_param.keys())
 
-    os.remove('STARTED_lhs_analysis.process')
-    os.mknod('FINISHED_lhs_analysis.process')
+    os.remove(os.path.join(path_sim, 'STARTED_lhs_analysis.process'))
+    os.mknod(os.path.join(path_sim, 'FINISHED_lhs_analysis.process'))
 
     return matrix

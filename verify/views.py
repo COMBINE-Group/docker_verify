@@ -213,25 +213,24 @@ def lhs_analysis(request):
         if len(request.FILES.getlist('files_input_lhs')) == 1:
             if check_content_type(request.FILES.getlist('files_input_lhs'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
 
-                list_files_uploaded, sep = save_and_convert_files(request.FILES.getlist('files_input_lhs'), os.getcwd())
-                df_param = pd.read_csv(list_files_uploaded[0], sep=sep, engine='c', na_filter=False, low_memory=False)
+                list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_input_lhs'), path_sim)
+                df_param = pd.read_csv(list_files_uploaded[0], engine='c', na_filter=False, low_memory=False)
 
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
                 inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
 
                 matrix_lhs = run_lhs_analysis(inputs_space, int(request.POST['number_combinations']),
-                                              int(request.POST['seed']), int(request.POST['iterations']))
+                                              int(request.POST['seed']), int(request.POST['iterations']), path_sim)
 
-                matrix_lhs.to_csv('matrix_lhs.csv', index=False)
-                path = os.path.join(os.getcwd(), 'matrix_lhs.csv')
+                matrix_lhs.to_csv(os.path.join(path_sim,'matrix_lhs.csv'), index=False)
+                path = os.path.join(path_sim, 'matrix_lhs.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
 
                 link = request.scheme + '://' + request.get_host() + '/' + out
 
-                os.chdir(settings.BASE_DIR_VERIFY)
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': link})
             else:
