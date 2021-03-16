@@ -1,4 +1,4 @@
-function checkYourSimulation() {
+function checkYourSimulation(name_analysis) {
     swal({
         title: '<i>Search Simulations</i>',
         type: 'info',
@@ -9,7 +9,7 @@ function checkYourSimulation() {
         allowEscapeKey: true
     });
 
-    $.post(url_check_simulations, {'csrfmiddlewaretoken': csrf_token, 'name_analysis': ''}, function (data) {
+    $.post(url_check_simulations, {'csrfmiddlewaretoken': csrf_token, 'name_analysis': name_analysis}, function (data) {
 
         if (data.status === 1) {
             $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)

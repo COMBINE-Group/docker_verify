@@ -3,12 +3,13 @@ import { showPlot } from './common_function.js';
 import {swalError} from './common_function.js';
 
 $(document).ready(function () {
-    checkYourSimulation();
+    let name_analysis = ['sobol_generates_samples', 'sobol_analyze']
+    checkYourSimulation(name_analysis);
 
     $("#reload_simulation").click(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
-        checkYourSimulation();
+        checkYourSimulation(name_analysis);
     });
 
     $("#submit_sobol_analysis").click(function () {
@@ -30,7 +31,7 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("number_combinations", number_combinations)
             data.append("seed", seed)
-            data.append("name_analysis", 'sobol_generates_samples')
+            data.append("name_analysis", name_analysis[0])
 
             swal({
                 title: 'Running',
@@ -65,7 +66,7 @@ $(document).ready(function () {
                                 allowEscapeKey: true
                             }).then(result => {
                                 if (result.value) {
-                                    checkYourSimulation()
+                                    checkYourSimulation(name_analysis)
                                 }
                             })
                         }
@@ -100,7 +101,7 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("seed", seed)
             data.append("number_combinations", number_combinations)
-            data.append("name_analysis", 'sobol_analyze')
+            data.append("name_analysis", name_analysis[1])
 
             swal({
                 title: 'Running',
@@ -133,7 +134,7 @@ $(document).ready(function () {
                                 allowEscapeKey: true
                             }).then(result => {
                                 if (result.value) {
-                                    checkYourSimulation()
+                                    checkYourSimulation(name_analysis)
                                 }
                             })
                         }

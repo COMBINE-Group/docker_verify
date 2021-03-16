@@ -53,7 +53,6 @@ def check_status_simulation(base_dir, path, username, name_analysis=''):
     if not os.path.isdir(dir_simulation_user):
         return JsonResponse({'status': 0, 'type': 'warning', 'title': 'Done!', 'mess': 'No simulation found!'})
     else:
-        # html = ''
         html_s = ''
         html_f = ''
         started_string = 'STARTED'+name_analysis+'.process'
@@ -311,8 +310,8 @@ def existence_and_unique_analysis(csv_files):
             return [1, min(sd_list)]  # the files are NOT the same
 
 
-def run_smoothness_analysis(ll, arr_t, k_elem):
-    os.mknod('STARTED.process')
+def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str):
+    os.mknod(f'STARTED_{name_analysis}.process')
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
     new_array_time = [arr_t[jj:jj + k_elem] for jj in range(0, len(arr_t), k_elem)]
@@ -341,8 +340,8 @@ def run_smoothness_analysis(ll, arr_t, k_elem):
             array_result[i] = 0
         i += 1
     plot_smoothness_analysis(axis_x, array_result)
-    os.remove('STARTED.process')
-    os.mknod('FINISHED.process')
+    os.remove(f'STARTED_{name_analysis}.process')
+    os.mknod(f'FINISHED_{name_analysis}.process')
 
 
 def plot_smoothness_analysis(axis_x, arr_result):
@@ -428,11 +427,11 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse):
 
 
 # SOBOL ANALYSIS
-def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
+def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, flag=False, y=None, ):
     if flag:
-        os.mknod('STARTED_sobol_analysis.process')
+        os.mknod(f'STARTED_{name_analysis}.process') # sobol analysis
     else:
-        os.mknod('STARTED_sobol_gen_params.process')
+        os.mknod(f'STARTED_{name_analysis}.process') # sobol gen params
 
     df_params = pd.read_csv(csv_file, sep='\s+', engine='c', na_filter=False, low_memory=False)
 
@@ -466,11 +465,11 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
         ax.plot(names, s_i['S1'])
         fig.savefig(os.path.join(os.getcwd(), 'Sobol_Analysis.png'))
 
-        os.remove('STARTED_sobol_analysis.process')
-        os.mknod('FINISHED_sobol_analysis.process')
+        os.remove(f'STARTED_{name_analysis}.process')
+        os.mknod(f'FINISHED_{name_analysis}.process')
     else:
-        os.remove('STARTED_sobol_gen_params.process')
-        os.mknod('FINISHED_sobol_gen_params.process')
+        os.remove(f'STARTED_{name_analysis}.process')
+        os.mknod(f'FINISHED_{name_analysis}.process')
 
     return param_values, names
 

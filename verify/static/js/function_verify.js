@@ -3,12 +3,13 @@ import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
 $(document).ready(function () {
-    checkYourSimulation();
+    let name_analysis = ['uniquness', 'smoothness', 'timestep']
+    checkYourSimulation(name_analysis);
 
     $("#reload_simulation").click(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
-        checkYourSimulation();
+        checkYourSimulation(name_analysis);
     });
 
     $("#submit_uniquness_analysis").click(function () {
@@ -26,7 +27,7 @@ $(document).ready(function () {
                 data.append("file", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append('name_analysis', '_uniquness_analysis')
+            data.append('name_analysis', name_analysis[0])
 
             swal({
                 title: 'Running',
@@ -59,7 +60,7 @@ $(document).ready(function () {
                                 allowEscapeKey: true
                             }).then(result => {
                                 if (result.value) {
-                                    checkYourSimulation()
+                                    checkYourSimulation(name_analysis)
                                 }
                             })
                         }
@@ -94,7 +95,7 @@ $(document).ready(function () {
                     data.append("csrfmiddlewaretoken", csrf_token)
                     data.append("column_select", column_select)
                     data.append("k_select", k_select)
-                    data.append('name_analysis', '_smoothness_analysis')
+                    data.append('name_analysis', name_analysis[1])
 
                     swal({
                         title: 'Running',
@@ -127,7 +128,7 @@ $(document).ready(function () {
                                         allowEscapeKey: true
                                     }).then(result => {
                                         if (result.value) {
-                                            checkYourSimulation()
+                                            checkYourSimulation(name_analysis)
                                         }
                                     })
                                 }
@@ -161,7 +162,7 @@ $(document).ready(function () {
                     data.append("file", file);
                 });
                 data.append("csrfmiddlewaretoken", csrf_token)
-                data.append('name_analysis', '_timestep_analysis')
+                data.append('name_analysis', name_analysis[2])
 
                 swal({
                     title: 'Running',
@@ -194,7 +195,7 @@ $(document).ready(function () {
                                     allowEscapeKey: true
                                 }).then(result => {
                                     if (result.value) {
-                                        checkYourSimulation()
+                                        checkYourSimulation(name_analysis)
                                     }
                                 })
                             }

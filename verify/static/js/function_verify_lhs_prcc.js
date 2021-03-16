@@ -3,12 +3,13 @@ import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
 $(document).ready(function () {
-    checkYourSimulation();
+    let name_analysis = ['LHS', 'PRCC']
+    checkYourSimulation(name_analysis);
 
     $("#reload_simulation").click(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
-        checkYourSimulation();
+        checkYourSimulation(name_analysis);
     });
 
     $("#submit_lhs_analysis").click(function () {
@@ -32,7 +33,7 @@ $(document).ready(function () {
             data.append("number_combinations", number_combinations)
             data.append("seed", seed_lhs)
             data.append("iterations", iterations)
-            data.append("name_analysis", 'LHS')
+            data.append("name_analysis", name_analysis[0])
 
             swal({
                 title: 'Running',
@@ -71,7 +72,7 @@ $(document).ready(function () {
                                 allowEscapeKey: true
                             }).then(result => {
                                 if (result.value) {
-                                    checkYourSimulation()
+                                    checkYourSimulation(name_analysis)
                                 }
                             })
                         }
@@ -106,7 +107,7 @@ $(document).ready(function () {
             });
 
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("name_analysis", 'prcc_analysis')
+            data.append("name_analysis", name_analysis[1])
             data.append("step_time_points", step_time_points)
             data.append("type_prcc", type_prcc)
 
@@ -140,7 +141,7 @@ $(document).ready(function () {
                                 allowEscapeKey: true
                             }).then(result => {
                                 if (result.value) {
-                                    checkYourSimulation()
+                                    checkYourSimulation(name_analysis)
                                 }
                             })
                         }

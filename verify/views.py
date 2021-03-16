@@ -127,10 +127,8 @@ def smoothness_analysis(request):
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()
                 arr_time = df.iloc[:, 0].values.tolist()
-                thread = threading.Thread(target=run_smoothness_analysis(arr, arr_time, k))
-                thread.start()
+                run_smoothness_analysis(arr, arr_time, k, request.POST['name_analysis'])
 
-                os.chdir(settings.BASE_DIR_VERIFY)
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
             else:
@@ -153,7 +151,7 @@ def sobol_generates_sample(request):
                 n_combinations = request.POST['number_combinations']
 
                 params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations),
-                                                        int(request.POST['seed']))
+                                                        int(request.POST['seed']), request.POST['name_analysis'])
 
                 np.savetxt('out.csv', params, delimiter=',', fmt='%f', header=','.join(param_name), comments='')
                 path = os.path.join(os.getcwd(), 'out.csv')
@@ -191,7 +189,7 @@ def sobol_analyze(request):
                 yy = df.squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
-                                            flag=True, y=yy)
+                                            request.POST['name_analysis'], flag=True, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
