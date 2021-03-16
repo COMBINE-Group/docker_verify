@@ -248,12 +248,13 @@ def prcc_analysis(request):
             if check_content_type(request.FILES.getlist('file_input_prcc'), 'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
 
-                create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous', request.POST['name_analysis'])
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
                 try:
-                    matrix_from_output = save_and_convert_files(request.FILES.getlist('file_input_prcc'), os.getcwd())
-                    matrix_lhs = save_and_convert_files(request.FILES.getlist('file_matrix_lhs'), os.getcwd())
+                    matrix_from_output = save_and_convert_files(request.FILES.getlist('file_input_prcc'), path_sim)
+                    matrix_lhs = save_and_convert_files(request.FILES.getlist('file_matrix_lhs'), path_sim)
                 except Exception as e:
-                    # TODO delete the foleder simulation
+                    shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 lhs_matrix = pd.read_csv(matrix_lhs[0])
@@ -278,21 +279,23 @@ def prcc_analysis(request):
 
                         df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
                     else:
-                        # TODO delete the foleder simulation
-                        mess = 'The number of rows of LHS matrix are different ' \
-                               'from number of columns of File to Analyze'
+                        shutil.rmtree(path_sim)
+                        mess = 'The number of rows of LHS matrix and the' \
+                               'number of columns of File to Analyze are different'
                         return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
                 else:
                     # PRCC for specific value
                     if len(lhs_matrix) == len(matrix_output):
                         df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
                     else:
-                        # TODO delete the foleder simulation
+                        shutil.rmtree(path_sim)
                         mess = 'The number of rows of LHS matrix and File to Analyze are different'
                         return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
 
                 output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
-                output.to_csv('prcc.csv')
+                output.to_csv(os.path.join(path_sim, 'prcc.csv'))
+
+                return JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
 
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',

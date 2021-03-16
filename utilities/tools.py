@@ -34,17 +34,16 @@ def create_simulation_folder(path, username, name_analysis):
         os.makedirs(dir_simulation_user)
     # [END]
 
-    os.chdir(dir_simulation_user)
-
     simulation_id = name_analysis + strftime("%Y-%m-%d_%H:%M:%S", localtime())
+    path_simulation_id = os.path.join(dir_simulation_user, simulation_id)
 
-    if not os.path.isdir(simulation_id):
-        os.makedirs(simulation_id)
+    if not os.path.isdir(path_simulation_id):
+        os.makedirs(path_simulation_id)
     else:
         return JsonResponse(
             {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'There was a problem during execution!'})
 
-    os.chdir(simulation_id)
+    return path_simulation_id
 
 
 def check_status_simulation(base_dir, path, username, name_analysis=''):
@@ -268,7 +267,7 @@ def save_and_convert_files(files: list, path: str):
     list_files_uploaded = []
     for f in files:
         fs.save(os.path.join(path, f.name), f)
-        list_files_uploaded.append(f.name)
+        list_files_uploaded.append(os.path.join(path, f.name))
 
     new_list_files = []
     for i, f in enumerate(list_files_uploaded):
