@@ -256,7 +256,7 @@ def prcc_analysis(request):
                 lhs_matrix = pd.read_csv(matrix_lhs[0])
                 matrix_output = pd.read_csv(matrix_from_output[0])
 
-                return run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request)
+                return run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request.POST['name_analysis'], request)
 
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
