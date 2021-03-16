@@ -218,7 +218,8 @@ def lhs_analysis(request):
                 inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
 
                 matrix_lhs = run_lhs_analysis(inputs_space, int(request.POST['number_combinations']),
-                                              int(request.POST['seed']), int(request.POST['iterations']), path_sim)
+                                              int(request.POST['seed']), int(request.POST['iterations']), path_sim,
+                                              request.POST['name_analysis'])
 
                 matrix_lhs.to_csv(os.path.join(path_sim, 'matrix_lhs.csv'), index=False)
                 path = os.path.join(path_sim, 'matrix_lhs.csv')

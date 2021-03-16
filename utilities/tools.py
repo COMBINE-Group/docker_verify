@@ -476,8 +476,8 @@ def run_sobol_analysis(csv_file, n_comb, seed, flag=False, y=None):
 
 
 # LHS--PRCC TOOLS ANALYSIS
-def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int, path_sim: str):
-    os.mknod(os.path.join(path_sim, 'STARTED_lhs_analysis.process'))
+def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int, path_sim: str, name_analysis: str):
+    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
     input_space = list(df_param.values())
     space = Space(input_space)
@@ -485,14 +485,15 @@ def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int,
     matrix = pd.DataFrame(lhs.generate(dimensions=space.dimensions, n_samples=n_samples, random_state=seed))
     matrix.columns = list(df_param.keys())
 
-    os.remove(os.path.join(path_sim, 'STARTED_lhs_analysis.process'))
-    os.mknod(os.path.join(path_sim, 'FINISHED_lhs_analysis.process'))
+    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
     return matrix
 
 
-def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, request):
+def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, name_analysis: str, request):
 
+    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     # define the columns for combinations
     col_time = [[], []]
     col_time[0] = list(lhs_matrix.columns)
@@ -531,5 +532,8 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
+
+    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
     return response
