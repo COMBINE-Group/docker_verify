@@ -32,7 +32,7 @@ $(document).ready(function () {
             data.append("number_combinations", number_combinations)
             data.append("seed", seed_lhs)
             data.append("iterations", iterations)
-            data.append("name_analysis", 'LHS_generates_samples')
+            data.append("name_analysis", 'LHS')
 
             swal({
                 title: 'Running',
