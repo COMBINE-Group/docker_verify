@@ -43,7 +43,7 @@ def verify(response):
 
 def check_simulations(request):
     if request.method == 'POST':
-        return check_status_simulation(settings.BASE_DIR_VERIFY, settings.MEDIA_DIR_VERIFY, request.user.username,
+        return check_status_simulation(settings.BASE_DIR_VERIFY, settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                        request.POST['name_analysis'])
 
 

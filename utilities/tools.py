@@ -47,7 +47,7 @@ def create_simulation_folder(path, username, name_analysis):
     return path_simulation_id
 
 
-def check_status_simulation(base_dir, path, username, name_analysis=''):
+def check_status_simulation(base_dir, path, username, name_analysis):
     dir_simulation_user = os.path.join(path, username)
 
     if not os.path.isdir(dir_simulation_user):
@@ -55,22 +55,20 @@ def check_status_simulation(base_dir, path, username, name_analysis=''):
     else:
         html_s = ''
         html_f = ''
-        started_string = 'STARTED'+name_analysis+'.process'
-        finished_string = 'FINISHED'+name_analysis+'.process'
 
         for filename in Path(dir_simulation_user).rglob('*.process'):
-            if filename.parts[-1] == started_string:
-                html_s += '<option value="">' + filename.parts[-2] + '</option>'
-            elif filename.parts[-1] == finished_string:
-                html_f += '<option value="' + filename.parts[-2] + '">' + filename.parts[-2] + '</option>'
+            for name in name_analysis.split(','):
+                started_string = 'STARTED_' + name + '.process'
+                finished_string = 'FINISHED_' + name + '.process'
+                if filename.parts[-1] == started_string:
+                    html_s += '<option value="">' + filename.parts[-2] + '</option>'
+                elif filename.parts[-1] == finished_string:
+                    html_f += '<option value="' + filename.parts[-2] + '">' + filename.parts[-2] + '</option>'
 
         html_s = '<optgroup label="Started">' + html_s + '</optgroup>'
         html_f = '<optgroup label="Finished">' + html_f + '</optgroup>'
 
         html = html_s + html_f
-
-        # set BASE_DIR_UISSMS like a current position
-        os.chdir(base_dir)
 
         return JsonResponse({'status': 1, 'type': 'success', 'title': 'Your Simulations!',
                              'mess': 'Loading completed successfully',

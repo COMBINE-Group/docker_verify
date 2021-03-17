@@ -8,25 +8,38 @@ function checkYourSimulation(name_analysis) {
         allowOutsideClick: false,
         allowEscapeKey: true
     });
+    let data = new FormData();
+    data.append("csrfmiddlewaretoken", csrf_token)
+    data.append("name_analysis", name_analysis)
 
-    $.post(url_check_simulations, {'csrfmiddlewaretoken': csrf_token, 'name_analysis': name_analysis}, function (data) {
+    $.ajax({
+            type: 'POST',
+            url: url_check_simulations,
+            data: data,
+            processData: false,
+            contentType: false,
+            dataType: 'JSON',
+            async: false,
+            cache: false,
+            success: function (data) {
+                if (data.status === 1) {
+                    $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
+                }
 
-        if (data.status === 1) {
-            $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
+                swal({
+                    title: '<i>' + data.title + '</i>',
+                    type: data.type,
+                    html: data.mess,
+                    showCloseButton: true,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: true
+                })
+            }
         }
+    )
 
-        swal({
-            title: '<i>' + data.title + '</i>',
-            type: data.type,
-            html: data.mess,
-            showCloseButton: true,
-            showCancelButton: false,
-            showConfirmButton: true,
-            allowOutsideClick: false,
-            allowEscapeKey: true
-        })
-
-    }, "json");
 }
 
 function showPlot(id_sim, type_plot) {
@@ -37,7 +50,7 @@ function showPlot(id_sim, type_plot) {
 }
 
 function swalError(msg) {
-    let title = '<i>'+msg+'</i>'
+    let title = '<i>' + msg + '</i>'
     swal({
         title: title,
         type: 'error',
