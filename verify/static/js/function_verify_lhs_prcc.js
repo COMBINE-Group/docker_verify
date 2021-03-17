@@ -57,7 +57,7 @@ $(document).ready(function () {
                         cache: false,
                         success: function (result) {
                             let html = ''
-                            if (result.status === 1){
+                            if (result.status === 1) {
                                 html = '<a target="_blank" href="' + result.data + ' ">Download</a>'
                             }
 
@@ -155,19 +155,36 @@ $(document).ready(function () {
     $('select[name=simulation]').on('change', function () {
         let tagSelect = $('select[name=type_plot] option:eq(0)');
         tagSelect.prop("selected", true);
+        let substring = "LHS"
 
         let id_sim_pat = this.value;
-        let type_plot = tagSelect.val();
 
-        if (id_sim_pat !== '') {
-            //set id simulation
-            $('input[name=selectIdSimulation]').val(id_sim_pat);
+        if (id_sim_pat.includes(substring)) {
+            let path_matrix = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim_pat + '/matrix_lhs.csv';
+            let html = '<a target="_blank" href="' + path_matrix + ' ">Download LHS Matrix</a>'
+            swal({
+                title: '<i>' + id_sim_pat + '</i>',
+                type: 1,
+                html: html,
+                showCloseButton: true,
+                showCancelButton: false,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: true
+            })
+        } else {
+            let type_plot = tagSelect.val();
 
-            $(".printPlot").attr("src", '');
+            if (id_sim_pat !== '') {
+                //set id simulation
+                $('input[name=selectIdSimulation]').val(id_sim_pat);
 
-            $(".divPlot").removeAttr("style");
+                $(".printPlot").attr("src", '');
 
-            showPlot(id_sim_pat, type_plot)
+                $(".divPlot").removeAttr("style");
+
+                showPlot(id_sim_pat, type_plot)
+            }
         }
     });
 
