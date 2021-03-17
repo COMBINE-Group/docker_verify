@@ -270,11 +270,18 @@ def save_and_convert_files(files: list, path: str):
     new_list_files = []
     for i, f in enumerate(list_files_uploaded):
         df = pd.read_csv(f, comment='#', header=None, engine='c', na_filter=False, low_memory=False)
+        tmp_path_file = f
 
         if df.shape[1] == 1:
-            raise Exception('I can\'t read the input file. Only csv (with comma separated) are supported')
-        else:
-            new_list_files.append(os.path.join(path, f))
+            df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
+            if df.shape[1] == 1:
+                raise Exception('I can\'t read the input file. Only csv (space/comma delimiter) are supported')
+            else:
+                file_name = os.path.basename(f).split('.')[0]
+                tmp_path_file = os.path.join(path, file_name+'.csv')
+                df.to_csv(tmp_path_file, index=False)
+
+        new_list_files.append(tmp_path_file)
 
     return new_list_files
 
