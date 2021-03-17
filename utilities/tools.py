@@ -320,8 +320,8 @@ def existence_and_unique_analysis(csv_files):
             return [1, min(sd_list)]  # the files are NOT the same
 
 
-def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str):
-    os.mknod(f'STARTED_{name_analysis}.process')
+def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str):
+    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
     new_array_time = [arr_t[jj:jj + k_elem] for jj in range(0, len(arr_t), k_elem)]
@@ -349,17 +349,17 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str):
         else:
             array_result[i] = 0
         i += 1
-    plot_smoothness_analysis(axis_x, array_result)
-    os.remove(f'STARTED_{name_analysis}.process')
-    os.mknod(f'FINISHED_{name_analysis}.process')
+    plot_smoothness_analysis(axis_x, array_result, path_sim)
+    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
 
-def plot_smoothness_analysis(axis_x, arr_result):
+def plot_smoothness_analysis(axis_x, arr_result, path_sim):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set(title='Smoothness Analysis', xlabel='Time(secs)')
     ax.plot(axis_x, np.array(arr_result))
-    fig.savefig(os.path.join(os.getcwd(), '%s.png' % 'Smoothness_Analysis'))
+    fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'))
 
 
 def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime):

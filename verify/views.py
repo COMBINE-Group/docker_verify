@@ -129,8 +129,7 @@ def smoothness_analysis(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
-                df = pd.read_csv(new_list_files[0], comment='#', header=None, engine='c', na_filter=False,
-                                 low_memory=False)
+                df = pd.read_csv(new_list_files[0], comment='#', engine='c', na_filter=False, low_memory=False)
                 col = int(request.POST['column_select'])
                 if col > 1:
                     col = col - 1
@@ -138,7 +137,7 @@ def smoothness_analysis(request):
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()
                 arr_time = df.iloc[:, 0].values.tolist()
-                run_smoothness_analysis(arr, arr_time, k, request.POST['name_analysis'])
+                run_smoothness_analysis(arr, arr_time, k, request.POST['name_analysis'], path_sim)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
@@ -169,7 +168,7 @@ def sobol_generates_sample(request):
                                                         int(request.POST['seed']), request.POST['name_analysis'])
 
                 np.savetxt('out.csv', params, delimiter=',', fmt='%f', header=','.join(param_name), comments='')
-                path = os.path.join(os.getcwd(), 'out.csv')
+                path = os.path.join(os.getcwd(), 'sobol_matrix.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
 

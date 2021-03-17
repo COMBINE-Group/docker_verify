@@ -62,4 +62,20 @@ function swalError(msg) {
     });
 }
 
-export {showPlot, checkYourSimulation, swalError}
+function download_matrix(id_sim_pat, name_file) {
+
+    let path_matrix = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim_pat + '/'+name_file;
+    let html = '<a target="_blank" href="' + path_matrix + ' ">Download LHS Matrix</a>'
+    swal({
+        title: '<i>' + id_sim_pat + '</i>',
+        type: 1,
+        html: html,
+        showCloseButton: true,
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: true
+    })
+}
+
+export {showPlot, checkYourSimulation, swalError, download_matrix}

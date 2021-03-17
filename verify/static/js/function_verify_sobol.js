@@ -1,5 +1,5 @@
-import { checkYourSimulation } from './common_function.js';
-import { showPlot } from './common_function.js';
+import {checkYourSimulation, download_matrix} from './common_function.js';
+import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
 $(document).ready(function () {
@@ -148,19 +148,25 @@ $(document).ready(function () {
     $('select[name=simulation]').on('change', function () {
         let tagSelect = $('select[name=type_plot] option:eq(0)');
         tagSelect.prop("selected", true);
+        let substring = name_analysis[0]
 
         let id_sim_pat = this.value;
-        let type_plot = tagSelect.val();
+        if (id_sim_pat.includes(substring)) {
+            download_matrix(id_sim_pat, 'matrix_lhs.csv')
 
-        if (id_sim_pat !== '') {
-            //set id simulation
-            $('input[name=selectIdSimulation]').val(id_sim_pat);
+        } else {
+            let type_plot = tagSelect.val();
 
-            $(".printPlot").attr("src", '');
+            if (id_sim_pat !== '') {
+                //set id simulation
+                $('input[name=selectIdSimulation]').val(id_sim_pat);
 
-            $(".divPlot").removeAttr("style");
+                $(".printPlot").attr("src", '');
 
-            showPlot(id_sim_pat, type_plot)
+                $(".divPlot").removeAttr("style");
+
+                showPlot(id_sim_pat, type_plot)
+            }
         }
     });
 

@@ -1,6 +1,7 @@
 import {checkYourSimulation} from './common_function.js';
 import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
+import {download_matrix} from './common_function.js';
 
 $(document).ready(function () {
     let name_analysis = ['LHS', 'PRCC']
@@ -160,18 +161,8 @@ $(document).ready(function () {
         let id_sim_pat = this.value;
 
         if (id_sim_pat.includes(substring)) {
-            let path_matrix = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim_pat + '/matrix_lhs.csv';
-            let html = '<a target="_blank" href="' + path_matrix + ' ">Download LHS Matrix</a>'
-            swal({
-                title: '<i>' + id_sim_pat + '</i>',
-                type: 1,
-                html: html,
-                showCloseButton: true,
-                showCancelButton: false,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: true
-            })
+            download_matrix(id_sim_pat, 'matrix_lhs.csv')
+
         } else {
             let type_plot = tagSelect.val();
 
