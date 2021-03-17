@@ -165,10 +165,12 @@ def sobol_generates_sample(request):
                 n_combinations = request.POST['number_combinations']
 
                 params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations),
-                                                        int(request.POST['seed']), request.POST['name_analysis'])
+                                                        int(request.POST['seed']),
+                                                        request.POST['name_analysis'], path_sim)
 
-                np.savetxt('out.csv', params, delimiter=',', fmt='%f', header=','.join(param_name), comments='')
-                path = os.path.join(os.getcwd(), 'sobol_matrix.csv')
+                np.savetxt(os.path.join(path_sim, 'sobol_matrix.csv'), params, delimiter=',', fmt='%f',
+                           header=','.join(param_name), comments='')
+                path = os.path.join(path_sim, 'sobol_matrix.csv')
                 path_out = path.split('/')[-6:]
                 out = '/'.join(path_out)
 
@@ -202,7 +204,7 @@ def sobol_analyze(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 n_combinations = request.POST['number_combinations']
-                df = pd.read_csv(os.path.join(os.getcwd(), list_files_uploaded_1[0]), header=None, engine='c',
+                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), header=None, engine='c',
                                  na_filter=False, low_memory=False)
 
                 yy = df.squeeze().to_numpy()

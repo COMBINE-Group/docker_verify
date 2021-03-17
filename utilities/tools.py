@@ -437,13 +437,10 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
 
 
 # SOBOL ANALYSIS
-def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, flag=False, y=None, ):
-    if flag:
-        os.mknod(f'STARTED_{name_analysis}.process') # sobol analysis
-    else:
-        os.mknod(f'STARTED_{name_analysis}.process') # sobol gen params
+def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str, flag=False, y=None):
+    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
-    df_params = pd.read_csv(csv_file, sep='\s+', engine='c', na_filter=False, low_memory=False)
+    df_params = pd.read_csv(csv_file, engine='c', na_filter=False, low_memory=False)
 
     # Number of parameters to sample
     parameter_count = df_params.shape[0]
@@ -473,13 +470,10 @@ def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, flag=False, y
         ax = fig.add_subplot(111)
         ax.set(title='Sobol Analysis')
         ax.plot(names, s_i['S1'])
-        fig.savefig(os.path.join(os.getcwd(), 'Sobol_Analysis.png'))
+        fig.savefig(os.path.join(path_sim, 'Sobol_Analysis.png'))
 
-        os.remove(f'STARTED_{name_analysis}.process')
-        os.mknod(f'FINISHED_{name_analysis}.process')
-    else:
-        os.remove(f'STARTED_{name_analysis}.process')
-        os.mknod(f'FINISHED_{name_analysis}.process')
+    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
     return param_values, names
 

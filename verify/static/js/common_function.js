@@ -62,12 +62,12 @@ function swalError(msg) {
     });
 }
 
-function download_matrix(id_sim_pat, name_file) {
+function download_matrix(id_sim_pat, name_file, msg) {
 
     let path_matrix = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim_pat + '/'+name_file;
-    let html = '<a target="_blank" href="' + path_matrix + ' ">Download LHS Matrix</a>'
+    let html = '<a target="_blank" href="' + path_matrix + ' ">'+msg+'</a>'
     swal({
-        title: '<i>' + id_sim_pat + '</i>',
+        title: '<i>Download</i>',
         type: 1,
         html: html,
         showCloseButton: true,
