@@ -101,7 +101,8 @@ def parse_files(filename_output, files, col, start=0, end=0, starttime=0, endtim
     mean_value = []
 
     for f in files:
-        lista = read_data(f)
+        #lista = read_data(f)
+        lista = pd.read_csv(f, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -147,20 +148,21 @@ def get_col_max(ts, anarray, col, starttime=0, endtime=float('inf')):
         raise Exception('I can\'t get the correct Peak Value, Have you set the correct value of START_TIME_AG?')
 
 
-def get_plot_trends_convergence_corr(filename_output, files, column, starttime):
-    os.mknod('STARTED.process')
+def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis):
+    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+
     res_list = parse_files(filename_output, files, column, starttime=starttime)
 
     # plots pv values and time-to peak values
     # depends from the results of parse_files
-    plot_peak_value(res_list, filename_output, starttime=starttime)
-    convergence_pv_tpv_fv(res_list, filename_output, starttime=starttime)
+    plot_peak_value(res_list, filename_output, path_sim, starttime=starttime)
+    convergence_pv_tpv_fv(res_list, filename_output, path_sim, starttime=starttime)
 
     # calculates correlations and RMSE. Indipendent from the previous functions
-    calculate_corr(filename_output, files, column)
+    calculate_corr(filename_output, files, column, path_sim)
 
-    os.remove('STARTED.process')
-    os.mknod('FINISHED.process')
+    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED{name_analysis}.process'))
 
 
 def plot_trends(filename_output, files, start, end, col):
@@ -169,7 +171,8 @@ def plot_trends(filename_output, files, start, end, col):
     ax.set(title=filename_output, xlabel="time (days)", ylabel="entities")
 
     for f in files:
-        lista = read_data(f)
+        # lista = read_data(f)
+        lista = pd.read_csv(f, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -192,7 +195,7 @@ def convergence_calc(q_i, q_ii, mean_value):
 
 
 # calculate the convergence of the Peak Value and Time-To-Peak value
-def convergence_pv_tpv_fv(llist, dlabel, starttime=0):
+def convergence_pv_tpv_fv(llist, dlabel, path_sim, starttime=0):
     my_funcs = np.frompyfunc(convergence_calc, 3, 1)
     idx = llist.argmax(axis=0)[1]  # get index of the row of the larger time step
     mean_value = llist[idx:, -1]  # get the mean value of the time series of the larger time step
@@ -209,17 +212,18 @@ def convergence_pv_tpv_fv(llist, dlabel, starttime=0):
     array_fv = llist[:, 4]
     f_array_fv = my_funcs(array_fv, [q_i_fv], mean_value)
 
-    plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, starttime)
+    plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime)
 
 
-def calculate_corr(filename_output, files, col, start=0, end=0, starttime=0, endtime=float('inf')):
+def calculate_corr(filename_output, files, col, path_sim, start=0, end=0, starttime=0, endtime=float('inf')):
     time_step = 0
     alist = []
     listab = []
     xrange = np.array([])
 
     for f in files:
-        lista = read_data(f)
+        # lista = read_data(f)
+        lista = pd.read_csv(f, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -234,7 +238,8 @@ def calculate_corr(filename_output, files, col, start=0, end=0, starttime=0, end
     flag = 0
     interp_list = np.array(np.vstack(xrange))
     for f in files:
-        lista = read_data(f)
+        # lista = read_data(f)
+        lista = pd.read_csv(f, comment='#').to_numpy()
         if max_step[1] == np.size(lista, 0):
             flag = i
         i += 1
@@ -252,7 +257,7 @@ def calculate_corr(filename_output, files, col, start=0, end=0, starttime=0, end
         r.append(np.corrcoef(interp_list[:, flag].T, interp_list[:, i].T)[0, 1])
         rmse.append(RMSE(interp_list[:, flag].T, interp_list[:, i].T))
 
-    plot_rmse_pearsoncoeff(filename_output, rt, r, rmse)
+    plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim)
 
 
 def RMSE(predictions, targets):
@@ -357,7 +362,7 @@ def plot_smoothness_analysis(axis_x, arr_result):
     fig.savefig(os.path.join(os.getcwd(), '%s.png' % 'Smoothness_Analysis'))
 
 
-def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, starttime):
+def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime):
     fig = plt.figure()
 
     ax = fig.add_subplot(311)
@@ -385,10 +390,10 @@ def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, st
     fig.text(0.04, 0.5, 'Convergence estimation (%)', va='center', rotation='vertical')
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
-    fig.savefig(os.path.join(os.getcwd(), '%s.png' % 'behavior_and_variation_PV'))
+    fig.savefig(os.path.join(path_sim, '%s.png' % 'behavior_and_variation_PV'))
 
 
-def plot_peak_value(dlist, dlabel, starttime=0, endtime=float('inf')):
+def plot_peak_value(dlist, dlabel, path_sim, starttime=0, endtime=float('inf')):
     fig = plt.figure()
 
     ax = fig.add_subplot(211)
@@ -405,10 +410,10 @@ def plot_peak_value(dlist, dlabel, starttime=0, endtime=float('inf')):
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
-    fig.savefig(os.path.join(os.getcwd(), '%s_peak_value_time_to_pv.png' % dlabel))
+    fig.savefig(os.path.join(path_sim, '%s_peak_value_time_to_pv.png' % dlabel))
 
 
-def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse):
+def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
     fig = plt.figure()
     ax = fig.add_subplot(211)
     bx = fig.add_subplot(212)
@@ -428,7 +433,7 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse):
     bx.legend()
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
-    fig.savefig(os.path.join(os.getcwd(), '%s_pearson_corr_RMSE.png' % filename_output))
+    fig.savefig(os.path.join(path_sim, '%s_pearson_corr_RMSE.png' % filename_output))
 
 
 # SOBOL ANALYSIS

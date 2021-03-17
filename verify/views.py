@@ -69,9 +69,8 @@ def time_step_analysis(request):
                 if col > 1:
                     col = col - 1
 
-                thread = threading.Thread(
-                    target=get_plot_trends_convergence_corr('fig', new_list_files, col, starttime))
-                thread.start()
+                get_plot_trends_convergence_corr('fig', new_list_files, col, starttime, path_sim,
+                                                 request.POST['name_analysis'])
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': ''})
