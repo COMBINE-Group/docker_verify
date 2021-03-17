@@ -283,14 +283,14 @@ def existence_and_unique_analysis(csv_files):
     if not check_number_rows_csv(csv_files):
         return [-1]  # the number of lines in the files is different
     else:
-        df_tmp = pd.read_csv(csv_files[0], sep=';', header=None, engine='c', na_filter=False, low_memory=False)
+        df_tmp = pd.read_csv(csv_files[0], header=None, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
         sd_list = []
         mean_list = []
         list_of_dataframes = []
         for filename in csv_files:
             list_of_dataframes.append(
-                pd.read_csv(filename, sep=';', header=None, engine='c', na_filter=False, low_memory=False))
+                pd.read_csv(filename, header=None, engine='c', na_filter=False, low_memory=False))
 
         merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
 

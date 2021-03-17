@@ -59,7 +59,11 @@ def time_step_analysis(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                try:
+                    new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 col = int(request.POST['column_select'])
                 if col > 1:
@@ -86,7 +90,11 @@ def uniqueness_analysis(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                try:
+                    new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
                 result = existence_and_unique_analysis(new_list_files)
 
                 # delete unused folders
@@ -116,7 +124,11 @@ def smoothness_analysis(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                try:
+                    new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 df = pd.read_csv(new_list_files[0], comment='#', header=None, engine='c', na_filter=False,
                                  low_memory=False)
@@ -146,7 +158,11 @@ def sobol_generates_sample(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                try:
+                    new_list_files = save_and_convert_files(request.FILES.getlist('file'), path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 n_combinations = request.POST['number_combinations']
 
@@ -178,9 +194,14 @@ def sobol_analyze(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-
-                list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_parameter_input'), path_sim)
-                list_files_uploaded_1 = save_and_convert_files(request.FILES.getlist('files_output_model'), path_sim)
+                try:
+                    list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_parameter_input'),
+                                                                 path_sim)
+                    list_files_uploaded_1 = save_and_convert_files(request.FILES.getlist('files_output_model'),
+                                                                   path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
 
                 n_combinations = request.POST['number_combinations']
                 df = pd.read_csv(os.path.join(os.getcwd(), list_files_uploaded_1[0]), header=None, engine='c',
@@ -209,7 +230,12 @@ def lhs_analysis(request):
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
 
-                list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_input_lhs'), path_sim)
+                try:
+                    list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_input_lhs'), path_sim)
+                except Exception as e:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': e.args[0]})
+
                 df_param = pd.read_csv(list_files_uploaded[0], engine='c', na_filter=False, low_memory=False)
 
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
