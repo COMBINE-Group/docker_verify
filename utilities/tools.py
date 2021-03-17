@@ -463,9 +463,6 @@ def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str
         # Perform analysis
         s_i = sobol.analyze(problem, y)
 
-        # Print the first-order sensitivity indices
-        print(s_i['S1'])
-
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set(title='Sobol Analysis')

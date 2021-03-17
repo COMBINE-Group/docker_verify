@@ -84,24 +84,26 @@ $(document).ready(function () {
 
         let seed = $("#seed_analyze").val()
         let number_combinations = $("#number_combinations_sobol").val()
-        let filesParameterInput = $("#files_parameter_input")
-        let filesOutputModel = $("#files_output_model")
+        let filesRangeParameter = $("#file_range_parameter")
+        let filesOutputModel = $("#file_output_model")
 
-        if (filesParameterInput[0].files.length === 0 || [0].files.length === 0) {
+        if ((filesRangeParameter[0].files.length === 0) || (filesOutputModel[0].files.length === 0)) {
             swalError("No files selected")
         } else {
             let data = new FormData();
-            $.each(filesParameterInput[0].files, function (i, file) {
-                data.append("files_parameter_input", file);
+
+            $.each(filesRangeParameter[0].files, function (i, file) {
+                data.append("file_range_parameter", file);
             });
 
             $.each(filesOutputModel[0].files, function (i, file) {
-                data.append("files_output_model", file);
+                data.append("file_output_model", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("seed", seed)
             data.append("number_combinations", number_combinations)
             data.append("name_analysis", name_analysis[1])
+
 
             swal({
                 title: 'Running',

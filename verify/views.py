@@ -188,16 +188,18 @@ def sobol_generates_sample(request):
 
 def sobol_analyze(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('files_parameter_input')) == 1 and \
-                len(request.FILES.getlist('files_output_model')) == 1:
-            if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+        if len(request.FILES.getlist('file_range_parameter')) == 1 and \
+                len(request.FILES.getlist('file_output_model')) == 1:
+            if check_content_type(request.FILES.getlist('file_range_parameter'),
+                                  'text/csv,application/octet-stream') and \
+                    check_content_type(request.FILES.getlist('file_output_model'), 'text/csv,application/octet-stream'):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
                 try:
-                    list_files_uploaded = save_and_convert_files(request.FILES.getlist('files_parameter_input'),
+                    list_files_uploaded = save_and_convert_files(request.FILES.getlist('file_range_parameter'),
                                                                  path_sim)
-                    list_files_uploaded_1 = save_and_convert_files(request.FILES.getlist('files_output_model'),
+                    list_files_uploaded_1 = save_and_convert_files(request.FILES.getlist('file_output_model'),
                                                                    path_sim)
                 except Exception as e:
                     shutil.rmtree(path_sim)
@@ -210,7 +212,7 @@ def sobol_analyze(request):
                 yy = df.squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
-                                            request.POST['name_analysis'], flag=True, y=yy)
+                                            request.POST['name_analysis'], path_sim, flag=True, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
