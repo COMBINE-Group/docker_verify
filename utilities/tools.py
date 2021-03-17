@@ -96,7 +96,7 @@ def check_number_rows_csv(csv_files):
     return True
 
 
-def parse_files(filename_output, files, col, start=0, end=0, starttime=0, endtime=float('inf')):
+def parse_files(filename_output, files, col, path_sim, start=0, end=0, starttime=0, endtime=float('inf')):
     alist = []
     mean_value = []
 
@@ -116,7 +116,7 @@ def parse_files(filename_output, files, col, start=0, end=0, starttime=0, endtim
     rt = np.insert(rt, len(rt[0]), mean_value, axis=1)
     rt = rt[rt[:, 1].argsort()]
 
-    plot_trends(filename_output, files, start, end, col)
+    plot_trends(filename_output, files, start, end, col, path_sim)
     return rt
 
 
@@ -151,7 +151,7 @@ def get_col_max(ts, anarray, col, starttime=0, endtime=float('inf')):
 def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
-    res_list = parse_files(filename_output, files, column, starttime=starttime)
+    res_list = parse_files(filename_output, files, column, path_sim, starttime=starttime)
 
     # plots pv values and time-to peak values
     # depends from the results of parse_files
@@ -162,10 +162,10 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
     calculate_corr(filename_output, files, column, path_sim)
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
-    os.mknod(os.path.join(path_sim, f'FINISHED{name_analysis}.process'))
+    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
 
-def plot_trends(filename_output, files, start, end, col):
+def plot_trends(filename_output, files, start, end, col, path_sim):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set(title=filename_output, xlabel="time (days)", ylabel="entities")
@@ -181,7 +181,7 @@ def plot_trends(filename_output, files, start, end, col):
             ax.plot(lista[:, 0] / (3600 * 24), lista[:, col], label=str(time_step / 3600) + ' hrs')
 
     ax.legend()
-    fig.savefig(os.path.join(os.getcwd(), '%s_trends.png' % filename_output))
+    fig.savefig(os.path.join(path_sim, f'{filename_output}_trends.png'))
 
 
 def convergence_calc(q_i, q_ii, mean_value):
