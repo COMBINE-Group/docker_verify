@@ -20,6 +20,7 @@ $(document).ready(function () {
         let number_combinations = $("#number_combinations_sobol").val()
         let seed = $("#seed_analysis").val()
         let filesInputSobol = $("#files_input_sobol")
+        let char_sep = $('select[name=sep_sobol_generates_sample]').val();
 
         if (filesInputSobol[0].files.length === 0) {
             swalError("No files selected")
@@ -31,6 +32,7 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("number_combinations", number_combinations)
             data.append("seed", seed)
+            data.append("sep", char_sep)
             data.append("name_analysis", name_analysis[0])
 
             swal({
@@ -83,9 +85,10 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let seed = $("#seed_analyze").val()
-        let number_combinations = $("#number_combinations_sobol").val()
+        let number_combinations = $("#number_combinations_sobol_analyze").val()
         let filesRangeParameter = $("#file_range_parameter")
         let filesOutputModel = $("#file_output_model")
+        let char_sep = $('select[name=sep_sobol_analyze]').val();
 
         if ((filesRangeParameter[0].files.length === 0) || (filesOutputModel[0].files.length === 0)) {
             swalError("No files selected")
@@ -102,6 +105,7 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("seed", seed)
             data.append("number_combinations", number_combinations)
+            data.append("sep", char_sep)
             data.append("name_analysis", name_analysis[1])
 
 

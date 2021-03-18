@@ -16,6 +16,16 @@ from skopt.sampler import Lhs
 from skopt.space import Space
 
 
+def get_sep(sep: str):
+    if sep == 'tab' or sep == 'space':
+        val = '\s+'
+    elif sep == 'semicol':
+        val = ';'
+    else:
+        val = ','
+    return val
+
+
 def rolling_window(a, window):
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
@@ -96,13 +106,13 @@ def check_number_rows_csv(csv_files):
     return True
 
 
-def parse_files(filename_output, files, col, path_sim, start=0, end=0, starttime=0, endtime=float('inf')):
+def parse_files(filename_output, files, col, path_sim, sep, start=0, end=0, starttime=0, endtime=float('inf')):
     alist = []
     mean_value = []
 
     for f in files:
         #lista = read_data(f)
-        lista = pd.read_csv(f, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -116,7 +126,7 @@ def parse_files(filename_output, files, col, path_sim, start=0, end=0, starttime
     rt = np.insert(rt, len(rt[0]), mean_value, axis=1)
     rt = rt[rt[:, 1].argsort()]
 
-    plot_trends(filename_output, files, start, end, col, path_sim)
+    plot_trends(filename_output, files, start, end, col, path_sim, sep)
     return rt
 
 
@@ -148,10 +158,10 @@ def get_col_max(ts, anarray, col, starttime=0, endtime=float('inf')):
         raise Exception('I can\'t get the correct Peak Value, Have you set the correct value of START_TIME_AG?')
 
 
-def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis):
+def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis, sep):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
-    res_list = parse_files(filename_output, files, column, path_sim, starttime=starttime)
+    res_list = parse_files(filename_output, files, column, path_sim, sep, starttime=starttime)
 
     # plots pv values and time-to peak values
     # depends from the results of parse_files
@@ -159,20 +169,20 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
     convergence_pv_tpv_fv(res_list, filename_output, path_sim, starttime=starttime)
 
     # calculates correlations and RMSE. Indipendent from the previous functions
-    calculate_corr(filename_output, files, column, path_sim)
+    calculate_corr(filename_output, files, column, path_sim, sep)
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
 
-def plot_trends(filename_output, files, start, end, col, path_sim):
+def plot_trends(filename_output, files, start, end, col, path_sim, sep):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set(title=filename_output, xlabel="time (days)", ylabel="entities")
 
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -215,7 +225,7 @@ def convergence_pv_tpv_fv(llist, dlabel, path_sim, starttime=0):
     plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime)
 
 
-def calculate_corr(filename_output, files, col, path_sim, start=0, end=0, starttime=0, endtime=float('inf')):
+def calculate_corr(filename_output, files, col, path_sim, sep, start=0, end=0, starttime=0, endtime=float('inf')):
     time_step = 0
     alist = []
     listab = []
@@ -223,7 +233,7 @@ def calculate_corr(filename_output, files, col, path_sim, start=0, end=0, startt
 
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -239,7 +249,7 @@ def calculate_corr(filename_output, files, col, path_sim, start=0, end=0, startt
     interp_list = np.array(np.vstack(xrange))
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
         if max_step[1] == np.size(lista, 0):
             flag = i
         i += 1
@@ -264,7 +274,7 @@ def RMSE(predictions, targets):
     return np.sqrt(((predictions - targets).astype('double') ** 2).mean())
 
 
-def save_and_convert_files(files: list, path: str):
+def save_files(files: list, path: str):
     fs = FileSystemStorage()
 
     list_files_uploaded = []
@@ -272,37 +282,21 @@ def save_and_convert_files(files: list, path: str):
         fs.save(os.path.join(path, f.name), f)
         list_files_uploaded.append(os.path.join(path, f.name))
 
-    new_list_files = []
-    for i, f in enumerate(list_files_uploaded):
-        df = pd.read_csv(f, comment='#', header=None, engine='c', na_filter=False, low_memory=False)
-        tmp_path_file = f
-
-        if df.shape[1] == 1:
-            df = pd.read_csv(f, comment='#', sep='\s+', header=None, engine='c', na_filter=False, low_memory=False)
-            if df.shape[1] == 1:
-                raise Exception('I can\'t read the input file. Only csv (space/comma delimiter) are supported')
-            else:
-                file_name = os.path.basename(f).split('.')[0]
-                tmp_path_file = os.path.join(path, file_name+'.csv')
-                df.to_csv(tmp_path_file, index=False)
-
-        new_list_files.append(tmp_path_file)
-
-    return new_list_files
+    return list_files_uploaded
 
 
-def existence_and_unique_analysis(csv_files):
+def existence_and_unique_analysis(csv_files, sep: str):
     if not check_number_rows_csv(csv_files):
         return [-1]  # the number of lines in the files is different
     else:
-        df_tmp = pd.read_csv(csv_files[0], header=None, engine='c', na_filter=False, low_memory=False)
+        df_tmp = pd.read_csv(csv_files[0], sep=sep, header=None, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
         sd_list = []
         mean_list = []
         list_of_dataframes = []
         for filename in csv_files:
             list_of_dataframes.append(
-                pd.read_csv(filename, header=None, engine='c', na_filter=False, low_memory=False))
+                pd.read_csv(filename, sep=sep, header=None, engine='c', na_filter=False, low_memory=False))
 
         merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
 
@@ -437,10 +431,10 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
 
 
 # SOBOL ANALYSIS
-def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str, flag=False, y=None):
+def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str, sep: str, flag=False, y=None):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
-    df_params = pd.read_csv(csv_file, engine='c', na_filter=False, low_memory=False)
+    df_params = pd.read_csv(csv_file, sep=sep, engine='c', na_filter=False, low_memory=False)
 
     # Number of parameters to sample
     parameter_count = df_params.shape[0]
@@ -462,6 +456,7 @@ def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str
     if flag:
         # Perform analysis
         s_i = sobol.analyze(problem, y)
+        print(s_i['S1'])
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
