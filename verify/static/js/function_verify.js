@@ -17,6 +17,7 @@ $(document).ready(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
         let filesInputUniqueAnalysis = $("#files_input_unique_analysis")
+        let char_sep = $('select[name=sep_unique_analysis]').val();
 
         if (filesInputUniqueAnalysis[0].files.length === 0) {
             swalError("No files selected")
@@ -28,6 +29,7 @@ $(document).ready(function () {
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append('name_analysis', name_analysis[0])
+            data.append('sep', char_sep)
 
             swal({
                 title: 'Running',
@@ -78,6 +80,7 @@ $(document).ready(function () {
         let column_select = $("#column_select_smoothness_analysis").val()
         let k_select = $("#k_value_smoothness_analysis").val()
         let filesInputSmoothnessAnalysis = $("#files_input_smoothness_analysis")
+        let char_sep = $('select[name=sep_smoothness]').val();
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
             swalError("The \"K value\" fields are empty, or it is not numeric")
@@ -96,6 +99,7 @@ $(document).ready(function () {
                     data.append("column_select", column_select)
                     data.append("k_select", k_select)
                     data.append('name_analysis', name_analysis[1])
+                    data.append('sep', char_sep)
 
                     swal({
                         title: 'Running',
@@ -148,6 +152,7 @@ $(document).ready(function () {
 
         let column_select = $("#column_select_timestep").val()
         let filesInputTimestep = $("#files_input_timestep")
+        let char_sep = $('select[name=sep_time_step]').val();
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
             swalError("The 'Column to analyze' field is empty or it is not numeric!")
@@ -163,6 +168,7 @@ $(document).ready(function () {
                 });
                 data.append("csrfmiddlewaretoken", csrf_token)
                 data.append('name_analysis', name_analysis[2])
+                data.append('sep', char_sep)
 
                 swal({
                     title: 'Running',

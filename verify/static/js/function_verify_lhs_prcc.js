@@ -22,6 +22,7 @@ $(document).ready(function () {
         let seed_lhs = $("#seed_lhs").val()
         let filesInputLHS = $("#files_input_lhs")
         let iterations = $("#iterations").val()
+        let char_sep = $('select[name=sep_lhs]').val();
 
         if (filesInputLHS[0].files.length === 0) {
             swalError("No files selected")
@@ -35,6 +36,7 @@ $(document).ready(function () {
             data.append("seed", seed_lhs)
             data.append("iterations", iterations)
             data.append("name_analysis", name_analysis[0])
+            data.append("sep", char_sep)
 
             swal({
                 title: 'Running',
@@ -93,7 +95,7 @@ $(document).ready(function () {
         let fileMatrixLhs = $("#file_matrix_lhs")
         let step_time_points = $("#step_times_points").val()
         let type_prcc = $("#type_prcc").is(':checked')
-        console.log(type_prcc)
+        let char_sep = $('select[name=sep_prcc]').val();
 
         if (fileInputPrcc[0].files.length === 0 && fileMatrixLhs[0].files.length === 0) {
             swalError("No files selected")
@@ -111,6 +113,7 @@ $(document).ready(function () {
             data.append("name_analysis", name_analysis[1])
             data.append("step_time_points", step_time_points)
             data.append("type_prcc", type_prcc)
+            data.append("sep", char_sep)
 
             swal({
                 title: 'Running',
