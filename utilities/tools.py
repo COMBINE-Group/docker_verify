@@ -289,14 +289,14 @@ def existence_and_unique_analysis(csv_files, sep: str):
     if not check_number_rows_csv(csv_files):
         return [-1]  # the number of lines in the files is different
     else:
-        df_tmp = pd.read_csv(csv_files[0], sep=sep, header=None, engine='c', na_filter=False, low_memory=False)
+        df_tmp = pd.read_csv(csv_files[0], sep=sep, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
         sd_list = []
         mean_list = []
         list_of_dataframes = []
         for filename in csv_files:
             list_of_dataframes.append(
-                pd.read_csv(filename, sep=sep, header=None, engine='c', na_filter=False, low_memory=False))
+                pd.read_csv(filename, sep=sep, engine='c', na_filter=False, low_memory=False))
 
         merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
 
@@ -318,20 +318,9 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
-    new_array_time = [arr_t[jj:jj + k_elem] for jj in range(0, len(arr_t), k_elem)]
     array_result = np.zeros(len(ll))
-    axis_x = []
+
     i = k_elem
-
-    if len(new_array[-1]) == 1:  # delete last item if its length == 1
-        new_array.pop(-1)
-
-    if len(new_array_time[-1]) == 1:  # delete last item if its length == 1
-        new_array_time.pop(-1)
-
-    # TODO verify if this for loop is correct for plot
-    for l_time in new_array_time:
-        axis_x.append(np.median(l_time))
 
     for l_list in new_array:
         diff_array = np.diff(l_list)
@@ -343,7 +332,7 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
         else:
             array_result[i] = 0
         i += 1
-    plot_smoothness_analysis(axis_x, array_result, path_sim)
+    plot_smoothness_analysis(arr_t, array_result, path_sim)
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
