@@ -191,7 +191,7 @@ def sobol_analyze(request):
                 list_files_uploaded_1 = save_files(request.FILES.getlist('file_output_model'), path_sim)
 
                 n_combinations = request.POST['number_combinations']
-                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), sep=sep, header=None, engine='c',
+                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), sep=sep, engine='c',
                                  na_filter=False, low_memory=False)
 
                 yy = df.squeeze().to_numpy()
