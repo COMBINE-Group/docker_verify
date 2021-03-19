@@ -482,40 +482,28 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
     col_time = [[], []]
     col_time[0] = list(lhs_matrix.columns)
     col_time[1] = list(matrix_output.columns)
-    response = ''
-    df_lhs_output = pd.DataFrame
 
-    if request.POST['type_prcc'] == 'true':
-        # PRCC over time
-        if len(lhs_matrix) == matrix_output.shape[1]:
+    if len(lhs_matrix) == matrix_output.shape[1]:
 
-            time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
+        time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
 
-            matrix_output = matrix_output.iloc[:, time_points]
-            matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
-            # reset index to avoid problems with concat
-            lhs_matrix.reset_index(drop=True, inplace=True)
-            matrix_output.reset_index(drop=True, inplace=True)
+        matrix_output = matrix_output.iloc[:, time_points]
+        matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
+        # reset index to avoid problems with concat
+        lhs_matrix.reset_index(drop=True, inplace=True)
+        matrix_output.reset_index(drop=True, inplace=True)
 
-            df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
-        else:
-            shutil.rmtree(path_sim)
-            mess = 'The number of rows of LHS matrix and the' \
-                   'number of columns of File to Analyze are different'
-            response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
-    else:
-        # PRCC for specific value
-        if len(lhs_matrix) == len(matrix_output):
-            df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
-        else:
-            shutil.rmtree(path_sim)
-            mess = 'The number of rows of LHS matrix and File to Analyze are different'
-            response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+        df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
 
-    if response == '':
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
+
+    else:
+        shutil.rmtree(path_sim)
+        mess = 'The number of rows of LHS matrix and the' \
+               'number of columns of File to Analyze are different'
+        response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
