@@ -484,6 +484,11 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
     matrix_output = matrix_output.T
 
     if len(lhs_matrix) == matrix_output.shape[0]:
+        # add Dummy value in LHS matrix
+        lhs = Lhs(criterion="maximin")
+        space = Space([(0., 1.)])
+        dummy_values = lhs.generate(dimensions=space.dimensions, n_samples=len(lhs_matrix))
+        lhs_matrix['Dummy_value'] = list(np.concatenate(dummy_values).flat)
 
         time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
         x_time = x_time.iloc[time_points, ]
@@ -502,7 +507,7 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
 
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
-        plot_prcc(output, x_time, 0, path_sim, float(request.POST['threshold_pvalue']))
+        plot_prcc(output, x_time, path_sim, float(request.POST['threshold_pvalue']))
 
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
 
@@ -518,8 +523,10 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
     return response
 
 
-def plot_prcc(df: pd.DataFrame, x_time, dummy_val, path_sim: str, threshold: float = 0.01):
+def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
     params = df.iloc[:, 0].unique()
+    dummy_value = df[df['X'] == params[-1]].loc[:, 'r']
+    params = np.delete(params, -1)  # delete Dummy_value
     with PdfPages(os.path.join(path_sim, 'plot_prcc_overtime.pdf')) as pdf:
         for param in params:
             x_time_tmp = x_time
@@ -534,7 +541,7 @@ def plot_prcc(df: pd.DataFrame, x_time, dummy_val, path_sim: str, threshold: flo
 
             fig, ax = plt.subplots()
             ax.plot(x, prcc_value)
-            # ax.plot(x, dummy_val, color='red')
+            ax.plot(x, dummy_value, color='red')
             ax.fill_between(x, 0, 1, where=p_value < threshold, color='gray', alpha=0.5,
                             transform=ax.get_xaxis_transform())
             plt.ylabel('PRCC')
