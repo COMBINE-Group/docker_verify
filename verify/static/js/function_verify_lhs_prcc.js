@@ -94,6 +94,7 @@ $(document).ready(function () {
         let fileInputPrcc = $("#file_input_prcc")
         let fileMatrixLhs = $("#file_matrix_lhs")
         let step_time_points = $("#step_times_points").val()
+        let threshold_pvalue = $("#threshold_pvalue").val()
         let type_prcc = $("#type_prcc").is(':checked')
         let char_sep = $('select[name=sep_prcc]').val();
 
@@ -114,6 +115,7 @@ $(document).ready(function () {
             data.append("step_time_points", step_time_points)
             data.append("type_prcc", type_prcc)
             data.append("sep", char_sep)
+            data.append("threshold_pvalue", threshold_pvalue)
 
             swal({
                 title: 'Running',

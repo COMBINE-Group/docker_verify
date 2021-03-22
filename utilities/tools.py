@@ -14,6 +14,7 @@ from SALib.sample import saltelli
 from SALib.analyze import sobol
 from skopt.sampler import Lhs
 from skopt.space import Space
+from matplotlib.backends.backend_pdf import PdfPages
 
 
 def get_sep(sep: str):
@@ -111,7 +112,7 @@ def parse_files(filename_output, files, col, path_sim, sep, start=0, end=0, star
     mean_value = []
 
     for f in files:
-        #lista = read_data(f)
+        # lista = read_data(f)
         lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
@@ -475,28 +476,34 @@ def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int,
     return matrix
 
 
-def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, name_analysis: str, request):
-
+def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, name_analysis: str,
+                      request):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
-    # define the columns for combinations
-    col_time = [[], []]
-    col_time[0] = list(lhs_matrix.columns)
-    col_time[1] = list(matrix_output.columns)
+    # get column time
+    x_time = matrix_output.pop('time')
+    matrix_output = matrix_output.T
 
-    if len(lhs_matrix) == matrix_output.shape[1]:
+    if len(lhs_matrix) == matrix_output.shape[0]:
 
         time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
+        x_time = x_time.iloc[time_points, ]
 
         matrix_output = matrix_output.iloc[:, time_points]
         matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
         # reset index to avoid problems with concat
         lhs_matrix.reset_index(drop=True, inplace=True)
         matrix_output.reset_index(drop=True, inplace=True)
+        # define the columns for combinations
+        col_time = [[], []]
+        col_time[0] = list(lhs_matrix.columns)
+        col_time[1] = list(matrix_output.columns)
 
         df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
 
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
+        plot_prcc(output, x_time, 0, path_sim, float(request.POST['threshold_pvalue']))
+
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
 
     else:
@@ -509,3 +516,29 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
     return response
+
+
+def plot_prcc(df: pd.DataFrame, x_time, dummy_val, path_sim: str, threshold: float = 0.01):
+    params = df.iloc[:, 0].unique()
+    with PdfPages(os.path.join(path_sim, 'plot_prcc_overtime.pdf')) as pdf:
+        for param in params:
+            x_time_tmp = x_time
+            df_tmp = df[df['X'] == param]
+            x_time_tmp.reset_index(drop=True, inplace=True)
+            df_tmp.reset_index(drop=True, inplace=True)
+            time_value = [int(x.split('_')[1]) for x in df_tmp.loc[:, 'Y']]
+            x_time_tmp = x_time_tmp[time_value]
+            x = list(x_time_tmp)
+            prcc_value = df_tmp.loc[:, 'r']
+            p_value = df_tmp.loc[:, 'p-unc']
+
+            fig, ax = plt.subplots()
+            ax.plot(x, prcc_value)
+            # ax.plot(x, dummy_val, color='red')
+            ax.fill_between(x, 0, 1, where=p_value < threshold, color='gray', alpha=0.5,
+                            transform=ax.get_xaxis_transform())
+            plt.ylabel('PRCC')
+            plt.xlabel('time(secs)')
+            ax.legend([param, 'DUMMY', f'Significant(p<{threshold})'])
+            pdf.savefig(fig)
+            plt.close(fig)
