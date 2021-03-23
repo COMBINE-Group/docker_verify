@@ -4,7 +4,7 @@ import {swalError} from './common_function.js';
 import {download_matrix} from './common_function.js';
 
 $(document).ready(function () {
-    let name_analysis = ['LHS', 'PRCC']
+    let name_analysis = ['LHS', 'PRCC_overTime']
     checkYourSimulation(name_analysis);
 
     $("#reload_simulation").click(function () {
@@ -161,25 +161,28 @@ $(document).ready(function () {
     $('select[name=simulation]').on('change', function () {
         let tagSelect = $('select[name=type_plot] option:eq(0)');
         tagSelect.prop("selected", true);
-        let substring = "LHS"
 
         let id_sim_pat = this.value;
 
-        if (id_sim_pat.includes(substring)) {
+        if (id_sim_pat.includes(name_analysis[0])) {
             download_matrix(id_sim_pat, 'matrix_lhs.csv', 'LHS matrix')
 
         } else {
-            let type_plot = tagSelect.val();
+            if (id_sim_pat.includes(name_analysis[1])) {
+                download_matrix(id_sim_pat, 'plot_prcc_overtime.pdf', 'plot PRCC over time')
+            } else {
+                let type_plot = tagSelect.val();
 
-            if (id_sim_pat !== '') {
-                //set id simulation
-                $('input[name=selectIdSimulation]').val(id_sim_pat);
+                if (id_sim_pat !== '') {
+                    //set id simulation
+                    $('input[name=selectIdSimulation]').val(id_sim_pat);
 
-                $(".printPlot").attr("src", '');
+                    $(".printPlot").attr("src", '');
 
-                $(".divPlot").removeAttr("style");
+                    $(".divPlot").removeAttr("style");
 
-                showPlot(id_sim_pat, type_plot)
+                    showPlot(id_sim_pat, type_plot)
+                }
             }
         }
     });
