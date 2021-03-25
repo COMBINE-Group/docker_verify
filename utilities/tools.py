@@ -492,7 +492,7 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         lhs_matrix['Dummy_value'] = list(np.concatenate(dummy_values).flat)
 
         time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
-        x_time = x_time.iloc[time_points, ]
+        x_time = x_time.iloc[time_points,]
 
         matrix_output = matrix_output.iloc[:, time_points]
         matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
@@ -508,7 +508,8 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
 
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
-        plot_prcc(output, x_time, path_sim, float(request.POST['threshold_pvalue']))
+        name_pdf_file, name_time_corr_file = plot_prcc(output, x_time, path_sim,
+                                                       float(request.POST['threshold_pvalue']))
 
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
 
@@ -517,11 +518,13 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         mess = 'The number of rows of LHS matrix and the' \
                'number of columns of File to Analyze are different'
         response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+        name_pdf_file = ''
+        name_time_corr_file = ''
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
-    return response
+    return name_pdf_file, name_time_corr_file, response
 
 
 def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
@@ -530,7 +533,9 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
     params = np.delete(params, -1)  # delete Dummy_value
     # this variable is a dictonary where the keys are parameters(param variable) and values are time and p-value
     dict_time_corr = dict()
-    with PdfPages(os.path.join(path_sim, 'plot_prcc_overtime.pdf')) as pdf:
+    name_pdf_file = os.path.join(path_sim, 'plot_prcc_overtime.pdf')
+    name_time_corr_file = os.path.join(path_sim, 'time_corr.json')
+    with PdfPages(name_pdf_file) as pdf:
         for param in params:
             x_time_tmp = x_time.copy()
             df_tmp = df[df['X'] == param]
@@ -560,5 +565,14 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
             pdf.savefig(fig)
             plt.close(fig)
 
-    with open(os.path.join(path_sim, "time_corr.json"), 'w') as f:
+    with open(name_time_corr_file, 'w') as f:
         json.dump(dict_time_corr, f, indent=2)
+
+    return name_pdf_file, name_time_corr_file
+
+
+def get_media_link(path_file: str, scheme: str, host: str):
+    path_out = path_file.split('/')[-6:]
+    out = '/'.join(path_out)
+
+    return scheme + '://' + host + '/' + out

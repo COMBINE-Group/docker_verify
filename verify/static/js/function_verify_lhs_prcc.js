@@ -137,9 +137,16 @@ $(document).ready(function () {
                         async: false,
                         cache: false,
                         success: function (result) {
+                            let html = ''
+                            if (result.status === 1) {
+                                html = '<a target="_blank" href="' + result.link_plot + ' ">Download PDF plot</a><br/>'
+                                html += '<a target="_blank" href="' + result.link_time_corr + ' ">Download Time correlation file</a>'
+                            }
+
                             swal({
                                 title: '<i>' + result.mess + '</i>',
                                 type: result.type,
+                                html: html,
                                 showCloseButton: true,
                                 showCancelButton: false,
                                 showConfirmButton: true,

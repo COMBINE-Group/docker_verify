@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import render
 from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
     get_plot_trends_convergence_corr, save_files, existence_and_unique_analysis, run_smoothness_analysis, \
-    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis, get_sep
+    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis, get_sep, get_media_link
 from django.http import JsonResponse
 import shutil
 import os
@@ -261,7 +261,14 @@ def prcc_analysis(request):
                 lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
                 matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
 
-                return run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request.POST['name_analysis'], request)
+                plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim,
+                                                                        request.POST['name_analysis'], request)
+
+                link_plot = get_media_link(plot_file, request.scheme, request.get_host())
+                link_time_corr = get_media_link(time_corr_file, request.scheme, request.get_host())
+
+                return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                     'mess': '', 'link_plot': link_plot, 'link_time_corr': link_time_corr})
 
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
