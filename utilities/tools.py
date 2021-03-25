@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pingouin as pg
+import json
 from SALib.sample import saltelli
 from SALib.analyze import sobol
 from skopt.sampler import Lhs
@@ -527,9 +528,11 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
     params = df.iloc[:, 0].unique()
     dummy_value = df[df['X'] == params[-1]].loc[:, 'r']
     params = np.delete(params, -1)  # delete Dummy_value
+    # this variable is a dictonary where the keys are parameters(param variable) and values are time and p-value
+    dict_time_corr = dict()
     with PdfPages(os.path.join(path_sim, 'plot_prcc_overtime.pdf')) as pdf:
         for param in params:
-            x_time_tmp = x_time
+            x_time_tmp = x_time.copy()
             df_tmp = df[df['X'] == param]
             x_time_tmp.reset_index(drop=True, inplace=True)
             df_tmp.reset_index(drop=True, inplace=True)
@@ -538,6 +541,13 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
             x = list(x_time_tmp)
             prcc_value = df_tmp.loc[:, 'r']
             p_value = df_tmp.loc[:, 'p-unc']
+            x_time_tmp.reset_index(drop=True, inplace=True)
+            df_time_corr = pd.concat([x_time_tmp, p_value], axis=1, sort=False, ignore_index=True)
+            df_time_corr = df_time_corr.loc[df_time_corr[1] < threshold]
+            if not len(df_time_corr.index) == 0:
+                dict_time_corr[param] = dict()
+                dict_time_corr[param]['time'] = list(df_time_corr.to_dict().values())[0]
+                dict_time_corr[param]['p-val'] = list(df_time_corr.to_dict().values())[1]
 
             fig, ax = plt.subplots()
             ax.plot(x, prcc_value)
@@ -549,3 +559,6 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
             ax.legend([param, 'DUMMY', f'Significant(p<{threshold})'])
             pdf.savefig(fig)
             plt.close(fig)
+
+    with open(os.path.join(path_sim, "time_corr.json"), 'w') as f:
+        json.dump(dict_time_corr, f, indent=2)
