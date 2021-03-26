@@ -158,7 +158,7 @@ $(document).ready(function () {
 
         let id_sim_pat = this.value;
         if (id_sim_pat.includes(substring)) {
-            download_matrix(id_sim_pat, 'sobol_matrix.csv', 'Sobol matrix')
+            download_matrix(id_sim_pat, ['sobol_matrix.csv'], ['Sobol matrix'])
 
         } else {
             let type_plot = tagSelect.val();

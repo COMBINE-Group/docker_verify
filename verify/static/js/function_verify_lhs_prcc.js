@@ -140,7 +140,7 @@ $(document).ready(function () {
                             let html = ''
                             if (result.status === 1) {
                                 html = '<a target="_blank" href="' + result.link_plot + ' ">Download PDF plot</a><br/>'
-                                html += '<a target="_blank" href="' + result.link_time_corr + ' ">Download Time correlation file</a>'
+                                html += '<a target="_blank" href="' + result.link_time_corr + ' ">Download Time Correlation file</a>'
                             }
 
                             swal({
@@ -172,11 +172,11 @@ $(document).ready(function () {
         let id_sim_pat = this.value;
 
         if (id_sim_pat.includes(name_analysis[0])) {
-            download_matrix(id_sim_pat, 'matrix_lhs.csv', 'LHS matrix')
+            download_matrix(id_sim_pat, ['matrix_lhs.csv'], ['LHS matrix'])
 
         } else {
             if (id_sim_pat.includes(name_analysis[1])) {
-                download_matrix(id_sim_pat, 'plot_prcc_overtime.pdf', 'plot PRCC over time')
+                download_matrix(id_sim_pat, ['plot_prcc_overtime.pdf', 'time_corr.json'], ['Download PDF plot', 'Download Time Correlation file'])
             } else {
                 let type_plot = tagSelect.val();
 
