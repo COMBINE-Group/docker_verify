@@ -175,6 +175,85 @@
                 <div class="col-md-3 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
+                            <h2>Partial Rank Correlation Coefficients</h2><br/>
+                            <h5>(Specific Time Step)</h5>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
+                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="step_times_points">Time step</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="number" id="time_step" name="time_step" min="0" value="1">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Separator Character </label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <select name="sep_prcc_specific_ts" class="form-control" required>
+                                            <option value="tab">Tab</option>
+                                            <option value="comma">Comma</option>
+                                            <option value="semicol">Semicolon</option>
+                                            <option value="space">Space</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="threshold_pvalue_specific_ts">Threshold p-value</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="number" id="threshold_pvalue_specific_ts"
+                                               name="threshold_pvalue_specific_ts" min="0.01"
+                                               value="0.01" max="1.0" step="0.01">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">File to analyze</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="file_input_specific_ts" name="file_input_specific_ts"
+                                               required="required" multiple>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">LHS Matrix</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="file_matrix_lhs_specific_ts"
+                                               name="file_matrix_lhs_specific_ts"
+                                               required="required">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <button class="btn btn-primary" type="reset">Reset</button>
+                                        <input type="button" id="submit_prcc_analysis_specific_ts"
+                                               class="btn btn-success"
+                                               value="Submit"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
                             <h2>Your Analysis</h2>
                             <div class="clearfix"></div>
                         </div>
@@ -257,6 +336,7 @@
         var url_check_simulations = "{% url 'check-simulations-verify' %}";
         var url_run_lhs_analysis = "{% url 'run_lhs' %}";
         var url_run_prcc_analysis = "{% url 'run_prcc' %}";
+        var url_run_prcc_analysis_specific_ts = "{% url 'url_run_prcc_analysis_specific_ts' %}";
         var url_read_info = "{% url 'read-info-simulation-verify' %}";
         var csrf_token = "{{ csrf_token }}"
     </script>

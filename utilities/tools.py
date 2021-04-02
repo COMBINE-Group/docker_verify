@@ -16,6 +16,8 @@ from SALib.analyze import sobol
 from skopt.sampler import Lhs
 from skopt.space import Space
 from matplotlib.backends.backend_pdf import PdfPages
+from scipy.stats import rankdata, stats
+from sklearn.linear_model import LinearRegression
 
 
 def get_sep(sep: str):
@@ -525,6 +527,46 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
     return name_pdf_file, name_time_corr_file, response
+
+
+def run_prcc_specific_ts(lhs_matrix: pd.DataFrame, output_matrix: pd.DataFrame, path_sim: str, request):
+    os.mknod(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+
+    # remove time column
+    matrix_output = output_matrix[output_matrix['time'] == int(request.POST['timeStep'])].T.iloc[1:].squeeze()
+    lhs_ranked = rankdata(lhs_matrix, method='ordinal', axis=0)
+    output_ranked = rankdata(matrix_output, method='ordinal')
+    name_pdf_file = os.path.join(path_sim, 'plot_prcc_specific_ts.pdf')
+    flag = False
+
+    with PdfPages(name_pdf_file) as pdf:
+        for i in range(0, lhs_ranked.shape[1]):  # loop over parameter
+            tmp = np.delete(lhs_ranked, i, axis=1)
+            z_matrix = np.insert(tmp, 0, np.ones(len(tmp)), axis=1)
+
+            reg = LinearRegression().fit(z_matrix, output_ranked)
+            prediction = reg.predict(z_matrix)
+            residual_output_ranked = (output_ranked - prediction)
+
+            reg1 = LinearRegression().fit(z_matrix, lhs_ranked[:, i])
+            prediction1 = reg1.predict(z_matrix)
+            residual_lhs_ranked = (lhs_ranked[:, i] - prediction1)
+
+            if stats.pearsonr(residual_lhs_ranked, residual_output_ranked)[1] < float(request.POST['pvalue']):
+                flag = True
+                fig, ax = plt.subplots()
+
+                ax.scatter(residual_output_ranked, residual_lhs_ranked)
+                ax.legend([lhs_matrix.columns[i]])
+                plt.ylabel(f"Time Step: {request.POST['timeStep']}")
+                plt.xlabel(lhs_matrix.columns[i])
+                pdf.savefig(fig)
+                plt.close(fig)
+
+    os.remove(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+    os.mknod(os.path.join(path_sim, f"FINISHED_{request.POST['name_analysis']}.process"))
+
+    return name_pdf_file, flag
 
 
 def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
