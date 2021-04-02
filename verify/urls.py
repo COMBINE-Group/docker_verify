@@ -14,5 +14,6 @@ urlpatterns = [
     path('verify_lhs-prcc/', views.verify_lhs_prcc, name='verify_lhs_prcc'),
     path('runLHS/', views.lhs_analysis, name='run_lhs'),
     path('runPRCC/', views.prcc_analysis, name='run_prcc'),
+    path('runPRCCts/', views.prcc_analysis_specific_ts, name='url_run_prcc_analysis_specific_ts'),
 
 ]

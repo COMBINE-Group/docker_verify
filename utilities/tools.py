@@ -10,11 +10,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import pingouin as pg
+import json
 from SALib.sample import saltelli
 from SALib.analyze import sobol
 from skopt.sampler import Lhs
 from skopt.space import Space
 from matplotlib.backends.backend_pdf import PdfPages
+from scipy.stats import rankdata, stats
+from sklearn.linear_model import LinearRegression
 
 
 def get_sep(sep: str):
@@ -491,7 +494,7 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         lhs_matrix['Dummy_value'] = list(np.concatenate(dummy_values).flat)
 
         time_points = list(range(0, matrix_output.shape[1], int(request.POST['step_time_points'])))
-        x_time = x_time.iloc[time_points, ]
+        x_time = x_time.iloc[time_points,]
 
         matrix_output = matrix_output.iloc[:, time_points]
         matrix_output.columns = [f'time_{str(x)}' for x in range(matrix_output.shape[1])]
@@ -507,7 +510,8 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
 
         output = pg.pairwise_corr(data=df_lhs_output, columns=col_time, method='spearman')
         output.to_csv(os.path.join(path_sim, 'prcc.csv'))
-        plot_prcc(output, x_time, path_sim, float(request.POST['threshold_pvalue']))
+        name_pdf_file, name_time_corr_file = plot_prcc(output, x_time, path_sim,
+                                                       float(request.POST['threshold_pvalue']))
 
         response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
 
@@ -516,20 +520,66 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         mess = 'The number of rows of LHS matrix and the' \
                'number of columns of File to Analyze are different'
         response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
+        name_pdf_file = ''
+        name_time_corr_file = ''
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
-    return response
+    return name_pdf_file, name_time_corr_file, response
+
+
+def run_prcc_specific_ts(lhs_matrix: pd.DataFrame, output_matrix: pd.DataFrame, path_sim: str, request):
+    os.mknod(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+
+    # remove time column
+    matrix_output = output_matrix[output_matrix['time'] == int(request.POST['timeStep'])].T.iloc[1:].squeeze()
+    lhs_ranked = rankdata(lhs_matrix, method='ordinal', axis=0)
+    output_ranked = rankdata(matrix_output, method='ordinal')
+    name_pdf_file = os.path.join(path_sim, 'plot_prcc_specific_ts.pdf')
+    flag = False
+
+    with PdfPages(name_pdf_file) as pdf:
+        for i in range(0, lhs_ranked.shape[1]):  # loop over parameter
+            tmp = np.delete(lhs_ranked, i, axis=1)
+            z_matrix = np.insert(tmp, 0, np.ones(len(tmp)), axis=1)
+
+            reg = LinearRegression().fit(z_matrix, output_ranked)
+            prediction = reg.predict(z_matrix)
+            residual_output_ranked = (output_ranked - prediction)
+
+            reg1 = LinearRegression().fit(z_matrix, lhs_ranked[:, i])
+            prediction1 = reg1.predict(z_matrix)
+            residual_lhs_ranked = (lhs_ranked[:, i] - prediction1)
+
+            if stats.pearsonr(residual_lhs_ranked, residual_output_ranked)[1] < float(request.POST['pvalue']):
+                flag = True
+                fig, ax = plt.subplots()
+
+                ax.scatter(residual_output_ranked, residual_lhs_ranked)
+                ax.legend([lhs_matrix.columns[i]])
+                plt.ylabel(f"Time Step: {request.POST['timeStep']}")
+                plt.xlabel(lhs_matrix.columns[i])
+                pdf.savefig(fig)
+                plt.close(fig)
+
+    os.remove(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+    os.mknod(os.path.join(path_sim, f"FINISHED_{request.POST['name_analysis']}.process"))
+
+    return name_pdf_file, flag
 
 
 def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
     params = df.iloc[:, 0].unique()
     dummy_value = df[df['X'] == params[-1]].loc[:, 'r']
     params = np.delete(params, -1)  # delete Dummy_value
-    with PdfPages(os.path.join(path_sim, 'plot_prcc_overtime.pdf')) as pdf:
+    # this variable is a dictonary where the keys are parameters(param variable) and values are time and p-value
+    dict_time_corr = dict()
+    name_pdf_file = os.path.join(path_sim, 'plot_prcc_overtime.pdf')
+    name_time_corr_file = os.path.join(path_sim, 'time_corr.json')
+    with PdfPages(name_pdf_file) as pdf:
         for param in params:
-            x_time_tmp = x_time
+            x_time_tmp = x_time.copy()
             df_tmp = df[df['X'] == param]
             x_time_tmp.reset_index(drop=True, inplace=True)
             df_tmp.reset_index(drop=True, inplace=True)
@@ -538,6 +588,13 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
             x = list(x_time_tmp)
             prcc_value = df_tmp.loc[:, 'r']
             p_value = df_tmp.loc[:, 'p-unc']
+            x_time_tmp.reset_index(drop=True, inplace=True)
+            df_time_corr = pd.concat([x_time_tmp, p_value], axis=1, sort=False, ignore_index=True)
+            df_time_corr = df_time_corr.loc[df_time_corr[1] < threshold]
+            if not len(df_time_corr.index) == 0:
+                dict_time_corr[param] = dict()
+                dict_time_corr[param]['time'] = list(df_time_corr.to_dict().values())[0]
+                dict_time_corr[param]['p-val'] = list(df_time_corr.to_dict().values())[1]
 
             fig, ax = plt.subplots()
             ax.plot(x, prcc_value)
@@ -549,3 +606,15 @@ def plot_prcc(df: pd.DataFrame, x_time, path_sim: str, threshold: float = 0.01):
             ax.legend([param, 'DUMMY', f'Significant(p<{threshold})'])
             pdf.savefig(fig)
             plt.close(fig)
+
+    with open(name_time_corr_file, 'w') as f:
+        json.dump(dict_time_corr, f, indent=2)
+
+    return name_pdf_file, name_time_corr_file
+
+
+def get_media_link(path_file: str, scheme: str, host: str):
+    path_out = path_file.split('/')[-6:]
+    out = '/'.join(path_out)
+
+    return scheme + '://' + host + '/' + out

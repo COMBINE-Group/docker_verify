@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import render
 from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
     get_plot_trends_convergence_corr, save_files, existence_and_unique_analysis, run_smoothness_analysis, \
-    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis, get_sep
+    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis, get_sep, get_media_link, run_prcc_specific_ts
 from django.http import JsonResponse
 import shutil
 import os
@@ -261,11 +261,51 @@ def prcc_analysis(request):
                 lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
                 matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
 
-                return run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request.POST['name_analysis'], request)
+                plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim,
+                                                                        request.POST['name_analysis'], request)
+
+                link_plot = get_media_link(plot_file, request.scheme, request.get_host())
+                link_time_corr = get_media_link(time_corr_file, request.scheme, request.get_host())
+
+                return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                     'mess': '', 'link_plot': link_plot, 'link_time_corr': link_time_corr})
 
             else:
                 return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                      'mess': 'There was a problem during execution!'})
+        else:
+            return JsonResponse(
+                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have choosed more than 1 files'})
+
+
+def prcc_analysis_specific_ts(request):
+    if request.method == 'POST':
+        if len(request.FILES.getlist('file_input')) == 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
+            if check_content_type(request.FILES.getlist('file_input'), 'text/csv,application/octet-stream') and \
+                    check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
+
+                path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
+                                                    request.POST['name_analysis'])
+                sep = get_sep(request.POST['sep'])
+                matrix_from_output = save_files(request.FILES.getlist('file_input'), path_sim)
+                matrix_lhs = save_files(request.FILES.getlist('file_matrix_lhs'), path_sim)
+
+                lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
+                matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
+                plot_file, status = run_prcc_specific_ts(lhs_matrix, matrix_output, path_sim, request)
+
+                # if status is True, than the PDF is not empty
+                if status:
+                    link_plot = get_media_link(plot_file, request.scheme, request.get_host())
+
+                    return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                         'mess': '', 'link_plot': link_plot})
+                else:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'PDF file is empty!',
+                                         'mess': 'No scatter plots was generated'})
+            else:
+                return JsonResponse(
+                    {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'There was a problem during execution!'})
         else:
             return JsonResponse(
                 {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have choosed more than 1 files'})
