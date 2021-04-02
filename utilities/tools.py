@@ -479,9 +479,8 @@ def run_lhs_analysis(df_param: dict, n_samples: int, seed: int, iterations: int,
     return matrix
 
 
-def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, name_analysis: str,
-                      request):
-    os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, path_sim: str, request):
+    os.mknod(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
     # get column time
     x_time = matrix_output.pop('time')
     matrix_output = matrix_output.T
@@ -523,8 +522,8 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         name_pdf_file = ''
         name_time_corr_file = ''
 
-    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
-    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
+    os.remove(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+    os.mknod(os.path.join(path_sim, f"FINISHED_{request.POST['name_analysis']}.process"))
 
     return name_pdf_file, name_time_corr_file, response
 

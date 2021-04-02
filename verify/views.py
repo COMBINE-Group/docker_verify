@@ -261,8 +261,7 @@ def prcc_analysis(request):
                 lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
                 matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
 
-                plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim,
-                                                                        request.POST['name_analysis'], request)
+                plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request)
 
                 link_plot = get_media_link(plot_file, request.scheme, request.get_host())
                 link_time_corr = get_media_link(time_corr_file, request.scheme, request.get_host())
