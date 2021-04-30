@@ -1,23 +1,24 @@
+import json
 import logging
 import os
 import shutil
 from pathlib import Path
 from time import localtime, strftime
-from django.core.files.storage import FileSystemStorage
-from django.http import JsonResponse
-from scipy import special
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pingouin as pg
-import json
-from SALib.sample import saltelli
-from SALib.analyze import sobol
-from skopt.sampler import Lhs
-from skopt.space import Space
+from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
 from matplotlib.backends.backend_pdf import PdfPages
+from SALib.analyze import sobol
+from SALib.sample import saltelli
+from scipy import special
 from scipy.stats import rankdata, stats
 from sklearn.linear_model import LinearRegression
+from skopt.sampler import Lhs
+from skopt.space import Space
 
 
 def get_sep(sep: str):
