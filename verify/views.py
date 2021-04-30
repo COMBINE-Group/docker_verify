@@ -1,14 +1,20 @@
-from django.conf import settings
-from django.shortcuts import render
-from utilities.tools import check_status_simulation, check_content_type, create_simulation_folder, \
-    get_plot_trends_convergence_corr, save_files, existence_and_unique_analysis, run_smoothness_analysis, \
-    run_sobol_analysis, run_lhs_analysis, run_prcc_analysis, get_sep, get_media_link, run_prcc_specific_ts
-from django.http import JsonResponse
-import shutil
 import os
+import shutil
 import threading
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+from django.conf import settings
+from django.http import JsonResponse
+from django.shortcuts import render
+
+from utilities.tools import (check_content_type, check_status_simulation,
+                             create_simulation_folder,
+                             existence_and_unique_analysis, get_media_link,
+                             get_plot_trends_convergence_corr, get_sep,
+                             run_lhs_analysis, run_prcc_analysis,
+                             run_prcc_specific_ts, run_smoothness_analysis,
+                             run_sobol_analysis, save_files)
 
 
 def verify_lhs_prcc(response):
