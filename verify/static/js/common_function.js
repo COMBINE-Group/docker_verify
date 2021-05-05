@@ -1,13 +1,4 @@
 function checkYourSimulation(name_analysis) {
-    swal({
-        title: '<i>Search Simulations</i>',
-        type: 'info',
-        showCloseButton: true,
-        showCancelButton: false,
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        allowEscapeKey: true
-    });
     let data = new FormData();
     data.append("csrfmiddlewaretoken", csrf_token)
     data.append("name_analysis", name_analysis)
@@ -25,17 +16,6 @@ function checkYourSimulation(name_analysis) {
                 if (data.status === 1) {
                     $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
                 }
-
-                swal({
-                    title: '<i>' + data.title + '</i>',
-                    type: data.type,
-                    html: data.mess,
-                    showCloseButton: true,
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
-                })
             }
         }
     )
