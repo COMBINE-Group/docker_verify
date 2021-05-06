@@ -14,11 +14,10 @@
             <div class="clearfix"></div>
 
             <div class="row">
-
                 <div class="col-md-3 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>Smoothness Analysis</h2>
+                            <h2>Existence and Uniqueness <br/>Analysis</h2>
                             <div class="clearfix"></div>
                         </div>
 
@@ -27,33 +26,10 @@
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Column to analyze</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="column_select_smoothness_analysis"
-                                               name="column_select_smoothness_analysis"
-                                               placeholder="just one column"
-                                               class="form-control" required>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Windows Size</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="k_value_smoothness_analysis"
-                                               name="k_value_smoothness_analysis"
-                                               class="form-control" required>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Separator Character </label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_smoothness" class="form-control" required>
+                                        <select name="sep_unique_analysis" class="form-control" required>
                                             <option value="tab">Tab</option>
                                             <option value="comma">Comma</option>
                                             <option value="semicol">Semicolon</option>
@@ -64,18 +40,19 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="files_input">File to analyze</label>
+                                        <label for="files_input">Files to analyze</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="files_input_smoothness_analysis" name="files_input"
-                                               required="required">
+                                        <input type="file" id="files_input_unique_analysis" name="files_input"
+                                               required="required"
+                                               multiple>
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <input type="button" id="submit_smoothness_analysis" class="btn btn-success"
+                                        <input type="button" id="submit_uniquness_analysis" class="btn btn-success"
                                                value="Submit"/>
                                     </div>
                                 </div>
@@ -83,36 +60,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-3 col-xs-12">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <h2>Your Analysis</h2>
-                            <div class="clearfix"></div>
-                        </div>
-
-                        <div class="x_content">
-                            <br/>
-
-                            <form action="#" method="POST" name="form_plot"
-                                  class="form-horizontal form-label-left input_mask">
-                                <select name="simulation" class="select2_group form-control" required="">
-                                    <option value="">Choose..</option>
-                                </select>
-
-                                <div class="ln_solid"></div>
-
-                                <div class="form-group">
-                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-                                        <input type="button" id="reload_simulation" class="btn btn-success"
-                                               value="Check status!"/>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="row">
@@ -129,12 +76,18 @@
                                   enctype="multipart/form-data">
                                 <select id="type_plot" name="type_plot" class="select2_group form-control" required="">
                                     <optgroup label="Details">
+                                        <option id="opt_trends" value="fig_trends">Trends</option>
+                                        <option id="opt_pearson_rmse" value="fig_pearson_corr_RMSE">Pearson Correlation
+                                            coeff and RMSE
+                                        </option>
+                                        <option id="opt_behavior" value="behavior_and_variation_PV">Behavior and
+                                            variation of the PV. Final Value convergence
+                                        </option>
                                         <option id="opt_smooth" value="Smoothness_Analysis">Smoothness Analysis</option>
                                     </optgroup>
                                 </select>
                             </form>
                             <hr/>
-                            <input type="button" id="delete_simulation" class="btn btn-danger" value="Delete Simulation"/>
                             <p class="infosim"></p>
                         </div>
                     </div>
@@ -163,11 +116,10 @@
         let appname = "{{ appname }}";
         let user_username = "Anonymous";
         let url_check_simulations = "{% url 'check-simulations-verify' %}";
-        let url_delete_simulations = "{% url 'delete-simulations-verify' %}";
-        let url_run_smoothness_analysis = "{% url 'run-smoothness_analysis' %}";
+        let url_run_uniqueness_analysis = "{% url 'run-uniqueness_analysis' %}";
         let url_read_info = "{% url 'read-info-simulation-verify' %}";
         let csrf_token = "{{ csrf_token }}"
     </script>
-    <script src="{% static 'js/function_smoothness.js' %}" type="module"></script>
+    <script src="{% static 'js/function_verify.js' %}" type="module"></script>
 
 {% endblock content %}

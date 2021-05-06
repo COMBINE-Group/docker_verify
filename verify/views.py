@@ -77,10 +77,29 @@ def verify_unique_exist(response):
     return render(response, 'verify/exist_unique.html', data)
 
 
+def verify_documentation(response):
+    data = {
+        'appname': 'verify',
+        'title': 'documentation',
+        'media_path': settings.MEDIA_URL,
+    }
+
+    return render(response, 'verify/documentation.html', data)
+
+
 def check_simulations(request):
     if request.method == 'POST':
         return check_status_simulation(settings.BASE_DIR_VERIFY, settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                        request.POST['name_analysis'])
+
+
+def delete_simulations(request):
+    if request.method == 'POST':
+        name_sim = request.POST['path_sim'].split('/')[-2]
+        shutil.rmtree(os.path.join(settings.MEDIA_DIR_VERIFY, 'Anonymous', name_sim))
+
+        return JsonResponse({'status': 0, 'type': 'success', 'title': 'Deleted',
+                             'mess': f'{name_sim} has been deleted.'})
 
 
 def read_info_simulation(request):

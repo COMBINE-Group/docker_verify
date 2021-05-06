@@ -61,4 +61,36 @@ function download_matrix(id_sim_pat, name_file, msg) {
     })
 }
 
-export {showPlot, checkYourSimulation, swalError, download_matrix}
+function delete_simulation(id_sim){
+    let path_sim = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim + '/'
+    let data = new FormData();
+    data.append("csrfmiddlewaretoken", csrf_token)
+    data.append("path_sim", path_sim)
+
+    $.ajax({
+            type: 'POST',
+            url: url_delete_simulations,
+            data: data,
+            processData: false,
+            contentType: false,
+            dataType: 'JSON',
+            async: false,
+            cache: false,
+            success: function (data) {
+                swal({
+                    title: data.title,
+                    type: data.type,
+                    html: data.mess,
+                    timer: 2500,
+                    showCloseButton: true,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: true
+                 })
+            }
+        }
+    )
+}
+
+export {showPlot, checkYourSimulation, swalError, download_matrix, delete_simulation}
