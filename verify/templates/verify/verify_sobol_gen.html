@@ -208,6 +208,7 @@
                                 </select>
                             </form>
                             <hr/>
+                            <input type="button" id="delete_simulation" class="btn btn-danger" value="Delete Simulation"/>
                             <p class="infosim"></p>
                         </div>
                     </div>
@@ -236,6 +237,7 @@
         let appname = "{{ appname }}";
         let user_username = "Anonymous";
         let url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_delete_simulations = "{% url 'delete-simulations-verify' %}";
         let url_run_sobol_analysis = "{% url 'sobol_generates_sample' %}";
         let url_run_sobol_analyze = "{% url 'sobol-analyze' %}";
         let url_read_info = "{% url 'read-info-simulation-verify' %}";
