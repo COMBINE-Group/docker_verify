@@ -47,6 +47,36 @@ def verify(response):
     return render(response, 'verify/verify_gen.html', data)
 
 
+def verify_smoothness(response):
+    data = {
+        'appname': 'verify',
+        'title': 'Smoothness',
+        'media_path': settings.MEDIA_URL,
+    }
+
+    return render(response, 'verify/smoothness.html', data)
+
+
+def verify_time_step(response):
+    data = {
+        'appname': 'verify',
+        'title': 'Time Step',
+        'media_path': settings.MEDIA_URL,
+    }
+
+    return render(response, 'verify/time_step.html', data)
+
+
+def verify_unique_exist(response):
+    data = {
+        'appname': 'verify',
+        'title': 'Existence Unique',
+        'media_path': settings.MEDIA_URL,
+    }
+
+    return render(response, 'verify/exist_unique.html', data)
+
+
 def check_simulations(request):
     if request.method == 'POST':
         return check_status_simulation(settings.BASE_DIR_VERIFY, settings.MEDIA_DIR_VERIFY, 'Anonymous',

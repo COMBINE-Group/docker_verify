@@ -231,6 +231,7 @@ $(document).ready(function () {
                 $("#type_plot option").each(function () {
                     $(this).removeAttr("selected");
                     $(this).hide();
+                    console.log($(this).val())
                     if ($(this).val() === "Smoothness_Analysis") {
                         $(this).show();
                         $(this).attr("selected", "selected");

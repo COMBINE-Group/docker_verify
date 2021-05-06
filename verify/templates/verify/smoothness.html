@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>Deterministic Model Verification tools for discrete-time models</h3>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Smoothness Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
+                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Column to analyze</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="column_select_smoothness_analysis"
+                                               name="column_select_smoothness_analysis"
+                                               placeholder="just one column"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Windows Size</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="k_value_smoothness_analysis"
+                                               name="k_value_smoothness_analysis"
+                                               class="form-control" required>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Separator Character </label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <select name="sep_smoothness" class="form-control" required>
+                                            <option value="tab">Tab</option>
+                                            <option value="comma">Comma</option>
+                                            <option value="semicol">Semicolon</option>
+                                            <option value="space">Space</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label for="files_input">File to analyze</label>
+                                    </div>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        <input type="file" id="files_input_smoothness_analysis" name="files_input"
+                                               required="required">
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <button class="btn btn-primary" type="reset">Reset</button>
+                                        <input type="button" id="submit_smoothness_analysis" class="btn btn-success"
+                                               value="Submit"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Your Analysis</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <br/>
+
+                            <form action="#" method="POST" name="form_plot"
+                                  class="form-horizontal form-label-left input_mask">
+                                <select name="simulation" class="select2_group form-control" required="">
+                                    <option value="">Choose..</option>
+                                </select>
+
+                                <div class="ln_solid"></div>
+
+                                <div class="form-group">
+                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                                        <input type="button" id="reload_simulation" class="btn btn-success"
+                                               value="Check status!"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="divPlot col-md-3 col-xs-12" style="visibility: hidden;">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Show Plot</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <form action="#" method="POST" name="form_plot"
+                                  class="form-horizontal form-label-left input_mask"
+                                  enctype="multipart/form-data">
+                                <select id="type_plot" name="type_plot" class="select2_group form-control" required="">
+                                    <optgroup label="Details">
+                                        <option id="opt_smooth" value="Smoothness_Analysis">Smoothness Analysis</option>
+                                    </optgroup>
+                                </select>
+                            </form>
+                            <hr/>
+                            <p class="infosim"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divPrintPlot col-md-9 col-xs-12" style="visibility: hidden;">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2>Plot</h2>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                            <br/>
+                            <img class="printPlot" src="" style="height: 100%;width: 100%;"/>
+                            <input type="hidden" name="selectIdSimulation" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /page content -->
+    <script>
+        let media_path = "{{ media_path }}";
+        let appname = "{{ appname }}";
+        let user_username = "Anonymous";
+        let url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_run_smoothness_analysis = "{% url 'run-smoothness_analysis' %}";
+        let url_read_info = "{% url 'read-info-simulation-verify' %}";
+        let csrf_token = "{{ csrf_token }}"
+    </script>
+    <script src="{% static 'js/function_smoothness.js' %}" type="module"></script>
+
+{% endblock content %}
