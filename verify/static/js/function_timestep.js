@@ -1,4 +1,4 @@
-import {checkYourSimulation} from './common_function.js';
+import {checkYourSimulation, delete_simulation} from './common_function.js';
 import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
@@ -10,6 +10,26 @@ $(document).ready(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
         checkYourSimulation(name_analysis);
+    });
+
+    $("#delete_simulation").click(function () {
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
+                $('.divPlot').attr('style', 'visibility: hidden;');
+                $('.divPrintPlot').attr('style', 'visibility: hidden;');
+                let id_sim = $('input[name=selectIdSimulation]').val()
+                delete_simulation(id_sim);
+                checkYourSimulation(name_analysis);
+            }
+        })
     });
 
     $("#submit_timestep_analysis").click(function () {

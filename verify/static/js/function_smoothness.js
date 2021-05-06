@@ -30,9 +30,6 @@ $(document).ready(function () {
                 checkYourSimulation(name_analysis);
             }
         })
-
-
-        /**/
     });
 
     $("#submit_smoothness_analysis").click(function () {
