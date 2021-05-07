@@ -294,29 +294,45 @@ def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):
     if not check_number_rows_csv(csv_files):
         return [-1]  # the number of lines in the files is different
     else:
-        df_tmp = pd.read_csv(csv_files[0], sep=sep, skiprows=skip_rows, engine='c', na_filter=False, low_memory=False)
+        df_tmp = pd.read_csv(csv_files[0], sep=sep, skiprows=skip_rows, header=None, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
         sd_list = []
         mean_list = []
         list_of_dataframes = []
         for filename in csv_files:
             list_of_dataframes.append(
-                pd.read_csv(filename, sep=sep, skiprows=skip_rows, engine='c', na_filter=False, low_memory=False))
+                pd.read_csv(filename, sep=sep, skiprows=skip_rows, header=None, engine='c', na_filter=False, low_memory=False))
 
         merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
+        merged_df = merged_df.apply(pd.to_numeric, errors='coerce')
 
+        for i in range(0, n_col):
+            list_indices = [*range(i, merged_df.shape[1], n_col)]
+            sd_list.append(merged_df.iloc[:, list_indices].std(axis=1))
+            mean_list.append(merged_df.iloc[:, list_indices].mean(axis=1))
+
+        '''
+        sd_list1 = []
+        mean_list1 = []
         for ii in range(len(merged_df)):
             for jj in np.arange(0, n_col):
                 tmp = []
                 for xx in range(0, len(list_of_dataframes)):
                     tmp.append(merged_df.iloc[ii, jj + (n_col * xx)])
-                sd_list.append(np.array(tmp).std())
-                mean_list.append(np.array(tmp).mean())
+                sd_list1.append(np.array(tmp).std())
+                mean_list1.append(np.array(tmp).mean())
+        '''
 
-        if max(sd_list) == 0:
+        tmp_max = []
+        tmp_min = []
+        for array in sd_list:
+            tmp_max.append(array.max())
+            tmp_min.append(array.min())
+
+        if max(tmp_max) == 0:
             return [0]  # the files are the same
         else:
-            return [1, min(sd_list)]  # the files are NOT the same
+            return [1, min(tmp_min)]  # the files are NOT the same
 
 
 def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str):
