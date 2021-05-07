@@ -40,6 +40,7 @@ $(document).ready(function () {
         let column_select = $("#column_select_timestep").val()
         let filesInputTimestep = $("#files_input_timestep")
         let char_sep = $('select[name=sep_time_step]').val();
+        let skip_rows = $("#skip_rows").val();
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
             swalError("The 'Column to analyze' field is empty or it is not numeric!")
@@ -56,6 +57,7 @@ $(document).ready(function () {
                 data.append("csrfmiddlewaretoken", csrf_token)
                 data.append('name_analysis', name_analysis)
                 data.append('sep', char_sep)
+                data.append('skip_rows', skip_rows)
 
                 swal({
                     title: 'Running',

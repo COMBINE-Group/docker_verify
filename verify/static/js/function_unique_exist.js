@@ -17,6 +17,7 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
         let filesInputUniqueAnalysis = $("#files_input_unique_analysis")
         let char_sep = $('select[name=sep_unique_analysis]').val();
+        let skip_rows = $("#skip_rows").val();
 
         if (filesInputUniqueAnalysis[0].files.length === 0) {
             swalError("No files selected")
@@ -29,6 +30,7 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append('name_analysis', name_analysis)
             data.append('sep', char_sep)
+            data.append('skip_rows', skip_rows)
 
             swal({
                 title: 'Running',

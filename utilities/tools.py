@@ -111,13 +111,13 @@ def check_number_rows_csv(csv_files):
     return True
 
 
-def parse_files(filename_output, files, col, path_sim, sep, start=0, end=0, starttime=0, endtime=float('inf')):
+def parse_files(filename_output, files, col, path_sim, sep, skip_rows, start=0, end=0, starttime=0, endtime=float('inf')):
     alist = []
     mean_value = []
 
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, skiprows=skip_rows).to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -131,7 +131,7 @@ def parse_files(filename_output, files, col, path_sim, sep, start=0, end=0, star
     rt = np.insert(rt, len(rt[0]), mean_value, axis=1)
     rt = rt[rt[:, 1].argsort()]
 
-    plot_trends(filename_output, files, start, end, col, path_sim, sep)
+    plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_rows)
     return rt
 
 
@@ -163,10 +163,10 @@ def get_col_max(ts, anarray, col, starttime=0, endtime=float('inf')):
         raise Exception('I can\'t get the correct Peak Value, Have you set the correct value of START_TIME_AG?')
 
 
-def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis, sep):
+def get_plot_trends_convergence_corr(filename_output, files, column, starttime, path_sim, name_analysis, sep, skip_rows):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
-    res_list = parse_files(filename_output, files, column, path_sim, sep, starttime=starttime)
+    res_list = parse_files(filename_output, files, column, path_sim, sep, skip_rows, starttime=starttime)
 
     # plots pv values and time-to peak values
     # depends from the results of parse_files
@@ -174,20 +174,20 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
     convergence_pv_tpv_fv(res_list, filename_output, path_sim, starttime=starttime)
 
     # calculates correlations and RMSE. Indipendent from the previous functions
-    calculate_corr(filename_output, files, column, path_sim, sep)
+    calculate_corr(filename_output, files, column, path_sim, sep, skip_rows)
 
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
 
-def plot_trends(filename_output, files, start, end, col, path_sim, sep):
+def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_rows):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set(title=filename_output, xlabel="time (days)", ylabel="entities")
 
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, skiprows=skip_rows).to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -230,7 +230,7 @@ def convergence_pv_tpv_fv(llist, dlabel, path_sim, starttime=0):
     plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime)
 
 
-def calculate_corr(filename_output, files, col, path_sim, sep, start=0, end=0, starttime=0, endtime=float('inf')):
+def calculate_corr(filename_output, files, col, path_sim, sep, skip_rows, start=0, end=0, starttime=0, endtime=float('inf')):
     time_step = 0
     alist = []
     listab = []
@@ -238,7 +238,7 @@ def calculate_corr(filename_output, files, col, path_sim, sep, start=0, end=0, s
 
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, skiprows=skip_rows).to_numpy()
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
@@ -254,7 +254,7 @@ def calculate_corr(filename_output, files, col, path_sim, sep, start=0, end=0, s
     interp_list = np.array(np.vstack(xrange))
     for f in files:
         # lista = read_data(f)
-        lista = pd.read_csv(f, sep=sep, comment='#').to_numpy()
+        lista = pd.read_csv(f, sep=sep, skiprows=skip_rows).to_numpy()
         if max_step[1] == np.size(lista, 0):
             flag = i
         i += 1
@@ -290,18 +290,18 @@ def save_files(files: list, path: str):
     return list_files_uploaded
 
 
-def existence_and_unique_analysis(csv_files, sep: str):
+def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):
     if not check_number_rows_csv(csv_files):
         return [-1]  # the number of lines in the files is different
     else:
-        df_tmp = pd.read_csv(csv_files[0], sep=sep, engine='c', na_filter=False, low_memory=False)
+        df_tmp = pd.read_csv(csv_files[0], sep=sep, skiprows=skip_rows, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
         sd_list = []
         mean_list = []
         list_of_dataframes = []
         for filename in csv_files:
             list_of_dataframes.append(
-                pd.read_csv(filename, sep=sep, engine='c', na_filter=False, low_memory=False))
+                pd.read_csv(filename, sep=sep, skiprows=skip_rows, engine='c', na_filter=False, low_memory=False))
 
         merged_df = pd.concat(list_of_dataframes, axis=1, sort=False, ignore_index=True)
 

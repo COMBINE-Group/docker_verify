@@ -41,6 +41,7 @@ $(document).ready(function () {
         let k_select = $("#k_value_smoothness_analysis").val()
         let filesInputSmoothnessAnalysis = $("#files_input_smoothness_analysis")
         let char_sep = $('select[name=sep_smoothness]').val();
+        let skip_rows = $("#skip_rows").val();
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
             swalError("The \"K value\" fields are empty, or it is not numeric")
@@ -59,6 +60,7 @@ $(document).ready(function () {
                     data.append("column_select", column_select)
                     data.append("k_select", k_select)
                     data.append('name_analysis', name_analysis)
+                    data.append('skip_rows', skip_rows)
                     data.append('sep', char_sep)
 
                     swal({

@@ -25,6 +25,7 @@
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Number of samples</label>
@@ -105,6 +106,7 @@
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label for="step_times_points">Time points interval</label>
@@ -183,6 +185,7 @@
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label for="step_times_points">Time step</label>
@@ -306,6 +309,7 @@
                                 </select>
                             </form>
                             <hr/>
+                            <input type="button" id="delete_simulation" class="btn btn-danger" value="Delete Simulation"/>
                             <p class="infosim"></p>
                         </div>
                     </div>
@@ -334,6 +338,7 @@
         var appname = "{{ appname }}";
         var user_username = "Anonymous";
         var url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_delete_simulations = "{% url 'delete-simulations-verify' %}";
         var url_run_lhs_analysis = "{% url 'run_lhs' %}";
         var url_run_prcc_analysis = "{% url 'run_prcc' %}";
         var url_run_prcc_analysis_specific_ts = "{% url 'url_run_prcc_analysis_specific_ts' %}";

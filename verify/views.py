@@ -116,13 +116,14 @@ def time_step_analysis(request):
                                                     request.POST['name_analysis'])
                 sep = get_sep(request.POST['sep'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
+                skip_rows = int(request.POST['skip_rows'])
 
                 col = int(request.POST['column_select'])
                 if col > 1:
                     col = col - 1
 
                 get_plot_trends_convergence_corr('fig', new_list_files, col, starttime, path_sim,
-                                                 request.POST['name_analysis'], sep)
+                                                 request.POST['name_analysis'], sep, skip_rows)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': ''})
@@ -142,9 +143,10 @@ def uniqueness_analysis(request):
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
                 sep = get_sep(request.POST['sep'])
+                skip_rows = int(request.POST['skip_rows'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
 
-                result = existence_and_unique_analysis(new_list_files, sep)
+                result = existence_and_unique_analysis(new_list_files, sep, skip_rows)
 
                 # delete unused folders
                 shutil.rmtree(path_sim)
@@ -175,8 +177,10 @@ def smoothness_analysis(request):
                                                     request.POST['name_analysis'])
                 sep = get_sep(request.POST['sep'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
+                skip_rows = int(request.POST['skip_rows'])
 
-                df = pd.read_csv(new_list_files[0], comment='#', sep=sep, engine='c', na_filter=False, low_memory=False)
+                df = pd.read_csv(new_list_files[0], skiprows=skip_rows, header=None,
+                                 sep=sep, engine='c', na_filter=False, low_memory=False)
                 col = int(request.POST['column_select'])
                 if col > 1:
                     col = col - 1
@@ -246,13 +250,14 @@ def sobol_analyze(request):
                 list_files_uploaded_1 = save_files(request.FILES.getlist('file_output_model'), path_sim)
 
                 n_combinations = request.POST['number_combinations']
-                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), sep=sep, engine='c',
-                                 na_filter=False, low_memory=False)
+                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), sep=sep,
+                                 engine='c', na_filter=False, low_memory=False)
 
                 yy = df.squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
-                                            request.POST['name_analysis'], path_sim, sep=sep, flag=True, y=yy)
+                                            request.POST['name_analysis'], path_sim, sep=sep,
+                                            flag=True, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
