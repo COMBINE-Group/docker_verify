@@ -29,6 +29,30 @@
                             <!-- start accordion -->
                             <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
                                 <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingZero" data-toggle="collapse"
+                                       data-parent="#accordion" href="#collapseZero" aria-expanded="false"
+                                       aria-controls="collapseZero">
+                                        <h4 class="panel-title">Common Input Parameters of the Analysis</h4>
+                                    </a>
+                                    <div id="collapseZero" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingZero">
+                                        <div class="panel-body">
+                                            <p> This section groups all parameters in commmon among Model Verification Tools</p>
+
+                                           <ul>
+                                               <li>Skip Rows: This value represents the number of rows that must
+                                                   be removed from the input files before proceeding with the
+                                                   analysis, and it is useful to remove unneeded values such
+                                                   columns headers or other information; </li>
+                                               <li>Column to Analyze: This  parameter allows  to  select  the  column  on  which  to  perform the analysis</li>
+                                               <li>Separator character: it represents the field separator that is used to
+                                                   separate the columns in the uploaded files.
+                                                   The model Verification Tools supports four separator (space, tab, comma and semicolon) </li>
+                                           </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
                                     <a class="panel-heading collapsed" role="tab" id="headingOne" data-toggle="collapse"
                                        data-parent="#accordion" href="#collapseOne" aria-expanded="false"
                                        aria-controls="collapseOne">
@@ -38,12 +62,20 @@
                                          aria-labelledby="headingOne" style="">
                                         <div class="panel-body">
                                             <div class="panel-body">
+                                                <p>The Smoothness Analysis can be used to evaluate the singularities,
+                                                    discontinuities and buckling errors inside your model</p>
                                                 <p><strong>Input Parameters</strong>
                                                 </p>
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
-                                                terry richardson ad squid. 3 wolf moon officia aute, non cupidatat
-                                                skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
-                                                Brunch 3 wolf moon tempor,
+                                                <ul>
+                                                    <li>Skip Rows: This value represents the number of rows that must
+                                                        be removed from the input files before proceeding with the
+                                                        analysis, and it is useful to remove unneeded values such
+                                                        columns headers or other information; </li>
+                                                    <li>Column to Analyze</li>
+                                                    <li>Window size</li>
+                                                    <li>Separator character</li>
+                                                    <li>File to analyze</li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -139,11 +171,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- end of accordion -->
-
-
                         </div>
-
                     </div>
                 </div>
             </div>
