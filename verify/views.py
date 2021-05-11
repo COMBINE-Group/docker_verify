@@ -22,6 +22,7 @@ def verify_lhs_prcc(response):
         'appname': 'verify',
         'title': 'VERIFY',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/verify_lhs_prcc_gen.html', data)
@@ -32,6 +33,7 @@ def verify_sobol(response):
         'appname': 'verify',
         'title': 'VERIFY',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/verify_sobol_gen.html', data)
@@ -42,6 +44,7 @@ def verify(response):
         'appname': 'verify',
         'title': 'VERIFY',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/verify_gen.html', data)
@@ -52,6 +55,7 @@ def verify_smoothness(response):
         'appname': 'verify',
         'title': 'Smoothness',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/smoothness.html', data)
@@ -62,6 +66,7 @@ def verify_time_step(response):
         'appname': 'verify',
         'title': 'Time Step',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/time_step.html', data)
@@ -72,6 +77,7 @@ def verify_unique_exist(response):
         'appname': 'verify',
         'title': 'Existence Unique',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/exist_unique.html', data)
@@ -82,6 +88,7 @@ def verify_documentation(response):
         'appname': 'verify',
         'title': 'documentation',
         'media_path': settings.MEDIA_URL,
+        'version': settings.VERSION,
     }
 
     return render(response, 'verify/documentation.html', data)
