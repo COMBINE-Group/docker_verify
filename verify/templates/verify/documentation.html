@@ -37,17 +37,25 @@
                                     <div id="collapseZero" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingZero">
                                         <div class="panel-body">
-                                            <p> This section groups all parameters in commmon among Model Verification Tools</p>
+                                            <p> This section groups all parameters in common among Model Verification Tools</p>
 
                                            <ul>
-                                               <li>Skip Rows: This value represents the number of rows that must
-                                                   be removed from the input files before proceeding with the
+                                               <li><strong>Skip Rows:</strong> This value represents the number of rows
+                                                   that must be removed from the input files before proceeding with the
                                                    analysis, and it is useful to remove unneeded values such
-                                                   columns headers or other information; </li>
-                                               <li>Column to Analyze: This  parameter allows  to  select  the  column  on  which  to  perform the analysis</li>
-                                               <li>Separator character: it represents the field separator that is used to
-                                                   separate the columns in the uploaded files.
-                                                   The model Verification Tools supports four separator (space, tab, comma and semicolon) </li>
+                                                   columns headers or other information;
+                                               </li>
+                                               <li><strong>Column to Analyze:</strong> This  parameter allows  to
+                                                   select the column on which to perform the analysis
+                                               </li>
+                                               <li><strong>Separator character:</strong> it represents the field
+                                                   separator that is used to separate the columns in the uploaded files.
+                                                   The model Verification Tools support four separator
+                                                   (space, tab, comma and semicolon)
+                                               </li>
+                                               <li><strong>Seed: When provided, this parameter allow to users to generate
+                                                   the same number sequence</strong>
+                                               </li>
                                            </ul>
                                         </div>
                                     </div>
@@ -63,18 +71,22 @@
                                         <div class="panel-body">
                                             <div class="panel-body">
                                                 <p>The Smoothness Analysis can be used to evaluate the singularities,
-                                                    discontinuities and buckling errors inside your model</p>
+                                                    discontinuities and buckling errors inside your model.
+                                                </p>
                                                 <p><strong>Input Parameters</strong>
                                                 </p>
                                                 <ul>
-                                                    <li>Skip Rows: This value represents the number of rows that must
-                                                        be removed from the input files before proceeding with the
-                                                        analysis, and it is useful to remove unneeded values such
-                                                        columns headers or other information; </li>
-                                                    <li>Column to Analyze</li>
-                                                    <li>Window size</li>
-                                                    <li>Separator character</li>
-                                                    <li>File to analyze</li>
+                                                    <li><strong>Window size: </strong> In order to detect possible
+                                                        local roughness in the model, our smoothness analysis perform a
+                                                        coefficient of variation using the k nearest neighbours in the windows.
+                                                        This parameter allow to choose the window size.
+                                                    </li>
+                                                    <li><strong>File to analyze:</strong> is a ASCII or CSV file that
+                                                        defines the model outputs in which the first column usually
+                                                        represents the time (expressed as a physical time or time-step
+                                                        number), and the other columns represent the outputs to be
+                                                        analyzed.
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -89,12 +101,19 @@
                                     <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingTwo">
                                         <div class="panel-body">
-                                            <p><strong>Input Parameters</strong>
-                                            </p>
-                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                            richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                            dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
-                                            tempor,
+                                            <p>This analysis allows to determine if there is a convergence
+                                                in the behavior of the model outputs as the time-step length becomes
+                                                narrower.
+                                                </p>
+                                            <p><strong>Input Parameters</strong></p>
+                                            <ul>
+                                                <li><strong>File to analyze:</strong> The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed. At the moment, Time Step Convergence Analysis
+                                                    consider the peak-value and the relative time-to-peak-value.
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -107,12 +126,15 @@
                                     <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingThree">
                                         <div class="panel-body">
-                                            <p><strong>Input Parameters</strong>
+                                            <p>The aims of this analysis is to check if repeated executions on the same
+                                                input parameter set lead to identical output.
                                             </p>
-                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                            richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                            dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
-                                            tempor
+                                            <p><strong>Input Parameters</strong></p>
+                                            <ul>
+                                                <li><strong>File to analyze:</strong> The user can upload one or more
+                                                    files in ASCII or CSV format.
+                                                </li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -125,12 +147,34 @@
                                     <div id="collapseFourth" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingFourth">
                                         <div class="panel-body">
-                                            <p><strong>Input Parameters</strong>
+                                            <p>Sobol Sensitivity Analysis methodology, is a technique to perform a
+                                                variance based sensitivity analysis of model output.
                                             </p>
-                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                            richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                            dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
-                                            tempor
+                                            <p><strong>Input Parameters for SOBOL sample generation</strong></p>
+                                            <ul>
+                                                <li><strong>Number of combinations:</strong>The user use this parameter
+                                                    to set the number of samples to generate
+                                                </li>
+                                                <li><strong>Input parameter file:</strong> is a CSV file
+                                                    that defines the parameters of the model and its minimum and maximum values.
+                                                    The file must have a header and this structure:
+                                                    <ul>
+                                                        <li><strong>param_name:</strong> is the name of the parameter</li>
+                                                        <li><strong>min:</strong> is the min value of the parameter</li>
+                                                        <li><strong>max:</strong> is the max value of the parameter</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            <p><strong>Input Parameters for SOBOL analysis</strong></p>
+                                            <ul>
+                                                <li><strong>Number of combinations:</strong> is the same of the sample generation</li>
+                                                <li><strong>Input parameter file:</strong> is the same of the sample generation</li>
+                                                <li><strong>Output file from the model:</strong> is the output ASCII or
+                                                    CSV file with one column and N rows (the number of parameter samples
+                                                    generated during the first step).
+                                                    This file represents the N output values obtained from the model</li>
+                                            </ul>
+
                                         </div>
                                     </div>
                                 </div>
@@ -138,20 +182,50 @@
                                     <a class="panel-heading collapsed" role="tab" id="headingFifth"
                                        data-toggle="collapse" data-parent="#accordion" href="#collapseFifth"
                                        aria-expanded="false" aria-controls="collapseFifth">
-                                        <h4 class="panel-title">Latin Hypercube Sampling Analysis</h4>
+                                        <h4 class="panel-title">Latin Hypercube Sampling Analysis and Partial Rank Correlation Coefficients Analysis</h4>
                                     </a>
                                     <div id="collapseFifth" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingFifth">
                                         <div class="panel-body">
-                                            <p><strong>Input Parameters</strong>
+
+                                            <p><strong>Input Parameters for Latin Hypercupe Sampling </strong></p>
+                                            <p>Latin hypercube sampling is a statistical method for generating a
+                                                near-random sample of parameter values from a multidimensional distribution.
                                             </p>
-                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
-                                            richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
-                                            dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
-                                            tempor
+                                            <ul>
+                                                <li><strong>Number of samples:</strong> Defines the number of samples</li>
+                                                <li><strong>Iterations:</strong> Defines the number of iterations for optimizing LHS</li>
+                                                <li><strong>Input parameter file:</strong> is a CSV file
+                                                    that defines the parameters of the model and its minimum and maximum values.
+                                                    The file must have a header and this structure:
+                                                    <ul>
+                                                        <li><strong>param_name:</strong> is the name of the parameter</li>
+                                                        <li><strong>min:</strong> is the min value of the parameter</li>
+                                                        <li><strong>max:</strong> is the max value of the parameter</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Over time)</strong></p>
+                                            <p>Partial Rank Correlation Coefficients is a Sensitivity Analysis test, it's a sampling-based method</p>
+                                            <ul>
+                                                <li><strong>Time points interval:</strong></li>
+                                                <li><strong>Threshold p-value:</strong></li>
+                                                <li><strong>File to analyze:</strong></li>
+                                                <li><strong>LHS Matrix:</strong></li>
+                                            </ul>
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Specific Time Step)</strong></p>
+                                            <ul>
+                                                <li><strong>Time step:</strong></li>
+                                                <li><strong>Threshold p-value:</strong></li>
+                                                <li><strong>File to analyze:</strong></li>
+                                                <li><strong>LHS Matrix:</strong></li>
+                                            </ul>
+
                                         </div>
                                     </div>
                                 </div>
+                                {% comment %}
                                 <div class="panel">
                                     <a class="panel-heading collapsed" role="tab" id="headingSixth"
                                        data-toggle="collapse" data-parent="#accordion" href="#collapseSixth"
@@ -169,7 +243,7 @@
                                             tempor
                                         </div>
                                     </div>
-                                </div>
+                                </div>{% endcomment %}
                             </div>
                         </div>
                     </div>
