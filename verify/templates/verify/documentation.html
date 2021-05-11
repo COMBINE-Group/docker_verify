@@ -53,8 +53,7 @@
                                                    The model Verification Tools support four separator
                                                    (space, tab, comma and semicolon)
                                                </li>
-                                               <li><strong>Seed: When provided, this parameter allow to users to generate
-                                                   the same number sequence</strong>
+                                               <li><strong>Seed:</strong> this parameter sets the random-seed for the generation of the sample-set
                                                </li>
                                            </ul>
                                         </div>
@@ -205,21 +204,28 @@
                                                     </ul>
                                                 </li>
                                             </ul>
+                                            This analysis produce a
 
                                             <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Over time)</strong></p>
                                             <p>Partial Rank Correlation Coefficients is a Sensitivity Analysis test, it's a sampling-based method</p>
                                             <ul>
-                                                <li><strong>Time points interval:</strong></li>
-                                                <li><strong>Threshold p-value:</strong></li>
-                                                <li><strong>File to analyze:</strong></li>
-                                                <li><strong>LHS Matrix:</strong></li>
+                                                <li><strong>Time points interval:</strong>specific the number of time points in which perform the analysis </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a threshold, below which the plots are not shown </li>
+                                                <li><strong>File to analyze:</strong>The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed.</li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin Hypercube Sampling analysis</li>
                                             </ul>
                                             <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Specific Time Step)</strong></p>
                                             <ul>
-                                                <li><strong>Time step:</strong></li>
-                                                <li><strong>Threshold p-value:</strong></li>
-                                                <li><strong>File to analyze:</strong></li>
-                                                <li><strong>LHS Matrix:</strong></li>
+                                                <li><strong>Time step:</strong>specific the time step in which perform the analysis </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a threshold, below which the plots are not shown</li>
+                                                <li><strong>File to analyze:</strong>The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed.</li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin Hypercube Sampling analysis</li>
                                             </ul>
 
                                         </div>
