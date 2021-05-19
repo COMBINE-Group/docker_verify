@@ -117,6 +117,13 @@ def time_step_analysis(request):
     if request.method == 'POST':
         if len(request.FILES.getlist('file')) >= 2:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+
+                col = int(request.POST['column_select'])
+                if col > 1:
+                    col = col - 1
+                else:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The first column is used for the X-axis of the plot '})
                 starttime = 0
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
@@ -124,10 +131,6 @@ def time_step_analysis(request):
                 sep = get_sep(request.POST['sep'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
                 skip_rows = int(request.POST['skip_rows'])
-
-                col = int(request.POST['column_select'])
-                if col > 1:
-                    col = col - 1
 
                 get_plot_trends_convergence_corr('fig', new_list_files, col, starttime, path_sim,
                                                  request.POST['name_analysis'], sep, skip_rows)
