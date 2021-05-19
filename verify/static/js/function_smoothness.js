@@ -44,10 +44,10 @@ $(document).ready(function () {
         let skip_rows = $("#skip_rows").val();
 
         if (!column_select.trim() || !$.isNumeric(column_select)) {
-            swalError("The \"K value\" fields are empty, or it is not numeric")
+            swalError("The \"Column value\" field are empty, or it is not a numeric value")
         } else {
             if (!k_select.trim() || !$.isNumeric(k_select)) {
-                swalError("The \"K value\" fields are empty, or it is not numeric")
+                swalError("The \"Window Size value\" field are empty, or it is not a numeric value")
             } else {
                 if (filesInputSmoothnessAnalysis[0].files.length === 0) {
                     swalError("No files selected")

@@ -179,6 +179,12 @@ def smoothness_analysis(request):
     if request.method == 'POST':
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
+                col = int(request.POST['column_select'])
+                if col > 1:
+                    col = col - 1
+                else:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The first column is used for the X-axis of the plot '})
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
@@ -186,11 +192,8 @@ def smoothness_analysis(request):
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
                 skip_rows = int(request.POST['skip_rows'])
 
-                df = pd.read_csv(new_list_files[0], skiprows=skip_rows, header=None,
+                df = pd.read_csv(new_list_files[0], skiprows=skip_rows, header=None, decimal=',',
                                  sep=sep, engine='c', na_filter=False, low_memory=False)
-                col = int(request.POST['column_select'])
-                if col > 1:
-                    col = col - 1
 
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()

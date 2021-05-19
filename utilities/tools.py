@@ -340,6 +340,7 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
     array_result = np.zeros(len(ll))
+    new_array = new_array.astype(np.float64)
 
     i = k_elem
 
@@ -361,7 +362,7 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
 def plot_smoothness_analysis(axis_x, arr_result, path_sim):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title='Smoothness Analysis', xlabel='Time(secs)')
+    ax.set(title='Smoothness Analysis', xlabel='values of the first column')
     ax.plot(axis_x, np.array(arr_result))
     fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'))
 
