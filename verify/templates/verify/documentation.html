@@ -29,7 +29,8 @@
                             <!-- start accordion -->
                             <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
                                 <div class="panel">
-                                    <a class="panel-heading collapsed" role="tab" id="headingZero" data-toggle="collapse"
+                                    <a class="panel-heading collapsed" role="tab" id="headingZero"
+                                       data-toggle="collapse"
                                        data-parent="#accordion" href="#collapseZero" aria-expanded="false"
                                        aria-controls="collapseZero">
                                         <h4 class="panel-title">Common Input Parameters of the Analysis</h4>
@@ -37,26 +38,30 @@
                                     <div id="collapseZero" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingZero">
                                         <div class="panel-body">
-                                            <p> This section groups all parameters in common among Model Verification Tools</p>
+                                            <p> This section groups all parameters in common among Model Verification
+                                                Tools</p>
 
-                                           <ul>
-                                               <li><strong>Skip Rows:</strong> This value represents the number of rows
-                                                   that must be removed from the input files before proceeding with the
-                                                   analysis, and it is useful to remove unneeded values such
-                                                   columns headers or other information;
-                                               </li>
-                                               <li><strong>Column to Analyze:</strong> This  parameter allows  to
-                                                   select the column on which to perform the analysis
-                                               </li>
-                                               <li><strong>Separator character:</strong> it represents the field
-                                                   separator that is used to separate the columns in the uploaded files.
-                                                   The model Verification Tools support four separator
-                                                   (space, tab, comma and semicolon)
-                                               </li>
-                                               <li><strong>Seed:</strong> this parameter sets the random-seed for the generation of the sample-set
-                                               </li>
-                                           </ul>
-                                            <strong>WARNING:</strong> The values inside the files must use the Decimal point separator. Otherwise, the analysis can not be performed.
+                                            <ul>
+                                                <li><strong>Skip Rows:</strong> This value represents the number of rows
+                                                    that must be removed from the input files before proceeding with the
+                                                    analysis, and it is useful to remove unneeded values such
+                                                    columns headers or other information;
+                                                </li>
+                                                <li><strong>Column to Analyze:</strong> This parameter allows to
+                                                    select the column on which to perform the analysis
+                                                </li>
+                                                <li><strong>Separator character:</strong> it represents the field
+                                                    separator that is used to separate the columns in the uploaded
+                                                    files.
+                                                    The model Verification Tools support four separator
+                                                    (space, tab, comma and semicolon)
+                                                </li>
+                                                <li><strong>Seed:</strong> this parameter sets the random-seed for the
+                                                    generation of the sample-set
+                                                </li>
+                                            </ul>
+                                            <strong>WARNING:</strong> The values inside the files must use the Decimal
+                                            point separator. Otherwise, the analysis can not be performed.
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +83,8 @@
                                                 <ul>
                                                     <li><strong>Window size: </strong> In order to detect possible
                                                         local roughness in the model, our smoothness analysis perform a
-                                                        coefficient of variation using the k nearest neighbours in the windows.
+                                                        coefficient of variation using the k nearest neighbours in the
+                                                        windows.
                                                         This parameter allow to choose the window size.
                                                     </li>
                                                     <li><strong>File to analyze:</strong> is a ASCII or CSV file that
@@ -104,13 +110,14 @@
                                             <p>This analysis allows to determine if there is a convergence
                                                 in the behavior of the model outputs as the time-step length becomes
                                                 narrower.
-                                                </p>
+                                            </p>
                                             <p><strong>Input Parameters</strong></p>
                                             <ul>
                                                 <li><strong>File to analyze:</strong> The user can upload two or more
                                                     ASCII or CSV files that defines the model outputs in which the first
                                                     column represents the time, and the other columns represent the
-                                                    outputs to be analyzed. At the moment, Time Step Convergence Analysis
+                                                    outputs to be analyzed. At the moment, Time Step Convergence
+                                                    Analysis
                                                     consider the peak-value and the relative time-to-peak-value.
                                                 </li>
                                             </ul>
@@ -156,10 +163,12 @@
                                                     to set the number of samples to generate
                                                 </li>
                                                 <li><strong>Input parameter file:</strong> is a CSV file
-                                                    that defines the parameters of the model and its minimum and maximum values.
+                                                    that defines the parameters of the model and its minimum and maximum
+                                                    values.
                                                     The file must have a header and this structure:
                                                     <ul>
-                                                        <li><strong>param_name:</strong> is the name of the parameter</li>
+                                                        <li><strong>param_name:</strong> is the name of the parameter
+                                                        </li>
                                                         <li><strong>min:</strong> is the min value of the parameter</li>
                                                         <li><strong>max:</strong> is the max value of the parameter</li>
                                                     </ul>
@@ -167,12 +176,17 @@
                                             </ul>
                                             <p><strong>Input Parameters for SOBOL analysis</strong></p>
                                             <ul>
-                                                <li><strong>Number of combinations:</strong> is the same of the sample generation</li>
-                                                <li><strong>Input parameter file:</strong> is the same of the sample generation</li>
+                                                <li><strong>Number of combinations:</strong> is the same of the sample
+                                                    generation
+                                                </li>
+                                                <li><strong>Input parameter file:</strong> is the same of the sample
+                                                    generation
+                                                </li>
                                                 <li><strong>Output file from the model:</strong> is the output ASCII or
                                                     CSV file with one column and N rows (the number of parameter samples
                                                     generated during the first step).
-                                                    This file represents the N output values obtained from the model</li>
+                                                    This file represents the N output values obtained from the model
+                                                </li>
                                             </ul>
 
                                         </div>
@@ -182,7 +196,8 @@
                                     <a class="panel-heading collapsed" role="tab" id="headingFifth"
                                        data-toggle="collapse" data-parent="#accordion" href="#collapseFifth"
                                        aria-expanded="false" aria-controls="collapseFifth">
-                                        <h4 class="panel-title">Latin Hypercube Sampling Analysis and Partial Rank Correlation Coefficients Analysis</h4>
+                                        <h4 class="panel-title">Latin Hypercube Sampling Analysis and Partial Rank
+                                            Correlation Coefficients Analysis</h4>
                                     </a>
                                     <div id="collapseFifth" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingFifth">
@@ -190,16 +205,22 @@
 
                                             <p><strong>Input Parameters for Latin Hypercupe Sampling </strong></p>
                                             <p>Latin hypercube sampling is a statistical method for generating a
-                                                near-random sample of parameter values from a multidimensional distribution.
+                                                near-random sample of parameter values from a multidimensional
+                                                distribution.
                                             </p>
                                             <ul>
-                                                <li><strong>Number of samples:</strong> Defines the number of samples</li>
-                                                <li><strong>Iterations:</strong> Defines the number of iterations for optimizing LHS</li>
+                                                <li><strong>Number of samples:</strong> Defines the number of samples
+                                                </li>
+                                                <li><strong>Iterations:</strong> Defines the number of iterations for
+                                                    optimizing LHS
+                                                </li>
                                                 <li><strong>Input parameter file:</strong> is a CSV file
-                                                    that defines the parameters of the model and its minimum and maximum values.
+                                                    that defines the parameters of the model and its minimum and maximum
+                                                    values.
                                                     The file must have a header and this structure:
                                                     <ul>
-                                                        <li><strong>param_name:</strong> is the name of the parameter</li>
+                                                        <li><strong>param_name:</strong> is the name of the parameter
+                                                        </li>
                                                         <li><strong>min:</strong> is the min value of the parameter</li>
                                                         <li><strong>max:</strong> is the max value of the parameter</li>
                                                     </ul>
@@ -207,30 +228,52 @@
                                             </ul>
                                             This analysis produce a
 
-                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Over time)</strong></p>
-                                            <p>Partial Rank Correlation Coefficients is a Sensitivity Analysis test, it's a sampling-based method</p>
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Over
+                                                time)</strong></p>
+                                            <p>Partial Rank Correlation Coefficients is a Sensitivity Analysis test,
+                                                it's a sampling-based method</p>
                                             <ul>
-                                                <li><strong>Time points interval:</strong>specific the number of time points in which perform the analysis </li>
-                                                <li><strong>Threshold p-value:</strong>this value is used as a threshold, below which the plots are not shown </li>
+                                                <li><strong>Time points interval:</strong>specific the number of time
+                                                    points in which perform the analysis
+                                                </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a
+                                                    threshold, below which the plots are not shown
+                                                </li>
                                                 <li><strong>File to analyze:</strong>The user can upload two or more
                                                     ASCII or CSV files that defines the model outputs in which the first
                                                     column represents the time, and the other columns represent the
-                                                    outputs to be analyzed.</li>
-                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin Hypercube Sampling analysis</li>
+                                                    outputs to be analyzed.
+                                                </li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin
+                                                    Hypercube Sampling analysis
+                                                </li>
                                             </ul>
-                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Specific Time Step)</strong></p>
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients
+                                                (Specific Time Step)</strong></p>
                                             <ul>
-                                                <li><strong>Time step:</strong>specific the time step in which perform the analysis </li>
-                                                <li><strong>Threshold p-value:</strong>this value is used as a threshold, below which the plots are not shown</li>
+                                                <li><strong>Time step:</strong>specific the time step in which perform
+                                                    the analysis
+                                                </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a
+                                                    threshold, below which the plots are not shown
+                                                </li>
                                                 <li><strong>File to analyze:</strong>The user can upload two or more
                                                     ASCII or CSV files that defines the model outputs in which the first
                                                     column represents the time, and the other columns represent the
-                                                    outputs to be analyzed.</li>
-                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin Hypercube Sampling analysis</li>
+                                                    outputs to be analyzed.
+                                                </li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin
+                                                    Hypercube Sampling analysis
+                                                </li>
                                             </ul>
 
                                         </div>
                                     </div>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="mailto:info@combine-group.org?subject=Report a BUGs&body=it is important that you are as accurate as possible in describing the bugs. If possible, please attach the files.">
+                                        <button class="btn btn-danger" type="reset">Report a BUGs</button>
+                                    </a>
                                 </div>
                                 {% comment %}
                                 <div class="panel">
