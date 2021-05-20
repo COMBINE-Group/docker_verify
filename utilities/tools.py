@@ -183,7 +183,7 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
 def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_rows):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title=filename_output, xlabel="time (days)", ylabel="entities")
+    ax.set(title=filename_output, xlabel="values of the first column", ylabel="entities")
 
     for f in files:
         # lista = read_data(f)
@@ -248,7 +248,7 @@ def calculate_corr(filename_output, files, col, path_sim, sep, skip_rows, start=
     rt = np.array(alist)
     rt2 = rt[rt[:, 0].argsort()]
     max_step = rt2[0, 0:2]
-    xrange = np.array(list(range(0, max_step[0] * max_step[1], max_step[0])))
+    xrange = np.arange(0, max_step[0] * max_step[1], max_step[0])
     i = 0
     flag = 0
     interp_list = np.array(np.vstack(xrange))
