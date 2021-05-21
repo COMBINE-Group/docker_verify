@@ -63,7 +63,7 @@
                                             </ul>
                                             <p><strong>WARNING:</strong> The values inside the files must use the Decimal
                                                 point separator. Otherwise, the analysis can not be performed.</p>
-                                            <p><strong>WARNING:</strong> The values of the first column of the .</p>
+                                            <p><strong>WARNING:</strong> The values of the first column of all input files, represent the time.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,8 @@
                                     <a class="panel-heading collapsed" role="tab" id="headingThree"
                                        data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
                                        aria-expanded="false" aria-controls="collapseThree">
-                                        <h4 class="panel-title">Uniqueness Analysis</h4>
+                                        <h4 class="panel-title">
+                                            Uniqueness Analysis</h4>
                                     </a>
                                     <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
                                          aria-labelledby="headingThree">
@@ -176,6 +177,12 @@
                                                     </ul>
                                                 </li>
                                             </ul>
+                                            <p><strong>WARNING:</strong> The tools calculate the second-order
+                                                sensitivities, so the output matrix has N * (2D + 2) rows.
+                                                Where D is the number of parameters and N is The number of samples to generate.
+                                                Further information, read the
+                                                <a href="https://salib.readthedocs.io/en/latest/api.html#sobol-sensitivity-analysis" target="_blank"><strong><u>official documentation</u></strong></a>
+                                            </p>
                                             <p><strong>Input Parameters for SOBOL analysis</strong></p>
                                             <ul>
                                                 <li><strong>Number of combinations:</strong> is the same of the sample
