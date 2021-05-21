@@ -166,7 +166,8 @@ def uniqueness_analysis(request):
                                          'mess': ''})
                 elif result[0] == 1:
                     return JsonResponse({'status': 1, 'type': 'warning', 'title': '<u>the files are NOT the same</u>',
-                                         'mess': 'Min(SD): %s' % result[1]})
+                                         'mess': f'In your files at row:{result[1]} and at column: {result[2]} '
+                                                 f'the SD is:{result[3]}'})
                 else:
                     return JsonResponse({'status': 1, 'type': 'error', 'title': '<u>ERROR</u>',
                                          'mess': 'the number of lines in the files is different'})

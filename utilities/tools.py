@@ -324,15 +324,16 @@ def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):
         '''
 
         tmp_max = []
-        tmp_min = []
+
         for array in sd_list:
             tmp_max.append(array.max())
-            tmp_min.append(array.min())
 
-        if max(tmp_max) == 0:
-            return [0]  # the files are the same
-        else:
-            return [1, min(tmp_min)]  # the files are NOT the same
+        if max(tmp_max) == 0:  # the files are the same
+            return [0]
+        else:  # the files are NOT the same
+            index, col, val = get_row_col(sd_list)
+            # index+1 because the dataframe starts at row 0
+            return [1, index+1, col, val]
 
 
 def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str):
@@ -635,3 +636,22 @@ def get_media_link(path_file: str, scheme: str, host: str):
     out = '/'.join(path_out)
 
     return scheme + '://' + host + '/' + out
+
+
+def get_row_col(ll: np.array):
+    """
+    this function is used in Uniqueness analysis and allow to get value,
+     row and column of the first element different from zero, when input files are different.
+    """
+
+    index = []
+    column = 0
+    flag = True
+
+    while flag:
+        index = ll[column].to_numpy().nonzero()
+        if len(index[0]) != 0:
+            flag = False
+        column += 1
+
+    return ll[column-1][index[0]].index[0], column, ll[column-1][index[0]].values[0]
