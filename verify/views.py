@@ -252,25 +252,34 @@ def sobol_generates_sample(request):
 def sobol_analyze(request):
     if request.method == 'POST':
         if len(request.FILES.getlist('file_range_parameter')) == 1 and \
-                len(request.FILES.getlist('file_output_model')) == 1:
+                len(request.FILES.getlist('file_output_model')) >= 1:
             if check_content_type(request.FILES.getlist('file_range_parameter'),
                                   'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_output_model'), 'text/csv,application/octet-stream'):
 
+                col = int(request.POST['col_sobol'])
+
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                sep = get_sep(request.POST['sep'])
+
+                sep_input_parameter_file = get_sep(request.POST['sep_input_parameter_file'])
+                sep_output_model_file = get_sep(request.POST['sep_output_model_file'])
+
                 list_files_uploaded = save_files(request.FILES.getlist('file_range_parameter'), path_sim)
                 list_files_uploaded_1 = save_files(request.FILES.getlist('file_output_model'), path_sim)
 
                 n_combinations = request.POST['number_combinations']
-                df = pd.read_csv(os.path.join(path_sim, list_files_uploaded_1[0]), sep=sep,
-                                 engine='c', na_filter=False, low_memory=False)
+                ll = []
+                for path in list_files_uploaded_1:
+                    df = pd.read_csv(path, sep=sep_output_model_file, engine='c', na_filter=False, low_memory=False,
+                                     header=None)
+                    ll.append(df)
 
-                yy = df.squeeze().to_numpy()
+                df_merged = pd.concat(ll, axis=0, ignore_index=True)
+                yy = df_merged[col-1].squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
-                                            request.POST['name_analysis'], path_sim, sep=sep,
+                                            request.POST['name_analysis'], path_sim, sep=sep_input_parameter_file,
                                             flag=True, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',

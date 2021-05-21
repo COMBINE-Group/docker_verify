@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import shutil
 from pathlib import Path
@@ -9,12 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pingouin as pg
+from natsort import natsorted
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from matplotlib.backends.backend_pdf import PdfPages
 from SALib.analyze import sobol
 from SALib.sample import saltelli
-from scipy import special
 from scipy.stats import rankdata, stats
 from sklearn.linear_model import LinearRegression
 from skopt.sampler import Lhs
@@ -287,7 +286,7 @@ def save_files(files: list, path: str):
         fs.save(os.path.join(path, f.name), f)
         list_files_uploaded.append(os.path.join(path, f.name))
 
-    return list_files_uploaded
+    return natsorted(list_files_uploaded)
 
 
 def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):

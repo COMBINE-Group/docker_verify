@@ -108,7 +108,9 @@ $(document).ready(function () {
         let number_combinations = $("#number_combinations_sobol_analyze").val()
         let filesRangeParameter = $("#file_range_parameter")
         let filesOutputModel = $("#file_output_model")
-        let char_sep = $('select[name=sep_sobol_analyze]').val();
+        let char_sep_input_parameter_file = $('select[name=sep_sobol_analyze_parameter_file]').val();
+        let sep_output_model_file = $('select[name=sep_output_model_file]').val();
+        let column_select = $("#column_select_sobol").val()
 
         if ((filesRangeParameter[0].files.length === 0) || (filesOutputModel[0].files.length === 0)) {
             swalError("No files selected")
@@ -125,8 +127,10 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("seed", seed)
             data.append("number_combinations", number_combinations)
-            data.append("sep", char_sep)
+            data.append("sep_input_parameter_file", char_sep_input_parameter_file)
+            data.append("sep_output_model_file", sep_output_model_file)
             data.append("name_analysis", name_analysis[1])
+            data.append("col_sobol", column_select)
 
 
             swal({
