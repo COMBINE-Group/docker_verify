@@ -458,7 +458,8 @@ def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str
     problem = {
         'num_vars': parameter_count,
         'names': names,
-        'bounds': df_params.iloc[:, 1:].values.tolist()
+        'bounds': df_params.iloc[:, 1:3].values.tolist(),
+        'dists': df_params.iloc[:, 3].values.tolist()
     }
 
     # Generate samples
