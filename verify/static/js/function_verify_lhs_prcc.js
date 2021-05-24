@@ -100,7 +100,9 @@ $(document).ready(function () {
         let fileMatrixLhs = $("#file_matrix_lhs")
         let step_time_points = $("#step_times_points").val()
         let threshold_pvalue = $("#threshold_pvalue").val()
-        let char_sep = $('select[name=sep_prcc]').val();
+        let char_sep_for_lhs = $('select[name=sep_prcc_for_lhs_matrix]').val();
+        let char_sep_for_files = $('select[name=sep_prcc_for_files]').val();
+        let col = $('#column_select_prcc_overtime').val();
 
         if (fileInputPrcc[0].files.length === 0 && fileMatrixLhs[0].files.length === 0) {
             swalError("No files selected")
@@ -117,8 +119,10 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("name_analysis", name_analysis[1])
             data.append("step_time_points", step_time_points)
-            data.append("sep", char_sep)
+            data.append("sep_for_lhs", char_sep_for_lhs)
+            data.append("sep_for_files", char_sep_for_files)
             data.append("threshold_pvalue", threshold_pvalue)
+            data.append("col", col)
 
             swal({
                 title: 'Running',
@@ -175,6 +179,7 @@ $(document).ready(function () {
         let timeStep = $("#time_step").val()
         let threshold_pvalue = $("#threshold_pvalue_specific_ts").val()
         let char_sep = $('select[name=sep_prcc_specific_ts]').val();
+        let col = $('#column_select_prcc_specific_ts').val();
         let fileInput = $("#file_input_specific_ts")
         let fileMatrixLhs = $("#file_matrix_lhs_specific_ts")
 
@@ -195,6 +200,7 @@ $(document).ready(function () {
             data.append("timeStep", timeStep)
             data.append("pvalue", threshold_pvalue)
             data.append("sep", char_sep)
+            data.append("col", col)
 
             swal({
                 title: 'Running',

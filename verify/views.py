@@ -14,7 +14,7 @@ from utilities.tools import (check_content_type, check_status_simulation,
                              get_plot_trends_convergence_corr, get_sep,
                              run_lhs_analysis, run_prcc_analysis,
                              run_prcc_specific_ts, run_smoothness_analysis,
-                             run_sobol_analysis, save_files)
+                             run_sobol_analysis, save_files, get_correct_col_value)
 
 
 def verify_lhs_prcc(response):
@@ -183,10 +183,8 @@ def smoothness_analysis(request):
     if request.method == 'POST':
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
-                col = int(request.POST['column_select'])
-                if col > 1:
-                    col = col - 1
-                else:
+                col = get_correct_col_value(int(request.POST['col']))
+                if col == -1:
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The first column is used for the X-axis of the plot '})
 
@@ -276,7 +274,7 @@ def sobol_analyze(request):
                     ll.append(df)
 
                 df_merged = pd.concat(ll, axis=0, ignore_index=True)
-                yy = df_merged[col-1].squeeze().to_numpy()
+                yy = df_merged[col - 1].squeeze().to_numpy()
 
                 params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
                                             request.POST['name_analysis'], path_sim, sep=sep_input_parameter_file,
@@ -331,18 +329,36 @@ def lhs_analysis(request):
 
 def prcc_analysis(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('file_input_prcc')) == 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
+        if len(request.FILES.getlist('file_input_prcc')) >= 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
             if check_content_type(request.FILES.getlist('file_input_prcc'), 'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
 
+                col = get_correct_col_value(int(request.POST['col']))
+                if col == -1:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The first column is used for the X-axis of the plot '})
+
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                sep = get_sep(request.POST['sep'])
+
+                sep_lhs = get_sep(request.POST['sep_for_lhs'])
+                sep_for_files = get_sep(request.POST['sep_for_files'])
                 matrix_from_output = save_files(request.FILES.getlist('file_input_prcc'), path_sim)
                 matrix_lhs = save_files(request.FILES.getlist('file_matrix_lhs'), path_sim)
 
-                lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
-                matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
+                lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep_lhs)
+
+                ll = []
+                df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c', na_filter=False,
+                                 low_memory=False, header=None)
+                ll.append(df)
+                for i in range(1, len(matrix_from_output)):
+                    df = pd.read_csv(matrix_from_output[i], sep=sep_for_files, usecols=[col], engine='c', na_filter=False,
+                                     low_memory=False, header=None)
+                    ll.append(df)
+
+                matrix_output = pd.concat(ll, axis=1, ignore_index=True)
+                # matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
 
                 plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request)
 
@@ -365,6 +381,11 @@ def prcc_analysis_specific_ts(request):
         if len(request.FILES.getlist('file_input')) == 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
             if check_content_type(request.FILES.getlist('file_input'), 'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
+
+                col = get_correct_col_value(int(request.POST['col']))
+                if col == -1:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The first column is used for the X-axis of the plot '})
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])

@@ -655,3 +655,11 @@ def get_row_col(ll: np.array):
         column += 1
 
     return ll[column-1][index[0]].index[0], column, ll[column-1][index[0]].values[0]
+
+
+def get_correct_col_value(col: int):
+    if col > 1:
+        col = col - 1
+    else:
+        col = -1
+    return col
