@@ -93,4 +93,25 @@ function delete_simulation(id_sim){
     )
 }
 
-export {showPlot, checkYourSimulation, swalError, download_matrix, delete_simulation}
+function prompt_delete_simulation(id_sim, name_analysis){
+    if (id_sim !== "Choose..") {
+        swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.value) {
+            $('.divPlot').attr('style', 'visibility: hidden;');
+            $('.divPrintPlot').attr('style', 'visibility: hidden;');
+            delete_simulation(id_sim);
+            checkYourSimulation(name_analysis);
+        }
+    })
+}
+}
+
+export {showPlot, checkYourSimulation, swalError, download_matrix, prompt_delete_simulation}

@@ -1,4 +1,4 @@
-import {checkYourSimulation, delete_simulation, download_matrix} from './common_function.js';
+import {checkYourSimulation, prompt_delete_simulation, download_matrix} from './common_function.js';
 import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
@@ -13,23 +13,8 @@ $(document).ready(function () {
     });
 
     $("#delete_simulation").click(function () {
-        swal({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.value) {
-                $('.divPlot').attr('style', 'visibility: hidden;');
-                $('.divPrintPlot').attr('style', 'visibility: hidden;');
-                let id_sim = $('input[name=selectIdSimulation]').val()
-                delete_simulation(id_sim);
-                checkYourSimulation(name_analysis);
-            }
-        })
+        let id_sim = $('#id_simulations option:selected').text();
+        prompt_delete_simulation(id_sim, name_analysis);
     });
 
     $("#submit_sobol_analysis").click(function () {

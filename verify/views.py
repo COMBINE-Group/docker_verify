@@ -357,7 +357,7 @@ def prcc_analysis(request):
                                      'mess': 'There was a problem during execution!'})
         else:
             return JsonResponse(
-                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have choosed more than 1 files'})
+                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have chosen less than 1 files'})
 
 
 def prcc_analysis_specific_ts(request):
@@ -390,4 +390,4 @@ def prcc_analysis_specific_ts(request):
                     {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'There was a problem during execution!'})
         else:
             return JsonResponse(
-                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have choosed more than 1 files'})
+                {'status': 0, 'type': 'error', 'title': 'Error!', 'mess': 'You have chose less than 1 files'})
