@@ -378,7 +378,7 @@ def prcc_analysis(request):
 
 def prcc_analysis_specific_ts(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('file_input')) == 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
+        if len(request.FILES.getlist('file_input')) > 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
             if check_content_type(request.FILES.getlist('file_input'), 'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
 
@@ -389,12 +389,29 @@ def prcc_analysis_specific_ts(request):
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                sep = get_sep(request.POST['sep'])
+                sep_for_lhs = get_sep(request.POST['sep_for_lhs'])
+                sep_for_files = get_sep(request.POST['sep_for_files'])
+
                 matrix_from_output = save_files(request.FILES.getlist('file_input'), path_sim)
                 matrix_lhs = save_files(request.FILES.getlist('file_matrix_lhs'), path_sim)
 
-                lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep)
-                matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
+                lhs_matrix = pd.read_csv(matrix_lhs[0], sep=sep_for_lhs)
+
+                ll = []
+                df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c',
+                                 na_filter=False,
+                                 low_memory=False, header=None)
+                ll.append(df)
+                for i in range(1, len(matrix_from_output)):
+                    df = pd.read_csv(matrix_from_output[i], sep=sep_for_files, usecols=[col], engine='c',
+                                     na_filter=False,
+                                     low_memory=False, header=None)
+                    ll.append(df)
+
+                matrix_output = pd.concat(ll, axis=1, ignore_index=True)
+
+                # matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
+
                 plot_file, status = run_prcc_specific_ts(lhs_matrix, matrix_output, path_sim, request)
 
                 # if status is True, than the PDF is not empty

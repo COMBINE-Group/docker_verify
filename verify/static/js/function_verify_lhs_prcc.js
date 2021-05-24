@@ -178,7 +178,8 @@ $(document).ready(function () {
 
         let timeStep = $("#time_step").val()
         let threshold_pvalue = $("#threshold_pvalue_specific_ts").val()
-        let char_sep = $('select[name=sep_prcc_specific_ts]').val();
+        let sep_for_lhs = $('select[name=sep_prcc_for_lhs_matrix_specific_ts]').val();
+        let sep_for_files = $('select[name=sep_prcc_for_files_specific_ts]').val();
         let col = $('#column_select_prcc_specific_ts').val();
         let fileInput = $("#file_input_specific_ts")
         let fileMatrixLhs = $("#file_matrix_lhs_specific_ts")
@@ -199,7 +200,8 @@ $(document).ready(function () {
             data.append("name_analysis", name_analysis[2])
             data.append("timeStep", timeStep)
             data.append("pvalue", threshold_pvalue)
-            data.append("sep", char_sep)
+            data.append("sep_for_lhs", sep_for_lhs)
+            data.append("sep_for_files", sep_for_files)
             data.append("col", col)
 
             swal({
