@@ -357,9 +357,10 @@ def prcc_analysis(request):
                                      low_memory=False, header=None)
                     ll.append(df)
 
+                header = ["time"] + [str(i) for i in range(0, len(ll))]
                 matrix_output = pd.concat(ll, axis=1, ignore_index=True)
+                matrix_output.columns = header
                 # matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
-
                 plot_file, time_corr_file, response = run_prcc_analysis(lhs_matrix, matrix_output, path_sim, request)
 
                 link_plot = get_media_link(plot_file, request.scheme, request.get_host())
@@ -408,7 +409,9 @@ def prcc_analysis_specific_ts(request):
                                      low_memory=False, header=None)
                     ll.append(df)
 
+                header = ["time"] + [str(i) for i in range(0, len(ll))]
                 matrix_output = pd.concat(ll, axis=1, ignore_index=True)
+                matrix_output.columns = header
 
                 # matrix_output = pd.read_csv(matrix_from_output[0], sep=sep)
 
