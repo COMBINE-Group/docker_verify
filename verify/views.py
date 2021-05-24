@@ -329,7 +329,7 @@ def lhs_analysis(request):
 
 def prcc_analysis(request):
     if request.method == 'POST':
-        if len(request.FILES.getlist('file_input_prcc')) >= 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
+        if len(request.FILES.getlist('file_input_prcc')) > 1 and len(request.FILES.getlist('file_matrix_lhs')) == 1:
             if check_content_type(request.FILES.getlist('file_input_prcc'), 'text/csv,application/octet-stream') and \
                     check_content_type(request.FILES.getlist('file_matrix_lhs'), 'text/csv,application/octet-stream'):
 
