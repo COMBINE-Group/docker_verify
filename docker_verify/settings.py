@@ -134,4 +134,4 @@ BASE_DIR_VERIFY = os.path.join(BASE_DIR, 'verify')
 STATIC_DIR_VERIFY = os.path.join(BASE_DIR_VERIFY, 'static')
 MEDIA_DIR_VERIFY = os.path.join(MEDIA_ROOT, 'outputs', 'verify')
 
-VERSION = '1.0.2'
+VERSION = '1.1.0'

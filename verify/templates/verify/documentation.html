@@ -61,9 +61,11 @@
                                                     generation of the sample-set
                                                 </li>
                                             </ul>
-                                            <p><strong>WARNING:</strong> The values inside the files must use the Decimal
+                                            <p><strong>WARNING:</strong> The values inside the files must use the
+                                                Decimal
                                                 point separator. Otherwise, the analysis can not be performed.</p>
-                                            <p><strong>WARNING:</strong> The values of the first column of all input files, represent the time.</p>
+                                            <p><strong>WARNING:</strong> The values of the first column of all input
+                                                files, represent the time.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -165,23 +167,67 @@
                                                 <li><strong>Number of combinations:</strong>The user use this parameter
                                                     to set the number of samples to generate
                                                 </li>
-                                                <li><strong>Input parameter file:</strong> is a CSV file
-                                                    that defines the parameters of the model and its minimum and maximum
-                                                    values.
-                                                    The file must have a header and this structure:
+                                                <li><strong>Input parameter file:</strong> is a CSV file that defines
+                                                    the parameters of the model and its range values. The file must have
+                                                    a header and this structure:
                                                     <ul>
-                                                        <li><strong>param_name:</strong> is the name of the parameter
+                                                        <li><strong>param_name:</strong> is the name of the parameters
                                                         </li>
-                                                        <li><strong>min:</strong> is the min value of the parameter</li>
-                                                        <li><strong>max:</strong> is the max value of the parameter</li>
+                                                        <li><strong>first_value:</strong> see the below table</li>
+                                                        <li><strong>second_value:</strong> see the below table</li>
+                                                        <li><strong>distribution:</strong> it represent the distribution
+                                                            for each parameter. You can choose among: <code>"unif",
+                                                                "triang", "norm" and "lognorm"</code></li>
                                                     </ul>
                                                 </li>
                                             </ul>
+                                            <p><strong>WARNING:</strong> The columns <code>first_value</code> and
+                                                <code>second_value</code> take on different meanings
+                                                according to the chosen distribution. the following table shows the
+                                                corresponding values according to the chosen distribution.
+                                            <div class="clearfix">
+                                                <div class="x_content">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Distribution</th>
+                                                            <th>First value</th>
+                                                            <th>Second value</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <th scope="row">unif</th>
+                                                            <td>Minimum</td>
+                                                            <td>Maximum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">triang</th>
+                                                            <td>Jacob</td>
+                                                            <td>Thornton</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">norm</th>
+                                                            <td>Mean</td>
+                                                            <td>Standard Deviation</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">lognorm</th>
+                                                            <td>Mean</td>
+                                                            <td>Standard Deviation</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            </p>
                                             <p><strong>WARNING:</strong> The tools calculate the second-order
-                                                sensitivities, so the output matrix has N * (2D + 2) rows.
-                                                Where D is the number of parameters and N is The number of samples to generate.
+                                                sensitivities, so the output matrix has <code>N * (2D + 2)</code> rows.
+                                                Where D is the number of parameters and N is The number of samples to
+                                                generate.
                                                 Further information, read the
-                                                <a href="https://salib.readthedocs.io/en/latest/api.html#sobol-sensitivity-analysis" target="_blank"><strong><u>official documentation</u></strong></a>
+                                                <a href="https://salib.readthedocs.io/en/latest/api.html#sobol-sensitivity-analysis"
+                                                   target="_blank"><strong><u>official documentation</u></strong></a>
                                             </p>
                                             <p><strong>Input Parameters for SOBOL analysis</strong></p>
                                             <ul>
@@ -194,10 +240,17 @@
                                                 <li><strong>Output files from the model:</strong> Here, the users upload
                                                     the model outputs files, in ASCII or CSV format, without Header.
                                                     In order to performs correctly the analysis it is important to
-                                                    rename the files correctly.<div class="clearfix">
-                                                        For example, the name of the first output model file would be
-                                                        "0_1.csv" because this file represent the output of the model
-                                                        with the first pair of values of the Sample Generation output matrix.
+                                                    rename the files correctly.
+                                                    <div class="clearfix">
+                                                        The name of the output model files would be,
+                                                        ("0_1.csv", "0_2.csv",..., "o_n.csv"). For example, the
+                                                        "0_1.csv"
+                                                        file represent the output of the model that uses the first row
+                                                        values obtained from the Sample Generation output matrix.
+                                                    </div>
+                                                    <div class="clearfix"> The "0_2.csv" file represent the output of
+                                                        the model that uses the second row values obtained from the
+                                                        Sample Generation output matrix and so on
                                                     </div>
                                                 </li>
                                             </ul>
