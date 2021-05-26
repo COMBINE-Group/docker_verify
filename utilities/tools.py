@@ -442,16 +442,12 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
 
 
 # SOBOL ANALYSIS
-def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str, sep: str, flag=False, y=None):
+def run_sobol_analysis(df_params, seed, name_analysis: str, path_sim: str, y=None, n_comb=None):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
-
-    df_params = pd.read_csv(csv_file, sep=sep, engine='c', na_filter=False, low_memory=False)
 
     # Number of parameters to sample
     parameter_count = df_params.shape[0]
 
-    # Number of samples to draw for each parameter
-    sample_count = int(n_comb)
     names = df_params.iloc[:, 0].tolist()
 
     # Define the model inputs
@@ -462,24 +458,25 @@ def run_sobol_analysis(csv_file, n_comb, seed, name_analysis: str, path_sim: str
         'dists': df_params.iloc[:, 3].values.tolist()
     }
 
-    # Generate samples
-    param_values = saltelli.sample(problem, sample_count, seed=seed)
-
-    if flag:
+    if y is not None:
         # Perform analysis
-        s_i = sobol.analyze(problem, y)
-        print(s_i['S1'])
+        s_i = sobol.analyze(problem, y, seed=seed)
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set(title='Sobol Analysis')
-        ax.plot(names, s_i['S1'])
+        ax.bar(names, s_i['S1'])
         fig.savefig(os.path.join(path_sim, 'Sobol_Analysis.png'))
-
-    os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
-    os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
-
-    return param_values, names
+        os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+        os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
+    else:
+        # Number of samples to draw for each parameter
+        sample_count = int(n_comb)
+        # Generate samples
+        param_values = saltelli.sample(problem, sample_count, skip_values=seed)
+        os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
+        os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
+        return param_values, names
 
 
 # LHS--PRCC TOOLS ANALYSIS

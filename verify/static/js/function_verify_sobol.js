@@ -61,8 +61,24 @@ $(document).ready(function () {
                         async: false,
                         cache: false,
                         success: function (result) {
-
-                            swal({
+                            if (result.status === 0){
+                                swal({
+                                title: '<i>' + result.title + '</i>',
+                                type: result.type,
+                                html: result.mess,
+                                showCloseButton: true,
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                allowOutsideClick: false,
+                                allowEscapeKey: true
+                            }).then(result => {
+                                if (result.value) {
+                                    checkYourSimulation(name_analysis)
+                                }
+                            })
+                            }
+                            else{
+                                swal({
                                 title: '<i>' + result.title + '</i>',
                                 type: result.type,
                                 html: '<a target="_blank" href="' + result.data + ' ">Download</a>',
@@ -76,6 +92,7 @@ $(document).ready(function () {
                                     checkYourSimulation(name_analysis)
                                 }
                             })
+                            }
                         }
                     });
                 }
@@ -90,7 +107,6 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let seed = $("#seed_analyze").val()
-        let number_combinations = $("#number_combinations_sobol_analyze").val()
         let filesRangeParameter = $("#file_range_parameter")
         let filesOutputModel = $("#file_output_model")
         let char_sep_input_parameter_file = $('select[name=sep_sobol_analyze_parameter_file]').val();
@@ -111,7 +127,6 @@ $(document).ready(function () {
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("seed", seed)
-            data.append("number_combinations", number_combinations)
             data.append("sep_input_parameter_file", char_sep_input_parameter_file)
             data.append("sep_output_model_file", sep_output_model_file)
             data.append("name_analysis", name_analysis[1])

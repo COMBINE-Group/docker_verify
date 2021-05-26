@@ -1,7 +1,7 @@
 import os
 import shutil
 import threading
-
+import warnings
 import numpy as np
 import pandas as pd
 from django.conf import settings
@@ -217,17 +217,31 @@ def sobol_generates_sample(request):
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
+                seed = int(request.POST['seed'])
+                n_combinations = int(request.POST['number_combinations'])
+                sep = get_sep(request.POST['sep'])
+
+                if not ((seed & (seed - 1) == 0) and (seed != 0 and seed - 1 != 0)):
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The seed must be an exponent of 2 '})
+
+                if not ((n_combinations & (n_combinations - 1) == 0) and (n_combinations != 0 and n_combinations - 1 != 0)):
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The number of combination must be an exponent of 2 '})
+
+                if n_combinations > seed:
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The number of combination must be lower of seed '})
+
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
-                sep = get_sep(request.POST['sep'])
 
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
 
-                n_combinations = request.POST['number_combinations']
+                df_params = pd.read_csv(new_list_files[0], sep=sep, engine='c', na_filter=False, low_memory=False)
 
-                params, param_name = run_sobol_analysis(new_list_files[0], int(n_combinations),
-                                                        int(request.POST['seed']),
-                                                        request.POST['name_analysis'], path_sim, sep)
+                params, param_name = run_sobol_analysis(df_params, seed, request.POST['name_analysis'],
+                                                        path_sim, n_comb=n_combinations)
 
                 np.savetxt(os.path.join(path_sim, 'sobol_matrix.csv'), params, delimiter=',', fmt='%f',
                            header=','.join(param_name), comments='')
@@ -266,7 +280,6 @@ def sobol_analyze(request):
                 list_files_uploaded = save_files(request.FILES.getlist('file_range_parameter'), path_sim)
                 list_files_uploaded_1 = save_files(request.FILES.getlist('file_output_model'), path_sim)
 
-                n_combinations = request.POST['number_combinations']
                 ll = []
                 for path in list_files_uploaded_1:
                     df = pd.read_csv(path, sep=sep_output_model_file, engine='c', na_filter=False, low_memory=False,
@@ -276,9 +289,11 @@ def sobol_analyze(request):
                 df_merged = pd.concat(ll, axis=0, ignore_index=True)
                 yy = df_merged[col - 1].squeeze().to_numpy()
 
-                params = run_sobol_analysis(list_files_uploaded[0], int(n_combinations), int(request.POST['seed']),
-                                            request.POST['name_analysis'], path_sim, sep=sep_input_parameter_file,
-                                            flag=True, y=yy)
+                df_params = pd.read_csv(list_files_uploaded[0], sep=sep_input_parameter_file, engine='c',
+                                        na_filter=False, low_memory=False)
+
+                run_sobol_analysis(df_params, int(request.POST['seed']), request.POST['name_analysis'],
+                                   path_sim, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
