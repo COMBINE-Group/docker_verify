@@ -455,10 +455,17 @@ def prcc_analysis_specific_ts(request):
                                          'mess': 'The separator character of the LHS matrix is not correct'})
 
                 ll = []
-                df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c',
-                                 na_filter=False,
-                                 low_memory=False, header=None)
-                ll.append(df)
+                try:
+                    df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c',
+                                     na_filter=False,
+                                     low_memory=False, header=None)
+                    ll.append(df)
+                except:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The separator character of the outputs model file is not correct, '
+                                                 'or you have selected a column that doesn\'t exist'})
+
                 for i in range(1, len(matrix_from_output)):
                     df = pd.read_csv(matrix_from_output[i], sep=sep_for_files, usecols=[col], engine='c',
                                      na_filter=False,
