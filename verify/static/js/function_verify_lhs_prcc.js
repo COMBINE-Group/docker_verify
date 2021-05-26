@@ -68,6 +68,9 @@ $(document).ready(function () {
                             if (result.status === 1) {
                                 html = '<a target="_blank" href="' + result.data + ' ">Download</a>'
                             }
+                            else {
+                                html = result.mess
+                            }
 
                             swal({
                                 title: '<i>' + result.title + '</i>',
@@ -148,6 +151,9 @@ $(document).ready(function () {
                             if (result.status === 1) {
                                 html = '<a target="_blank" href="' + result.link_plot + ' ">Download PDF plot</a><br/>'
                                 html += '<a target="_blank" href="' + result.link_time_corr + ' ">Download Time Correlation file</a>'
+                            }
+                            else {
+                                html = result.mess
                             }
 
                             swal({

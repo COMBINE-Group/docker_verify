@@ -295,6 +295,8 @@ def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):
     else:
         df_tmp = pd.read_csv(csv_files[0], sep=sep, skiprows=skip_rows, header=None, engine='c', na_filter=False, low_memory=False)
         n_col = len(df_tmp.axes[1])
+        if n_col == 1:
+            return [-2]  # the separator character is not correct
         sd_list = []
         mean_list = []
         list_of_dataframes = []
@@ -528,20 +530,22 @@ def run_prcc_analysis(lhs_matrix: pd.DataFrame, matrix_output: pd.DataFrame, pat
         name_pdf_file, name_time_corr_file = plot_prcc(output, x_time, path_sim,
                                                        float(request.POST['threshold_pvalue']))
 
-        response = JsonResponse({'status': 0, 'type': 'success', 'title': '<u>Completed</u>', 'mess': ''})
+        link_plot = get_media_link(name_pdf_file, request.scheme, request.get_host())
+        link_time_corr = get_media_link(name_time_corr_file, request.scheme, request.get_host())
+
+        response = JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
+                                 'mess': '', 'link_plot': link_plot, 'link_time_corr': link_time_corr})
+
+        os.remove(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
+        os.mknod(os.path.join(path_sim, f"FINISHED_{request.POST['name_analysis']}.process"))
 
     else:
         shutil.rmtree(path_sim)
         mess = 'The number of rows of LHS matrix and the' \
                'number of columns of File to Analyze are different'
         response = JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!', 'mess': mess})
-        name_pdf_file = ''
-        name_time_corr_file = ''
 
-    os.remove(os.path.join(path_sim, f"STARTED_{request.POST['name_analysis']}.process"))
-    os.mknod(os.path.join(path_sim, f"FINISHED_{request.POST['name_analysis']}.process"))
-
-    return name_pdf_file, name_time_corr_file, response
+    return response
 
 
 def run_prcc_specific_ts(lhs_matrix: pd.DataFrame, output_matrix: pd.DataFrame, path_sim: str, request):
@@ -660,3 +664,10 @@ def get_correct_col_value(col: int):
     else:
         col = -1
     return col
+
+
+def is_sep_correct(df: pd.DataFrame):
+    if len(df.columns) == 1:
+        return False
+
+    return True
