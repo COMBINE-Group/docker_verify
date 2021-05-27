@@ -202,6 +202,11 @@ def smoothness_analysis(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character is not correct'})
+                elif col > len(df.columns):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The column does not exist in your file'})
+
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()
                 arr_time = df.iloc[:, 0].values.tolist()
@@ -305,6 +310,10 @@ def sobol_analyze(request):
                         ll.append(df)
 
                 df_merged = pd.concat(ll, axis=0, ignore_index=True)
+                if col > len(df_merged.columns):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The column does not exist in your file'})
                 yy = df_merged[col - 1].squeeze().to_numpy()
 
                 df_params = pd.read_csv(list_files_uploaded[0], sep=sep_input_parameter_file, engine='c',
