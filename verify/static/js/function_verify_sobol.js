@@ -154,9 +154,9 @@ $(document).ready(function () {
                         cache: false,
                         success: function (result) {
                             swal({
-                                title: '<i>' + result.data + '</i>',
+                                title: '<i>' + result.title + '</i>',
                                 type: result.type,
-                                html: result.msg,
+                                html: result.mess,
                                 showCloseButton: true,
                                 showCancelButton: false,
                                 showConfirmButton: true,

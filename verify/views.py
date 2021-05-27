@@ -130,6 +130,18 @@ def time_step_analysis(request):
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
                 skip_rows = int(request.POST['skip_rows'])
 
+                # here we check if separator and column are correct.
+                df_tmp = pd.read_csv(new_list_files[0], sep=sep, skiprows=skip_rows)
+
+                if len(df_tmp.columns) == 1:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The separator character is not correct '})
+                elif col >= len(df_tmp.columns):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'The column does not exist in your file'})
+
                 get_plot_trends_convergence_corr('fig', new_list_files, col, starttime, path_sim,
                                                  request.POST['name_analysis'], sep, skip_rows)
 
@@ -202,7 +214,7 @@ def smoothness_analysis(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character is not correct'})
-                elif col > len(df.columns):
+                elif col >= len(df.columns):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The column does not exist in your file'})
@@ -254,9 +266,11 @@ def sobol_generates_sample(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character is not correct'})
-                elif len(df_params.columns) > 4 or len(df_params.columns) > 4:
+                elif len(df_params.columns) != 4:
+                    shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                                         'mess': 'the number of expected columns is 4'})
+                                         'mess': 'the number of expected columns is 4: param_name, '
+                                                 'first_value, second_value, distribution'})
 
                 params, param_name = run_sobol_analysis(df_params, seed, request.POST['name_analysis'],
                                                         path_sim, n_comb=n_combinations)
@@ -323,6 +337,11 @@ def sobol_analyze(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character of the parameter file is not correct'})
+                elif len(df_params.columns) != 4:
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': 'the number of expected columns is 4: param_name, '
+                                                 'first_value, second_value, distribution'})
 
                 run_sobol_analysis(df_params, int(request.POST['seed']), request.POST['name_analysis'],
                                    path_sim, y=yy)
@@ -353,9 +372,9 @@ def lhs_analysis(request):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character of the parameter file is not correct'})
-                elif len(df_param.columns) > 3 or len(df_param.columns) < 3:
+                elif len(df_param.columns) != 3:
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                                         'mess': 'the number of expected columns is 3'})
+                                         'mess': 'the number of expected columns is 3: param_name, min, max'})
 
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
                 inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
