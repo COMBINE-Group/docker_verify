@@ -1,6 +1,9 @@
-# docker_verify
-Docker version of verify for Bioinformatics supplement CMISF 2020
+# Setting up
+If `docker` and `docker-compose` are not installed, [install them first](https://docs.docker.com/engine/install/).
 
-use the following command to re-buil the docker container in order to upgrade the requirements:
+# How to install MVT
 
-`docker-compose -f docker-compose-dev.yml up --build -d`
+1. Download the latest available release from [here](https://github.com/COMBINE-Group/docker_verify/releases)
+2. open a command line, and then: `docker load -i MVT_vX.X.X.tar.gz`, replace the `X` with the latest versione of MVT.
+3. after that, run this command in your command line `docker run -d -p 8000:8000 model_verification_tools:vX.X.X` replace the `X` with the latest versione of MVT.
+4. Open in your browser this link: 0.0.0.0:8000
