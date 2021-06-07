@@ -142,7 +142,7 @@ def time_step_analysis(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The column does not exist in your file'})
 
-                get_plot_trends_convergence_corr('fig', new_list_files, col, starttime, path_sim,
+                get_plot_trends_convergence_corr('results', new_list_files, col, starttime, path_sim,
                                                  request.POST['name_analysis'], sep, skip_rows)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
@@ -222,7 +222,7 @@ def smoothness_analysis(request):
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()
                 arr_time = df.iloc[:, 0].values.tolist()
-                run_smoothness_analysis(arr, arr_time, k, request.POST['name_analysis'], path_sim)
+                run_smoothness_analysis(arr, arr_time, k, request.POST['name_analysis'], path_sim, str(col))
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})

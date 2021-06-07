@@ -182,7 +182,7 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
 def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_rows):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title=filename_output, xlabel="values of the first column", ylabel="entities")
+    ax.set(title=filename_output, xlabel=f"values of the column {col}", ylabel="entities")
 
     for f in files:
         # lista = read_data(f)
@@ -190,9 +190,9 @@ def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_row
         time_step = (lista[2, 0] - lista[1, 0])
         if start != 0 or end != 0:
             listab = np.append(lista[:, 0:1], np.vstack(np.sum(lista[:, start:end + 1], axis=1)), axis=1)
-            ax.plot(listab[:, 0] / (3600 * 24), listab[:, 1], label=str(time_step / 3600) + ' hrs')
+            ax.plot(listab[:, 0] / (3600 * 24), listab[:, 1], label=str(time_step))
         else:
-            ax.plot(lista[:, 0] / (3600 * 24), lista[:, col], label=str(time_step / 3600) + ' hrs')
+            ax.plot(lista[:, 0] / (3600 * 24), lista[:, col], label=str(time_step))
 
     ax.legend()
     fig.savefig(os.path.join(path_sim, f'{filename_output}_trends.png'))
@@ -337,7 +337,7 @@ def existence_and_unique_analysis(csv_files, sep: str, skip_rows: int):
             return [1, index+1, col, val]
 
 
-def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str):
+def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str, col: str):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
     new_array = rolling_window(np.array(ll), (k_elem * 2) + 1)
@@ -356,15 +356,15 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
         else:
             array_result[i] = 0
         i += 1
-    plot_smoothness_analysis(arr_t, array_result, path_sim)
+    plot_smoothness_analysis(arr_t, array_result, path_sim, col)
     os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
     os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
 
 
-def plot_smoothness_analysis(axis_x, arr_result, path_sim):
+def plot_smoothness_analysis(axis_x, arr_result, path_sim, col):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title='Smoothness Analysis', xlabel='values of the first column')
+    ax.set(title='Smoothness Analysis', xlabel=f'values of the column{col}')
     ax.plot(axis_x, np.array(arr_result))
     fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'))
 
@@ -375,26 +375,32 @@ def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, pa
     ax = fig.add_subplot(311)
     ax.set(title='Time-to-PV - Convergence')
 
-    ax.plot(llist[:, 1], f_array_timeto_pv, 'bo-.', label='Time to Peak Value')
-    ax.set_ylim([0, 1.15 * (np.amax(f_array_timeto_pv) + starttime) + 0.01])
+    ax.plot(llist[:, 1], f_array_timeto_pv, 'bo-.', color='red', label='Time to Peak Value')
+    ax.relim()
+    # update ax.viewLim using the new dataLim
+    ax.autoscale_view()
     ax.legend()
 
     bx = fig.add_subplot(312)
     bx.set(title='PV - Convergence')
 
-    bx.plot(llist[:, 1], f_array_pv, 'ro-.', label=' Peak Value')
-    bx.set_ylim([1.15 * np.amin(f_array_pv) + 0.01, 1.15 * np.amax(f_array_pv) + 0.01])
+    bx.plot(llist[:, 1], f_array_pv, 'ro-.', color='blue',  label=' Peak Value')
+    bx.relim()
+    # update ax.viewLim using the new dataLim
+    bx.autoscale_view()
     bx.legend()
 
     cx = fig.add_subplot(313)
     cx.set(title='FV - Convergence')
 
-    cx.plot(llist[:, 1], f_array_fv, 'ro-.', label=' Final Value')
-    cx.set_ylim([1.15 * np.amin(f_array_fv) + 0.01, 1.15 * np.amax(f_array_fv) + 0.01])
+    cx.plot(llist[:, 1], f_array_fv, 'ro-.', color='green', label=' Final Value')
+    cx.relim()
+    # update ax.viewLim using the new dataLim
+    cx.autoscale_view()
     cx.legend()
 
     fig.text(0.5, 0.004, '# iterations', ha='center')
-    fig.text(0.04, 0.5, 'Convergence estimation (%)', va='center', rotation='vertical')
+    fig.text(0.95, 0.5, 'Convergence estimation (%)', va='center', rotation='vertical')
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     fig.savefig(os.path.join(path_sim, '%s.png' % 'behavior_and_variation_PV'))
@@ -424,8 +430,8 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
     fig = plt.figure()
     ax = fig.add_subplot(211)
     bx = fig.add_subplot(212)
-    ax.set(title='%s - Pearson Correlation coeff' % filename_output, xlabel="# of iterations", ylabel="PCC")
-    bx.set(title='%s - RMSE' % filename_output, xlabel="# of iterations", ylabel="RMSE")
+    ax.set(title='Pearson Correlation coefficent', xlabel="# of iterations", ylabel="PCC")
+    bx.set(title='RMSE', xlabel="# of iterations", ylabel="RMSE")
 
     toplot = np.array([rt[:, 1], r]).T
     toplot = toplot[toplot[:, 0].argsort()]
