@@ -12,7 +12,7 @@ from utilities.tools import (check_content_type, check_status_simulation,
                              get_plot_trends_convergence_corr, get_sep,
                              run_lhs_analysis, run_prcc_analysis,
                              run_prcc_specific_ts, run_smoothness_analysis,
-                             run_sobol_analysis, save_files, get_correct_col_value)
+                             run_sobol_analysis, save_files, get_correct_col_value, is_columns_object)
 
 
 def verify_lhs_prcc(response):
@@ -140,7 +140,12 @@ def time_step_analysis(request):
                 elif col >= len(df_tmp.columns):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                                         'mess': 'The column does not exist in your file'})
+                                         'mess': f'The column {col} does not exist in your file'})
+
+                if is_columns_object(new_list_files, sep, skip_rows):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator'})
 
                 get_plot_trends_convergence_corr('results', new_list_files, col, starttime, path_sim,
                                                  request.POST['name_analysis'], sep, skip_rows)

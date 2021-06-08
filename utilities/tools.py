@@ -672,8 +672,13 @@ def get_correct_col_value(col: int):
     return col
 
 
-def is_sep_correct(df: pd.DataFrame):
-    if len(df.columns) == 1:
-        return False
+def is_columns_object(list_df: [], sep: str, skip_rows: int):
+    flag = False
+    i = 0
+    while not flag and i < len(list_df):
+        df = pd.read_csv(list_df[i], sep=sep, skiprows=skip_rows)
+        i = i + 1
+        if not df.select_dtypes(exclude=['int64', 'float64', 'int32', 'float32']).empty:
+            flag = True
 
-    return True
+    return flag
