@@ -672,7 +672,7 @@ def get_correct_col_value(col: int):
     return col
 
 
-def is_columns_object(list_df: [], sep: str, skip_rows: int):
+def is_columns_object(list_df: [], sep: str, skip_rows: int = None):
     flag = False
     i = 0
     while not flag and i < len(list_df):

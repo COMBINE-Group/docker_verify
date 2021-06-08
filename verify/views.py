@@ -170,6 +170,10 @@ def uniqueness_analysis(request):
                 sep = get_sep(request.POST['sep'])
                 skip_rows = int(request.POST['skip_rows'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
+                if is_columns_object(new_list_files, sep, skip_rows):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator'})
 
                 result = existence_and_unique_analysis(new_list_files, sep, skip_rows)
 
@@ -224,6 +228,11 @@ def smoothness_analysis(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The column does not exist in your file'})
 
+                if is_columns_object(new_list_files, sep, skip_rows):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator'})
+
                 k = int(request.POST['k_select'])
                 arr = df.iloc[:, col].values.tolist()
                 arr_time = df.iloc[:, 0].values.tolist()
@@ -276,6 +285,11 @@ def sobol_generates_sample(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'the number of expected columns is 4: param_name, '
                                                  'first_value, second_value, distribution'})
+
+                if is_columns_object(new_list_files, sep):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator'})
 
                 params, param_name = run_sobol_analysis(df_params, seed, request.POST['name_analysis'],
                                                         path_sim, n_comb=n_combinations)
@@ -348,6 +362,18 @@ def sobol_analyze(request):
                                          'mess': 'the number of expected columns is 4: param_name, '
                                                  'first_value, second_value, distribution'})
 
+                if is_columns_object(list_files_uploaded_1, sep_output_model_file):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal '
+                                                 f'separator in the output model files'})
+
+                if is_columns_object(list_files_uploaded, sep_input_parameter_file):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator '
+                                                 f'in the parameter file'})
+
                 run_sobol_analysis(df_params, int(request.POST['seed']), request.POST['name_analysis'],
                                    path_sim, y=yy)
 
@@ -380,6 +406,12 @@ def lhs_analysis(request):
                 elif len(df_param.columns) != 3:
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'the number of expected columns is 3: param_name, min, max'})
+
+                if is_columns_object(list_files_uploaded, sep):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator '
+                                                 f'in the parameter file'})
 
                 tuple_min_max_vf = list(zip(df_param['min'], df_param['max']))
                 inputs_space = dict(zip(df_param['param_name'], tuple_min_max_vf))
@@ -446,6 +478,12 @@ def prcc_analysis(request):
                                      low_memory=False, header=None)
                     ll.append(df)
 
+                if is_columns_object(matrix_from_output, sep_for_files):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator '
+                                                 f'in the outputs model file'})
+
                 header = ["time"] + [str(i) for i in range(0, len(ll))]
                 matrix_output = pd.concat(ll, axis=1, ignore_index=True)
                 matrix_output.columns = header
@@ -493,7 +531,7 @@ def prcc_analysis_specific_ts(request):
                                      na_filter=False,
                                      low_memory=False, header=None)
                     ll.append(df)
-                except:
+                except ValueError as e:
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The separator character of the outputs model file is not correct, '
@@ -504,6 +542,12 @@ def prcc_analysis_specific_ts(request):
                                      na_filter=False,
                                      low_memory=False, header=None)
                     ll.append(df)
+
+                if is_columns_object(matrix_from_output, sep_for_files):
+                    shutil.rmtree(path_sim)
+                    return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
+                                         'mess': f'There are some columns with comma as decimal separator '
+                                                 f'in the outputs model file'})
 
                 header = ["time"] + [str(i) for i in range(0, len(ll))]
                 matrix_output = pd.concat(ll, axis=1, ignore_index=True)
