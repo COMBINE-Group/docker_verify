@@ -167,6 +167,9 @@
                                                 <li><strong>Number of combinations:</strong>The user use this parameter
                                                     to set the number of samples to generate
                                                 </li>
+                                                <li><strong>Skip values:</strong> is the number of points in Sobol' sequence to skip.
+                                                    This must be an exponent of 2 and its is used for obtaining different samples
+                                                </li>
                                                 <li><strong>Input parameter file:</strong> is a CSV file that defines
                                                     the parameters of the model and its range values. The file must have
                                                     a header and this structure:
@@ -177,7 +180,7 @@
                                                         <li><strong>second_value:</strong> see the below table</li>
                                                         <li><strong>distribution:</strong> it represent the distribution
                                                             for each parameter. You can choose among: <code>"unif",
-                                                                "triang", "norm" and "lognorm"</code></li>
+                                                                "norm" and "lognorm"</code></li>
                                                     </ul>
                                                 </li>
                                             </ul>
@@ -200,11 +203,6 @@
                                                             <th scope="row">unif</th>
                                                             <td>Minimum</td>
                                                             <td>Maximum</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">triang</th>
-                                                            <td>Jacob</td>
-                                                            <td>Thornton</td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">norm</th>

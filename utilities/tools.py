@@ -672,11 +672,13 @@ def get_correct_col_value(col: int):
     return col
 
 
-def is_columns_object(list_df: [], sep: str, skip_rows: int = None):
+def is_columns_object(list_df: [], sep: str, skip_rows: int = None, columns_to_drop: list = None):
     flag = False
     i = 0
     while not flag and i < len(list_df):
         df = pd.read_csv(list_df[i], sep=sep, skiprows=skip_rows)
+        if columns_to_drop is not None:
+            df.drop(columns_to_drop, axis=1, inplace=True)
         i = i + 1
         if not df.select_dtypes(exclude=['int64', 'float64', 'int32', 'float32']).empty:
             flag = True

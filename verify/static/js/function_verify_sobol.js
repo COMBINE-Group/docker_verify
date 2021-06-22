@@ -23,7 +23,7 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let number_combinations = $("#number_combinations_sobol").val()
-        let seed = $("#seed_analysis").val()
+        let skip_values = $("#skip_value").val()
         let filesInputSobol = $("#files_input_sobol")
         let char_sep = $('select[name=sep_sobol_generates_sample]').val();
 
@@ -36,7 +36,7 @@ $(document).ready(function () {
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("number_combinations", number_combinations)
-            data.append("seed", seed)
+            data.append("skip_values", skip_values)
             data.append("sep", char_sep)
             data.append("name_analysis", name_analysis[0])
 

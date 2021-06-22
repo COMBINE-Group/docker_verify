@@ -253,21 +253,21 @@ def sobol_generates_sample(request):
         if len(request.FILES.getlist('file')) == 1:
             if check_content_type(request.FILES.getlist('file'), 'text/csv,application/octet-stream'):
 
-                seed = int(request.POST['seed'])
+                skip_values = int(request.POST['skip_values'])
                 n_combinations = int(request.POST['number_combinations'])
                 sep = get_sep(request.POST['sep'])
 
-                if not ((seed & (seed - 1) == 0) and (seed != 0 and seed - 1 != 0)):
+                if not ((skip_values & (skip_values - 1) == 0) and (skip_values != 0 and skip_values - 1 != 0)):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                                         'mess': 'The seed must be an exponent of 2 '})
+                                         'mess': 'The skip values must be an exponent of 2 '})
 
                 if not ((n_combinations & (n_combinations - 1) == 0) and (n_combinations != 0 and n_combinations - 1 != 0)):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The number of combination must be an exponent of 2 '})
 
-                if n_combinations > seed:
+                if n_combinations > skip_values:
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
-                                         'mess': 'The number of combination must be lower of seed '})
+                                         'mess': 'The number of combination must be lower of skip_values '})
 
                 path_sim = create_simulation_folder(settings.MEDIA_DIR_VERIFY, 'Anonymous',
                                                     request.POST['name_analysis'])
@@ -407,7 +407,7 @@ def lhs_analysis(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'the number of expected columns is 3: param_name, min, max'})
 
-                if is_columns_object(list_files_uploaded, sep):
+                if is_columns_object(list_files_uploaded, sep, columns_to_drop=['param_name']):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator '
