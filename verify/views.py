@@ -291,7 +291,7 @@ def sobol_generates_sample(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator'})
 
-                params, param_name = run_sobol_analysis(df_params, seed, request.POST['name_analysis'],
+                params, param_name = run_sobol_analysis(df_params, skip_values, request.POST['name_analysis'],
                                                         path_sim, n_comb=n_combinations)
 
                 np.savetxt(os.path.join(path_sim, 'sobol_matrix.csv'), params, delimiter=',', fmt='%f',
