@@ -412,13 +412,17 @@ def plot_peak_value(dlist, dlabel, path_sim, starttime=0, endtime=float('inf')):
     ax = fig.add_subplot(211)
     ax.set(title=str(dlabel) + ' - Peak Value', xlabel="# iterations", ylabel="Peak Value")
     ax.plot(dlist[:, 1], dlist[:, 3], 'ro-.', label=' Peak Value')
-    ax.set_ylim([0, 1.15 * np.amax(dlist[:, 3]) + 0.01])
+    ax.relim()
+    # update ax.viewLim using the new dataLim
+    ax.autoscale_view()
     ax.legend()
 
     bx = fig.add_subplot(212)
     bx.set(title=str(dlabel) + ' - Time to PV', xlabel="# iterations", ylabel="Time to PV (secs)")
     bx.plot(dlist[:, 1], dlist[:, 2] + starttime, 'bo-.', label=' Time to Peak Value')
-    bx.set_ylim([0, 1.15 * (np.amax(dlist[:, 2]) + starttime) + 0.01])
+    bx.relim()
+    # update ax.viewLim using the new dataLim
+    bx.autoscale_view()
     bx.legend()
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
@@ -436,13 +440,17 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
     toplot = np.array([rt[:, 1], r]).T
     toplot = toplot[toplot[:, 0].argsort()]
     ax.plot(toplot[:-1, 0], toplot[:-1, 1], 'or-.', label='Pearson Corr Coeff')
-    ax.set_ylim([0, 1.1])
+    ax.relim()
+    # update ax.viewLim using the new dataLim
+    ax.autoscale_view()
     ax.legend()
 
     toplot = np.array([rt[:, 1], rmse]).T
     toplot = toplot[toplot[:, 0].argsort()]
     bx.plot(toplot[:-1, 0], toplot[:-1, 1], 'og-.', label='RMSE')
-    bx.set_ylim([0, 1.15 * np.amax(toplot[:-1, 1]) + 0.01])
+    bx.relim()
+    # update ax.viewLim using the new dataLim
+    bx.autoscale_view()
     bx.legend()
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
