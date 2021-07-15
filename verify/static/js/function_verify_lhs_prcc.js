@@ -266,6 +266,7 @@ $(document).ready(function () {
 
         let id_sim_pat = this.value;
 
+
         if (id_sim_pat.includes(name_analysis[0])) {
             download_matrix(id_sim_pat, ['matrix_lhs.csv'], ['LHS matrix'])
 
@@ -273,28 +274,8 @@ $(document).ready(function () {
             if (id_sim_pat.includes(name_analysis[1])) {
                 download_matrix(id_sim_pat, ['plot_prcc_overtime.pdf', 'time_corr.json'], ['Download PDF plot', 'Download Time Correlation file'])
             } else {
-                let type_plot = tagSelect.val();
-
-                if (id_sim_pat !== '') {
-                    //set id simulation
-                    $('input[name=selectIdSimulation]').val(id_sim_pat);
-
-                    $(".printPlot").attr("src", '');
-
-                    $(".divPlot").removeAttr("style");
-
-                    showPlot(id_sim_pat, type_plot)
-                }
+                download_matrix(id_sim_pat, ['plot_prcc_specific_ts.pdf'], ['Download PDF plots'])
             }
         }
-    });
-
-    // handles the change of the plots
-    $('select[name=type_plot]').on('change', function () {
-
-        let type_plot = $('select[name=type_plot]').val();
-        let id_sim_pat = $('input[name=selectIdSimulation]').val();
-
-        showPlot(id_sim_pat, type_plot);
     });
 });
