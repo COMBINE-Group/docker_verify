@@ -51,7 +51,7 @@ function download_matrix(id_sim_pat, name_file, msg) {
 
     swal({
         title: '<i>Download</i>',
-        type: 1,
+        type: 'success',
         html: html,
         showCloseButton: true,
         showCancelButton: false,
