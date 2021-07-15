@@ -228,7 +228,7 @@ def smoothness_analysis(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': 'The column does not exist in your file'})
 
-                if is_columns_object(new_list_files, sep, skip_rows):
+                if is_columns_object(new_list_files, sep, skip_rows=skip_rows):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator'})
@@ -286,7 +286,7 @@ def sobol_generates_sample(request):
                                          'mess': 'the number of expected columns is 4: param_name, '
                                                  'first_value, second_value, distribution'})
 
-                if is_columns_object(new_list_files, sep):
+                if is_columns_object(new_list_files, sep, request.POST['name_analysis']):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator'})
@@ -334,7 +334,7 @@ def sobol_analyze(request):
                 ll = []
                 for path in list_files_uploaded_1:
                     df = pd.read_csv(path, sep=sep_output_model_file, engine='c', na_filter=False, low_memory=False,
-                                     header=None)
+                                     header=None, comment='#')
                     if len(df.columns) == 1:
                         shutil.rmtree(path_sim)
                         return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
@@ -368,14 +368,13 @@ def sobol_analyze(request):
                                          'mess': f'There are some columns with comma as decimal '
                                                  f'separator in the output model files'})
 
-                if is_columns_object(list_files_uploaded, sep_input_parameter_file):
+                if is_columns_object(list_files_uploaded, sep_input_parameter_file, 'sobol_generates_samples'):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator '
                                                  f'in the parameter file'})
 
-                run_sobol_analysis(df_params, int(request.POST['seed']), request.POST['name_analysis'],
-                                   path_sim, y=yy)
+                run_sobol_analysis(df_params, request.POST['name_analysis'], path_sim, y=yy)
 
                 return JsonResponse({'status': 1, 'type': 'success', 'title': '<u>Completed</u>',
                                      'mess': '', 'data': ''})
@@ -465,7 +464,7 @@ def prcc_analysis(request):
                 ll = []
                 try:
                     df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c', na_filter=False,
-                                     low_memory=False, header=None)
+                                     low_memory=False, header=None, comment='#')
                     ll.append(df)
                 except ValueError as e:
                     shutil.rmtree(path_sim)
@@ -475,7 +474,7 @@ def prcc_analysis(request):
 
                 for i in range(1, len(matrix_from_output)):
                     df = pd.read_csv(matrix_from_output[i], sep=sep_for_files, usecols=[col], engine='c', na_filter=False,
-                                     low_memory=False, header=None)
+                                     low_memory=False, header=None, comment='#')
                     ll.append(df)
 
                 if is_columns_object(matrix_from_output, sep_for_files):
@@ -528,8 +527,7 @@ def prcc_analysis_specific_ts(request):
                 ll = []
                 try:
                     df = pd.read_csv(matrix_from_output[0], sep=sep_for_files, usecols=[0, col], engine='c',
-                                     na_filter=False,
-                                     low_memory=False, header=None)
+                                     na_filter=False, low_memory=False, header=None, comment='#')
                     ll.append(df)
                 except ValueError as e:
                     shutil.rmtree(path_sim)
@@ -539,8 +537,7 @@ def prcc_analysis_specific_ts(request):
 
                 for i in range(1, len(matrix_from_output)):
                     df = pd.read_csv(matrix_from_output[i], sep=sep_for_files, usecols=[col], engine='c',
-                                     na_filter=False,
-                                     low_memory=False, header=None)
+                                     na_filter=False, low_memory=False, header=None, comment='#')
                     ll.append(df)
 
                 if is_columns_object(matrix_from_output, sep_for_files):

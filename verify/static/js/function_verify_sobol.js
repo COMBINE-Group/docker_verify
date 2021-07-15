@@ -23,7 +23,7 @@ $(document).ready(function () {
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let number_combinations = $("#number_combinations_sobol").val()
-        let skip_values = $("#skip_value").val()
+        let skip_values = $("#skip_values").val()
         let filesInputSobol = $("#files_input_sobol")
         let char_sep = $('select[name=sep_sobol_generates_sample]').val();
 
@@ -106,7 +106,6 @@ $(document).ready(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
-        let seed = $("#seed_analyze").val()
         let filesRangeParameter = $("#file_range_parameter")
         let filesOutputModel = $("#file_output_model")
         let char_sep_input_parameter_file = $('select[name=sep_sobol_analyze_parameter_file]').val();
@@ -126,7 +125,6 @@ $(document).ready(function () {
                 data.append("file_output_model", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("seed", seed)
             data.append("sep_input_parameter_file", char_sep_input_parameter_file)
             data.append("sep_output_model_file", sep_output_model_file)
             data.append("name_analysis", name_analysis[1])

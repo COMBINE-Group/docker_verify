@@ -182,7 +182,6 @@ def get_plot_trends_convergence_corr(filename_output, files, column, starttime, 
 def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_rows):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title=filename_output, xlabel=f"values of the column {col}", ylabel="entities")
 
     for f in files:
         # lista = read_data(f)
@@ -194,8 +193,10 @@ def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_row
         else:
             ax.plot(lista[:, 0] / (3600 * 24), lista[:, col], label=str(time_step))
 
+    col = int(col) + 1
+    ax.set(title=filename_output, xlabel=f"values of the column {col}", ylabel="entities")
     ax.legend()
-    fig.savefig(os.path.join(path_sim, f'{filename_output}_trends.png'))
+    fig.savefig(os.path.join(path_sim, f'{filename_output}_trends.png'), format='png')
 
 
 def convergence_calc(q_i, q_ii, mean_value):
@@ -364,9 +365,10 @@ def run_smoothness_analysis(ll, arr_t, k_elem, name_analysis: str, path_sim: str
 def plot_smoothness_analysis(axis_x, arr_result, path_sim, col):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.set(title='Smoothness Analysis', xlabel=f'values of the column{col}')
+    col = int(col) + 1
+    ax.set(title='Smoothness Analysis', xlabel=f'values of the column {col}')
     ax.plot(axis_x, np.array(arr_result))
-    fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'))
+    fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'), format='png')
 
 
 def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, path_sim, starttime):
@@ -403,7 +405,7 @@ def plot_convergence_pv_tpv(llist, f_array_timeto_pv, f_array_pv, f_array_fv, pa
     fig.text(0.95, 0.5, 'Convergence estimation (%)', va='center', rotation='vertical')
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
-    fig.savefig(os.path.join(path_sim, '%s.png' % 'behavior_and_variation_PV'))
+    fig.savefig(os.path.join(path_sim, '%s.png' % 'behavior_and_variation_PV'), format='png')
 
 
 def plot_peak_value(dlist, dlabel, path_sim, starttime=0, endtime=float('inf')):
@@ -427,7 +429,7 @@ def plot_peak_value(dlist, dlabel, path_sim, starttime=0, endtime=float('inf')):
 
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
-    fig.savefig(os.path.join(path_sim, '%s_peak_value_time_to_pv.png' % dlabel))
+    fig.savefig(os.path.join(path_sim, '%s_peak_value_time_to_pv.png' % dlabel), format='png')
 
 
 def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
@@ -454,11 +456,11 @@ def plot_rmse_pearsoncoeff(filename_output, rt, r, rmse, path_sim):
     bx.legend()
     fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.5, hspace=0.7)
     # plt.show()
-    fig.savefig(os.path.join(path_sim, '%s_pearson_corr_RMSE.png' % filename_output))
+    fig.savefig(os.path.join(path_sim, '%s_pearson_corr_RMSE.png' % filename_output), format='png')
 
 
 # SOBOL ANALYSIS
-def run_sobol_analysis(df_params, seed, name_analysis: str, path_sim: str, y=None, n_comb=None):
+def run_sobol_analysis(df_params, skip_values, name_analysis: str, path_sim: str, y=None, n_comb=None):
     os.mknod(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
 
     # Number of parameters to sample
@@ -476,20 +478,20 @@ def run_sobol_analysis(df_params, seed, name_analysis: str, path_sim: str, y=Non
 
     if y is not None:
         # Perform analysis
-        s_i = sobol.analyze(problem, y, seed=seed)
+        s_i = sobol.analyze(problem, y)
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set(title='Sobol Analysis')
         ax.bar(names, s_i['S1'])
-        fig.savefig(os.path.join(path_sim, 'Sobol_Analysis.png'))
+        fig.savefig(os.path.join(path_sim, 'Sobol_Analysis.png'), format='png')
         os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
         os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
     else:
         # Number of samples to draw for each parameter
         sample_count = int(n_comb)
         # Generate samples
-        param_values = saltelli.sample(problem, sample_count, skip_values=seed)
+        param_values = saltelli.sample(problem, sample_count, skip_values=skip_values)
         os.remove(os.path.join(path_sim, f'STARTED_{name_analysis}.process'))
         os.mknod(os.path.join(path_sim, f'FINISHED_{name_analysis}.process'))
         return param_values, names
@@ -572,6 +574,15 @@ def run_prcc_specific_ts(lhs_matrix: pd.DataFrame, output_matrix: pd.DataFrame, 
     name_pdf_file = os.path.join(path_sim, 'plot_prcc_specific_ts.pdf')
     flag = False
 
+    # reset index to avoid problems with concat
+    lhs_matrix.reset_index(drop=True, inplace=True)
+    matrix_output.reset_index(drop=True, inplace=True)
+    df_lhs_output = pd.concat([lhs_matrix, matrix_output], axis=1)
+    col = list(df_lhs_output.columns)
+    col[2] = 'time_0'
+    df_lhs_output.columns = col
+    output = pg.pairwise_corr(data=df_lhs_output, columns=list(col), method='spearman')
+
     with PdfPages(name_pdf_file) as pdf:
         for i in range(0, lhs_ranked.shape[1]):  # loop over parameter
             tmp = np.delete(lhs_ranked, i, axis=1)
@@ -591,8 +602,10 @@ def run_prcc_specific_ts(lhs_matrix: pd.DataFrame, output_matrix: pd.DataFrame, 
 
                 ax.scatter(residual_output_ranked, residual_lhs_ranked)
                 ax.legend([lhs_matrix.columns[i]])
-                plt.ylabel(f"Time Step: {request.POST['timeStep']}")
+                prcc_val = output[(output['X'] == lhs_matrix.columns[i]) & (output['Y'] == 'time_0')]['r'].iloc[0]
+                plt.title(f"Time Step: {request.POST['timeStep']}\n PRCC: {round(prcc_val, 4)}")
                 plt.xlabel(lhs_matrix.columns[i])
+                plt.ylabel(f"column: {str(int(request.POST['col']))}")
                 pdf.savefig(fig)
                 plt.close(fig)
 
@@ -680,15 +693,16 @@ def get_correct_col_value(col: int):
     return col
 
 
-def is_columns_object(list_df: [], sep: str, skip_rows: int = None, columns_to_drop: list = None):
+def is_columns_object(list_df: [], sep: str, type_analysis: str = 'None', skip_rows: int = None, columns_to_drop: list = None):
     flag = False
     i = 0
     while not flag and i < len(list_df):
-        df = pd.read_csv(list_df[i], sep=sep, skiprows=skip_rows)
+        df = pd.read_csv(list_df[i], sep=sep, skiprows=skip_rows, comment='#')
         if columns_to_drop is not None:
             df.drop(columns_to_drop, axis=1, inplace=True)
         i = i + 1
         if not df.select_dtypes(exclude=['int64', 'float64', 'int32', 'float32']).empty:
-            flag = True
+            if not 'sobol_generates_samples' == type_analysis:
+                flag = True
 
     return flag
