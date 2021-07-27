@@ -157,7 +157,7 @@ $(document).ready(function () {
                             }
 
                             swal({
-                                title: '<i>' + result.mess + '</i>',
+                                title: '<i>' + result.title + '</i>',
                                 type: result.type,
                                 html: html,
                                 showCloseButton: true,

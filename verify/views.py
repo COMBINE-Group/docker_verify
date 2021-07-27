@@ -170,7 +170,7 @@ def uniqueness_analysis(request):
                 sep = get_sep(request.POST['sep'])
                 skip_rows = int(request.POST['skip_rows'])
                 new_list_files = save_files(request.FILES.getlist('file'), path_sim)
-                if is_columns_object(new_list_files, sep, skip_rows):
+                if is_columns_object(new_list_files, sep, skip_rows=skip_rows):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator'})
