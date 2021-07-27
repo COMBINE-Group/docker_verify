@@ -194,7 +194,7 @@ def plot_trends(filename_output, files, start, end, col, path_sim, sep, skip_row
             ax.plot(lista[:, 0] / (3600 * 24), lista[:, col], label=str(time_step))
 
     col = int(col) + 1
-    ax.set(title=filename_output, xlabel=f"values of the column {col}", ylabel="entities")
+    ax.set(title=f"values of the column {col}", xlabel=f"time (days)", ylabel="entities")
     ax.legend()
     fig.savefig(os.path.join(path_sim, f'{filename_output}_trends.png'), format='png')
 
@@ -366,7 +366,7 @@ def plot_smoothness_analysis(axis_x, arr_result, path_sim, col):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     col = int(col) + 1
-    ax.set(title='Smoothness Analysis', xlabel=f'values of the column {col}')
+    ax.set(title='Smoothness Analysis', xlabel="time (seconds)", ylabel=f'values of the column {col}')
     ax.plot(axis_x, np.array(arr_result))
     fig.savefig(os.path.join(path_sim, 'Smoothness_Analysis.png'), format='png')
 

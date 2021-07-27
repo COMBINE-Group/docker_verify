@@ -142,7 +142,7 @@ def time_step_analysis(request):
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'The column {col} does not exist in your file'})
 
-                if is_columns_object(new_list_files, sep, skip_rows):
+                if is_columns_object(new_list_files, sep, skip_rows=skip_rows):
                     shutil.rmtree(path_sim)
                     return JsonResponse({'status': 0, 'type': 'error', 'title': 'Error!',
                                          'mess': f'There are some columns with comma as decimal separator'})
