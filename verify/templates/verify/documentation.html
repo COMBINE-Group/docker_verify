@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>Deterministic Model Verification tools for discrete-time models</h3>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12">
+                    <div class="x_panel">
+
+                        <div class="x_title">
+                            <h2><i class="fa fa-align-left"></i>Documentation</h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+                            <!-- start accordion -->
+                            <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingZero"
+                                       data-toggle="collapse"
+                                       data-parent="#accordion" href="#collapseZero" aria-expanded="false"
+                                       aria-controls="collapseZero">
+                                        <h4 class="panel-title">Common Input Parameters of the Analysis</h4>
+                                    </a>
+                                    <div id="collapseZero" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingZero">
+                                        <div class="panel-body">
+                                            <p> This section groups all parameters in common among Model Verification
+                                                Tools
+                                            </p>
+
+                                            <ul>
+                                                <li><strong>Skip Rows:</strong> This value represents the number of rows
+                                                    that must be removed from the input files before proceeding with the
+                                                    analysis, and it is useful to remove unneeded values such
+                                                    columns headers or other information;
+                                                </li>
+                                                <li><strong>Column to Analyze:</strong> This parameter allows to
+                                                    select the column on which to perform the analysis
+                                                </li>
+                                                <li><strong>Separator character:</strong> it represents the field
+                                                    separator that is used to separate the columns in the uploaded
+                                                    files.
+                                                    The model Verification Tools support four separator
+                                                    (space, tab, comma and semicolon)
+                                                </li>
+                                                <li><strong>Seed:</strong> this parameter sets the random-seed for the
+                                                    generation of the sample-set
+                                                </li>
+                                            </ul>
+                                            <p><strong>WARNING:</strong> The values inside the files must use the
+                                                decimal point as separator(No comma).
+                                                Otherwise, the analysis can not be performed.</p>
+                                            <p><strong>WARNING:</strong> The values of the first column of all input
+                                                files, represent the time.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingOne" data-toggle="collapse"
+                                       data-parent="#accordion" href="#collapseOne" aria-expanded="false"
+                                       aria-controls="collapseOne">
+                                        <h4 class="panel-title">Smooothness Analysis</h4>
+                                    </a>
+                                    <div id="collapseOne" class="panel-collapse in collapse" role="tabpanel"
+                                         aria-labelledby="headingOne" style="">
+                                        <div class="panel-body">
+                                            <div class="panel-body">
+                                                <p>The Smoothness Analysis can be used to evaluate the singularities,
+                                                    discontinuities and buckling errors inside your model.
+                                                </p>
+                                                <p><strong>Input Parameters</strong>
+                                                </p>
+                                                <ul>
+                                                    <li><strong>Window size: </strong> In order to detect possible
+                                                        local roughness in the model, our smoothness analysis perform a
+                                                        coefficient of variation using the k nearest neighbours in the
+                                                        windows.
+                                                        This parameter allow to choose the window size.
+                                                    </li>
+                                                    <li><strong>File to analyze:</strong> is a ASCII or CSV file that
+                                                        defines the model outputs in which the first column usually
+                                                        represents the time (expressed as a physical time or time-step
+                                                        number), and the other columns represent the outputs to be
+                                                        analyzed.
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingTwo" data-toggle="collapse"
+                                       data-parent="#accordion" href="#collapseTwo" aria-expanded="false"
+                                       aria-controls="collapseTwo">
+                                        <h4 class="panel-title">Time Step Convergence Analysis</h4>
+                                    </a>
+                                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingTwo">
+                                        <div class="panel-body">
+                                            <p>This analysis allows to determine if there is a convergence
+                                                in the behavior of the model outputs as the time-step length becomes
+                                                narrower.
+                                            </p>
+                                            <p><strong>Input Parameters</strong></p>
+                                            <ul>
+                                                <li><strong>File to analyze:</strong> The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed. At the moment, Time Step Convergence
+                                                    Analysis
+                                                    consider the peak-value and the relative time-to-peak-value.
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingThree"
+                                       data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                                       aria-expanded="false" aria-controls="collapseThree">
+                                        <h4 class="panel-title">
+                                            Uniqueness Analysis</h4>
+                                    </a>
+                                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingThree">
+                                        <div class="panel-body">
+                                            <p>The aims of this analysis is to check if repeated executions on the same
+                                                input parameter set lead to identical output.
+                                            </p>
+                                            <p><strong>Input Parameters</strong></p>
+                                            <ul>
+                                                <li><strong>File to analyze:</strong> The user can upload one or more
+                                                    files in ASCII or CSV format.
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingFourth"
+                                       data-toggle="collapse" data-parent="#accordion" href="#collapseFourth"
+                                       aria-expanded="false" aria-controls="collapseFourth">
+                                        <h4 class="panel-title">Sobol Analysis</h4>
+                                    </a>
+                                    <div id="collapseFourth" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingFourth">
+                                        <div class="panel-body">
+                                            <p>Sobol Sensitivity Analysis methodology, is a technique to perform a
+                                                variance based sensitivity analysis of model output.
+                                            </p>
+                                            <p><strong>Input Parameters for SOBOL sample generation</strong></p>
+                                            <ul>
+                                                <li><strong>Number of combinations:</strong>The user use this parameter
+                                                    to set the number of samples to generate. The number of combination must be an exponent of 2
+                                                </li>
+                                                <li><strong>Skip values:</strong> is the number of points in Sobol' sequence to skip.
+                                                    This must be an exponent of 2 and its is used for obtaining different samples
+                                                </li>
+                                                <li><strong>Input parameter file:</strong> is a CSV file that defines
+                                                    the parameters of the model and its range values. The file must have
+                                                    a header and this structure:
+                                                    <ul>
+                                                        <li><strong>param_name:</strong> is the name of the parameters
+                                                        </li>
+                                                        <li><strong>first_value:</strong> see the below table</li>
+                                                        <li><strong>second_value:</strong> see the below table</li>
+                                                        <li><strong>distribution:</strong> it represent the distribution
+                                                            for each parameter. You can choose among: <code>"unif",
+                                                                "norm" and "lognorm"</code></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            <p><strong>WARNING:</strong> The columns <code>first_value</code> and
+                                                <code>second_value</code> take on different meanings
+                                                according to the chosen distribution. the following table shows the
+                                                corresponding values according to the chosen distribution.
+                                            <div class="clearfix">
+                                                <div class="x_content">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Distribution</th>
+                                                            <th>First value</th>
+                                                            <th>Second value</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <th scope="row">unif</th>
+                                                            <td>Minimum</td>
+                                                            <td>Maximum</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">norm</th>
+                                                            <td>Mean</td>
+                                                            <td>Standard Deviation</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">lognorm</th>
+                                                            <td>Mean</td>
+                                                            <td>Standard Deviation</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            </p>
+                                            <p><strong>WARNING:</strong> The tools calculate the second-order
+                                                sensitivities, so the output matrix has <code>N * (2D + 2)</code> rows.
+                                                Where D is the number of parameters and N is The number of samples to
+                                                generate.
+                                                Further information, read the
+                                                <a href="https://salib.readthedocs.io/en/latest/api.html#sobol-sensitivity-analysis"
+                                                   target="_blank"><strong><u>official documentation</u></strong></a>
+                                            </p>
+                                            <p><strong>Input Parameters for SOBOL analysis</strong></p>
+                                            <ul>
+                                                <li><strong>Number of combinations:</strong> is the same of the sample
+                                                    generation
+                                                </li>
+                                                <li><strong>Input parameter file:</strong> is the same of the sample
+                                                    generation
+                                                </li>
+                                                <li><strong>Output files from the model:</strong> Here, the users upload
+                                                    the model outputs files, in ASCII or CSV format, without Header.
+                                                    In order to performs correctly the analysis it is important to
+                                                    rename the files correctly.
+                                                    <div class="clearfix">
+                                                        The name of the output model files would be,
+                                                        ("0_1.csv", "0_2.csv",..., "o_n.csv"). For example, the
+                                                        "0_1.csv"
+                                                        file represent the output of the model that uses the first row
+                                                        values obtained from the Sample Generation output matrix.
+                                                    </div>
+                                                    <div class="clearfix"> The "0_2.csv" file represent the output of
+                                                        the model that uses the second row values obtained from the
+                                                        Sample Generation output matrix and so on
+                                                    </div>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingFifth"
+                                       data-toggle="collapse" data-parent="#accordion" href="#collapseFifth"
+                                       aria-expanded="false" aria-controls="collapseFifth">
+                                        <h4 class="panel-title">Latin Hypercube Sampling Analysis and Partial Rank
+                                            Correlation Coefficients Analysis</h4>
+                                    </a>
+                                    <div id="collapseFifth" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingFifth">
+                                        <div class="panel-body">
+
+                                            <p><strong>Input Parameters for Latin Hypercupe Sampling </strong></p>
+                                            <p>Latin hypercube sampling is a statistical method for generating a
+                                                near-random sample of parameter values from a multidimensional
+                                                distribution.
+                                            </p>
+                                            <ul>
+                                                <li><strong>Number of samples:</strong> Defines the number of samples
+                                                </li>
+                                                <li><strong>Iterations:</strong> Defines the number of iterations for
+                                                    optimizing LHS
+                                                </li>
+                                                <li><strong>Input parameter file:</strong> is a CSV file
+                                                    that defines the parameters of the model and its minimum and maximum
+                                                    values.
+                                                    The file must have a header and this structure:
+                                                    <ul>
+                                                        <li><strong>param_name:</strong> is the name of the parameter
+                                                        </li>
+                                                        <li><strong>min:</strong> is the min value of the parameter</li>
+                                                        <li><strong>max:</strong> is the max value of the parameter</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients (Over
+                                                time)</strong></p>
+                                            <p>Partial Rank Correlation Coefficients is a Sensitivity Analysis test,
+                                                it's a sampling-based method</p>
+                                            <ul>
+                                                <li><strong>Time points interval:</strong>specific the number of time
+                                                    points in which perform the analysis
+                                                </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a
+                                                    threshold, below which the plots are not shown
+                                                </li>
+                                                <li><strong>File to analyze:</strong>The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed.
+                                                </li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin
+                                                    Hypercube Sampling analysis
+                                                </li>
+                                            </ul>
+                                            <p><strong>Input Parameters for Partial Rank Correlation Coefficients
+                                                (Specific Time Step)</strong></p>
+                                            <ul>
+                                                <li><strong>Time step:</strong>specific the time step in which perform
+                                                    the analysis
+                                                </li>
+                                                <li><strong>Threshold p-value:</strong>this value is used as a
+                                                    threshold, below which the plots are not shown
+                                                </li>
+                                                <li><strong>File to analyze:</strong>The user can upload two or more
+                                                    ASCII or CSV files that defines the model outputs in which the first
+                                                    column represents the time, and the other columns represent the
+                                                    outputs to be analyzed.
+                                                </li>
+                                                <li><strong>LHS Matrix:</strong> it is a CSV output file from Latin
+                                                    Hypercube Sampling analysis
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="mailto:info@combine-group.org?subject=Report a BUG&body=It is important that you are as accurate as possible in describing the bugs. If possible, please attach the input files.">
+                                        <button class="btn btn-danger" type="reset">Report a BUG</button>
+                                    </a>
+                                </div>
+                                {% comment %}
+                                <div class="panel">
+                                    <a class="panel-heading collapsed" role="tab" id="headingSixth"
+                                       data-toggle="collapse" data-parent="#accordion" href="#collapseSixth"
+                                       aria-expanded="false" aria-controls="collapseSixth">
+                                        <h4 class="panel-title">Partial Rank Correlation Coefficients Analysis</h4>
+                                    </a>
+                                    <div id="collapseSixth" class="panel-collapse collapse" role="tabpanel"
+                                         aria-labelledby="headingSixth">
+                                        <div class="panel-body">
+                                            <p><strong>Input Parameters</strong>
+                                            </p>
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry
+                                            richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard
+                                            dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon
+                                            tempor
+                                        </div>
+                                    </div>
+                                </div>{% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /page content -->
+    <script>
+        let media_path = "{{ media_path }}";
+        let appname = "{{ appname }}";
+        let user_username = "Anonymous";
+        let url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_run_uniqueness_analysis = "{% url 'run-uniqueness_analysis' %}";
+        let url_read_info = "{% url 'read-info-simulation-verify' %}";
+        let csrf_token = "{{ csrf_token }}"
+    </script>
+    <script src="{% static 'js/function_verify.js' %}" type="module"></script>
+
+{% endblock content %}

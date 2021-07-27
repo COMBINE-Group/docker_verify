@@ -1,4 +1,4 @@
-import {checkYourSimulation, download_matrix} from './common_function.js';
+import {checkYourSimulation, prompt_delete_simulation, download_matrix} from './common_function.js';
 import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 
@@ -12,13 +12,18 @@ $(document).ready(function () {
         checkYourSimulation(name_analysis);
     });
 
+    $("#delete_simulation").click(function () {
+        let id_sim = $('#id_simulations option:selected').text();
+        prompt_delete_simulation(id_sim, name_analysis);
+    });
+
     $("#submit_sobol_analysis").click(function () {
         //hide div to show the plots
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
         let number_combinations = $("#number_combinations_sobol").val()
-        let seed = $("#seed_analysis").val()
+        let skip_values = $("#skip_values").val()
         let filesInputSobol = $("#files_input_sobol")
         let char_sep = $('select[name=sep_sobol_generates_sample]').val();
 
@@ -31,7 +36,7 @@ $(document).ready(function () {
             });
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("number_combinations", number_combinations)
-            data.append("seed", seed)
+            data.append("skip_values", skip_values)
             data.append("sep", char_sep)
             data.append("name_analysis", name_analysis[0])
 
@@ -56,8 +61,24 @@ $(document).ready(function () {
                         async: false,
                         cache: false,
                         success: function (result) {
-
-                            swal({
+                            if (result.status === 0){
+                                swal({
+                                title: '<i>' + result.title + '</i>',
+                                type: result.type,
+                                html: result.mess,
+                                showCloseButton: true,
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                allowOutsideClick: false,
+                                allowEscapeKey: true
+                            }).then(result => {
+                                if (result.value) {
+                                    checkYourSimulation(name_analysis)
+                                }
+                            })
+                            }
+                            else{
+                                swal({
                                 title: '<i>' + result.title + '</i>',
                                 type: result.type,
                                 html: '<a target="_blank" href="' + result.data + ' ">Download</a>',
@@ -71,6 +92,7 @@ $(document).ready(function () {
                                     checkYourSimulation(name_analysis)
                                 }
                             })
+                            }
                         }
                     });
                 }
@@ -84,11 +106,11 @@ $(document).ready(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
 
-        let seed = $("#seed_analyze").val()
-        let number_combinations = $("#number_combinations_sobol_analyze").val()
         let filesRangeParameter = $("#file_range_parameter")
         let filesOutputModel = $("#file_output_model")
-        let char_sep = $('select[name=sep_sobol_analyze]').val();
+        let char_sep_input_parameter_file = $('select[name=sep_sobol_analyze_parameter_file]').val();
+        let sep_output_model_file = $('select[name=sep_output_model_file]').val();
+        let column_select = $("#column_select_sobol").val()
 
         if ((filesRangeParameter[0].files.length === 0) || (filesOutputModel[0].files.length === 0)) {
             swalError("No files selected")
@@ -103,10 +125,10 @@ $(document).ready(function () {
                 data.append("file_output_model", file);
             });
             data.append("csrfmiddlewaretoken", csrf_token)
-            data.append("seed", seed)
-            data.append("number_combinations", number_combinations)
-            data.append("sep", char_sep)
+            data.append("sep_input_parameter_file", char_sep_input_parameter_file)
+            data.append("sep_output_model_file", sep_output_model_file)
             data.append("name_analysis", name_analysis[1])
+            data.append("col_sobol", column_select)
 
 
             swal({
@@ -130,9 +152,9 @@ $(document).ready(function () {
                         cache: false,
                         success: function (result) {
                             swal({
-                                title: '<i>' + result.data + '</i>',
+                                title: '<i>' + result.title + '</i>',
                                 type: result.type,
-                                html: result.msg,
+                                html: result.mess,
                                 showCloseButton: true,
                                 showCancelButton: false,
                                 showConfirmButton: true,

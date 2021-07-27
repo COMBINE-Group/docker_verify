@@ -25,6 +25,7 @@
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Number of samples</label>
@@ -74,7 +75,7 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="files_input">File parameter range</label>
+                                        <label for="files_input">Input parameter File</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
                                         <input type="file" id="files_input_lhs" name="files_input_lhs"
@@ -98,16 +99,17 @@
                     <div class="x_panel">
                         <div class="x_title">
                             <h2>Partial Rank Correlation Coefficients</h2><br/>
-                            <h5>(Over time)</h5>
                             <div class="clearfix"></div>
+                            <div class="clearfix">(Over time)</div>
                         </div>
 
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="step_times_points">Step times points</label>
+                                        <label for="step_times_points">Time points interval</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
                                         <input type="number" id="step_times_points" name="step_times_points" min="1"
@@ -127,15 +129,42 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character </label>
+                                        <label>Separator Character to LHS Matrix</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_prcc" class="form-control" required>
+                                        <select name="sep_prcc_for_lhs_matrix" class="form-control" required>
                                             <option value="tab">Tab</option>
                                             <option value="comma">Comma</option>
                                             <option value="semicol">Semicolon</option>
                                             <option value="space">Space</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Separator Character for Files to analyze </label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <select name="sep_prcc_for_files" class="form-control" required>
+                                            <option value="tab">Tab</option>
+                                            <option value="comma">Comma</option>
+                                            <option value="semicol">Semicolon</option>
+                                            <option value="space">Space</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Column to analyze</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="column_select_prcc_overtime" name="column_select_prcc_overtime"
+                                               placeholder="just one column"
+                                               class="form-control" required>
                                     </div>
                                 </div>
                                 <br/>
@@ -175,14 +204,15 @@
                 <div class="col-md-3 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>Partial Rank Correlation Coefficients</h2><br/>
-                            <h5>(Specific Time Step)</h5>
+                            <h2>Partial Rank Correlation Coefficients</h2>
                             <div class="clearfix"></div>
+                            <div class="clearfix">(Specific Time Step)</div>
                         </div>
 
                         <div class="x_content">
                             <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
                                   class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
+
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label for="step_times_points">Time step</label>
@@ -194,15 +224,41 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character </label>
+                                        <label>Separator Character to LHS Matrix</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_prcc_specific_ts" class="form-control" required>
+                                        <select name="sep_prcc_for_lhs_matrix_specific_ts" class="form-control" required>
                                             <option value="tab">Tab</option>
                                             <option value="comma">Comma</option>
                                             <option value="semicol">Semicolon</option>
                                             <option value="space">Space</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <br/>
+
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Separator Character for Files to analyze </label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <select name="sep_prcc_for_files_specific_ts" class="form-control" required>
+                                            <option value="tab">Tab</option>
+                                            <option value="comma">Comma</option>
+                                            <option value="semicol">Semicolon</option>
+                                            <option value="space">Space</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Column to analyze</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <input type="text" id="column_select_prcc_specific_ts" name="column_select_prcc_specific_ts"
+                                               placeholder="just one column"
+                                               class="form-control" required>
                                     </div>
                                 </div>
                                 <br/>
@@ -263,16 +319,20 @@
 
                             <form action="#" method="POST" name="form_plot"
                                   class="form-horizontal form-label-left input_mask">
-                                <select name="simulation" class="select2_group form-control" required="">
+                                <select id="id_simulations" name="simulation" class="select2_group form-control" required="">
                                     <option value="">Choose..</option>
                                 </select>
 
                                 <div class="ln_solid"></div>
 
                                 <div class="form-group">
-                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-                                        <input type="button" id="reload_simulation" class="btn btn-success"
-                                               value="Check status!"/>
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <input type="button" id="reload_simulation" class="btn btn-success" value="Check status!"/>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                            <input type="button" id="delete_simulation" class="btn btn-danger" value="Delete Simulation"/>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -306,6 +366,7 @@
                                 </select>
                             </form>
                             <hr/>
+                            <input type="button" id="delete_simulation" class="btn btn-danger" value="Delete Simulation"/>
                             <p class="infosim"></p>
                         </div>
                     </div>
@@ -334,6 +395,7 @@
         var appname = "{{ appname }}";
         var user_username = "Anonymous";
         var url_check_simulations = "{% url 'check-simulations-verify' %}";
+        let url_delete_simulations = "{% url 'delete-simulations-verify' %}";
         var url_run_lhs_analysis = "{% url 'run_lhs' %}";
         var url_run_prcc_analysis = "{% url 'run_prcc' %}";
         var url_run_prcc_analysis_specific_ts = "{% url 'url_run_prcc_analysis_specific_ts' %}";

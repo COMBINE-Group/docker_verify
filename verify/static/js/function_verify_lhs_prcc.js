@@ -1,4 +1,4 @@
-import {checkYourSimulation} from './common_function.js';
+import {checkYourSimulation, prompt_delete_simulation} from './common_function.js';
 import {showPlot} from './common_function.js';
 import {swalError} from './common_function.js';
 import {download_matrix} from './common_function.js';
@@ -11,6 +11,11 @@ $(document).ready(function () {
         $('.divPlot').attr('style', 'visibility: hidden;');
         $('.divPrintPlot').attr('style', 'visibility: hidden;');
         checkYourSimulation(name_analysis);
+    });
+
+    $("#delete_simulation").click(function () {
+        let id_sim = $('#id_simulations option:selected').text();
+        prompt_delete_simulation(id_sim, name_analysis);
     });
 
     $("#submit_lhs_analysis").click(function () {
@@ -63,6 +68,9 @@ $(document).ready(function () {
                             if (result.status === 1) {
                                 html = '<a target="_blank" href="' + result.data + ' ">Download</a>'
                             }
+                            else {
+                                html = result.mess
+                            }
 
                             swal({
                                 title: '<i>' + result.title + '</i>',
@@ -95,7 +103,9 @@ $(document).ready(function () {
         let fileMatrixLhs = $("#file_matrix_lhs")
         let step_time_points = $("#step_times_points").val()
         let threshold_pvalue = $("#threshold_pvalue").val()
-        let char_sep = $('select[name=sep_prcc]').val();
+        let char_sep_for_lhs = $('select[name=sep_prcc_for_lhs_matrix]').val();
+        let char_sep_for_files = $('select[name=sep_prcc_for_files]').val();
+        let col = $('#column_select_prcc_overtime').val();
 
         if (fileInputPrcc[0].files.length === 0 && fileMatrixLhs[0].files.length === 0) {
             swalError("No files selected")
@@ -112,8 +122,10 @@ $(document).ready(function () {
             data.append("csrfmiddlewaretoken", csrf_token)
             data.append("name_analysis", name_analysis[1])
             data.append("step_time_points", step_time_points)
-            data.append("sep", char_sep)
+            data.append("sep_for_lhs", char_sep_for_lhs)
+            data.append("sep_for_files", char_sep_for_files)
             data.append("threshold_pvalue", threshold_pvalue)
+            data.append("col", col)
 
             swal({
                 title: 'Running',
@@ -140,9 +152,12 @@ $(document).ready(function () {
                                 html = '<a target="_blank" href="' + result.link_plot + ' ">Download PDF plot</a><br/>'
                                 html += '<a target="_blank" href="' + result.link_time_corr + ' ">Download Time Correlation file</a>'
                             }
+                            else {
+                                html = result.mess
+                            }
 
                             swal({
-                                title: '<i>' + result.mess + '</i>',
+                                title: '<i>' + result.title + '</i>',
                                 type: result.type,
                                 html: html,
                                 showCloseButton: true,
@@ -169,7 +184,9 @@ $(document).ready(function () {
 
         let timeStep = $("#time_step").val()
         let threshold_pvalue = $("#threshold_pvalue_specific_ts").val()
-        let char_sep = $('select[name=sep_prcc_specific_ts]').val();
+        let sep_for_lhs = $('select[name=sep_prcc_for_lhs_matrix_specific_ts]').val();
+        let sep_for_files = $('select[name=sep_prcc_for_files_specific_ts]').val();
+        let col = $('#column_select_prcc_specific_ts').val();
         let fileInput = $("#file_input_specific_ts")
         let fileMatrixLhs = $("#file_matrix_lhs_specific_ts")
 
@@ -189,7 +206,9 @@ $(document).ready(function () {
             data.append("name_analysis", name_analysis[2])
             data.append("timeStep", timeStep)
             data.append("pvalue", threshold_pvalue)
-            data.append("sep", char_sep)
+            data.append("sep_for_lhs", sep_for_lhs)
+            data.append("sep_for_files", sep_for_files)
+            data.append("col", col)
 
             swal({
                 title: 'Running',
@@ -247,6 +266,7 @@ $(document).ready(function () {
 
         let id_sim_pat = this.value;
 
+
         if (id_sim_pat.includes(name_analysis[0])) {
             download_matrix(id_sim_pat, ['matrix_lhs.csv'], ['LHS matrix'])
 
@@ -254,28 +274,8 @@ $(document).ready(function () {
             if (id_sim_pat.includes(name_analysis[1])) {
                 download_matrix(id_sim_pat, ['plot_prcc_overtime.pdf', 'time_corr.json'], ['Download PDF plot', 'Download Time Correlation file'])
             } else {
-                let type_plot = tagSelect.val();
-
-                if (id_sim_pat !== '') {
-                    //set id simulation
-                    $('input[name=selectIdSimulation]').val(id_sim_pat);
-
-                    $(".printPlot").attr("src", '');
-
-                    $(".divPlot").removeAttr("style");
-
-                    showPlot(id_sim_pat, type_plot)
-                }
+                download_matrix(id_sim_pat, ['plot_prcc_specific_ts.pdf'], ['Download PDF plots'])
             }
         }
-    });
-
-    // handles the change of the plots
-    $('select[name=type_plot]').on('change', function () {
-
-        let type_plot = $('select[name=type_plot]').val();
-        let id_sim_pat = $('input[name=selectIdSimulation]').val();
-
-        showPlot(id_sim_pat, type_plot);
     });
 });

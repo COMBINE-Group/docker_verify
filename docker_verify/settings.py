@@ -26,7 +26,7 @@ SECRET_KEY = '9x#f2q&5-v@ee^+9*deyr90*vjb9ft61bh3%!6j*%27i(njc68'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -133,3 +133,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 BASE_DIR_VERIFY = os.path.join(BASE_DIR, 'verify')
 STATIC_DIR_VERIFY = os.path.join(BASE_DIR_VERIFY, 'static')
 MEDIA_DIR_VERIFY = os.path.join(MEDIA_ROOT, 'outputs', 'verify')
+
+VERSION = '1.1.2'

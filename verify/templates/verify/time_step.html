@@ -18,7 +18,7 @@
                 <div class="col-md-3 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>SOBOL sample generation</h2>
+                            <h2>Time step Convergence Analysis</h2>
                             <div class="clearfix"></div>
                         </div>
 
@@ -28,106 +28,22 @@
 
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Number of combinations</label>
+                                        <label for="skip_rows">Skip rows</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="number_combinations_sobol"
-                                               name="number_combinations_sobol"
-                                               class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>skip values</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="skip_values"
-                                               name="skip_value"
-                                               value="1024"
-                                               class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character </label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_sobol_generates_sample" class="form-control" required>
-                                            <option value="tab">Tab</option>
-                                            <option value="comma">Comma</option>
-                                            <option value="semicol">Semicolon</option>
-                                            <option value="space">Space</option>
-                                        </select>
+                                        <input type="number" id="skip_rows" value="0" step="1"
+                                               name="skip_rows"
+                                               min="0" max="100" required>
                                     </div>
                                 </div>
                                 <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="files_input_sobol">Input parameter file</label>
-                                    </div>
-                                    <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="files_input_sobol" name="files_input_sobol"
-                                               required="required">
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-                                        <button class="btn btn-primary" type="reset">Reset</button>
-                                        <input type="button" id="submit_sobol_analysis" class="btn btn-success"
-                                               value="Submit"/>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-md-3 col-xs-12">
-                    <div class="x_panel">
-                        <div class="x_title">
-                            <h2>SOBOL analysis</h2>
-                            <div class="clearfix"></div>
-                        </div>
-
-                        <div class="x_content">
-                            <form action="#" method="POST" name="form_virtual" id="fileUploadForm"
-                                  class="form-horizontal form-label-left input_mask" enctype="multipart/form-data">
-
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character for Input parameter file</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_sobol_analyze_parameter_file" class="form-control" required>
-                                            <option value="tab">Tab</option>
-                                            <option value="comma">Comma</option>
-                                            <option value="semicol">Semicolon</option>
-                                            <option value="space">Space</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="form-group">
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Separator Character for Output file from the model</label>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <select name="sep_output_model_file" class="form-control" required>
-                                            <option value="tab">Tab</option>
-                                            <option value="comma">Comma</option>
-                                            <option value="semicol">Semicolon</option>
-                                            <option value="space">Space</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Column to analyze</label>
                                     </div>
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <input type="text" id="column_select_sobol" name="column_select_sobol"
+                                        <input type="text" id="column_select_timestep" name="column_select_timestep"
                                                placeholder="just one column"
                                                class="form-control" required>
                                     </div>
@@ -135,28 +51,33 @@
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="file_range_parameter">Input parameter file</label>
+                                        <label>Separator Character </label>
                                     </div>
-                                    <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="file_range_parameter" name="file_range_parameter"
-                                               required="required">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <select name="sep_time_step" class="form-control" required>
+                                            <option value="tab">Tab</option>
+                                            <option value="comma">Comma</option>
+                                            <option value="semicol">Semicolon</option>
+                                            <option value="space">Space</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label for="file_output_model">Output files from the model</label>
+                                        <label for="files_input">Files to analyze</label>
                                     </div>
                                     <div class="col-md-9 col-sm-9 col-xs-12">
-                                        <input type="file" id="file_output_model" name="file_output_model"
-                                               required="required" multiple>
+                                        <input type="file" id="files_input_timestep" name="files_input"
+                                               required="required"
+                                               multiple>
                                     </div>
                                 </div>
                                 <br/>
                                 <div class="form-group">
                                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
                                         <button class="btn btn-primary" type="reset">Reset</button>
-                                        <input type="button" id="submit_sobol_analyze" class="btn btn-success"
+                                        <input type="button" id="submit_timestep_analysis" class="btn btn-success"
                                                value="Submit"/>
                                     </div>
                                 </div>
@@ -212,9 +133,15 @@
                             <form action="#" method="POST" name="form_plot"
                                   class="form-horizontal form-label-left input_mask"
                                   enctype="multipart/form-data">
-                                <select name="type_plot" class="select2_group form-control" required="">
+                                <select id="type_plot" name="type_plot" class="select2_group form-control" required="">
                                     <optgroup label="Details">
-                                        <option value="Sobol_Analysis">Sobol Analysis</option>
+                                        <option id="opt_trends" value="results_trends">Trends</option>
+                                        <option id="opt_pearson_rmse" value="results_pearson_corr_RMSE">Pearson Correlation
+                                            coeff and RMSE
+                                        </option>
+                                        <option id="opt_behavior" value="behavior_and_variation_PV">Behavior and
+                                            variation of the PV. Final Value convergence
+                                        </option>
                                     </optgroup>
                                 </select>
                             </form>
@@ -248,11 +175,10 @@
         let user_username = "Anonymous";
         let url_check_simulations = "{% url 'check-simulations-verify' %}";
         let url_delete_simulations = "{% url 'delete-simulations-verify' %}";
-        let url_run_sobol_analysis = "{% url 'sobol_generates_sample' %}";
-        let url_run_sobol_analyze = "{% url 'sobol-analyze' %}";
+        let url_run_time_step_analysis = "{% url 'run-time_step_analysis' %}";
         let url_read_info = "{% url 'read-info-simulation-verify' %}";
         let csrf_token = "{{ csrf_token }}"
     </script>
-    <script src="{% static 'js/function_verify_sobol.js' %}" type="module"></script>
+    <script src="{% static 'js/function_timestep.js' %}" type="module"></script>
 
 {% endblock content %}

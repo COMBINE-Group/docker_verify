@@ -29,12 +29,15 @@
                     <div class="menu_section">
 
                         <ul class="nav side-menu">
+                            <li class=""><a href="/"><i class="fa fa-list-alt"></i> Documentation </a>
                             <li class=""><a><i class="fa fa-list-alt"></i> Model Verification <span
                                     class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu" style="display: none;">
-                                    <li><a href="/">Basic</a></li>
+                                    <li><a href="/verify_smoothness">Smoothness Analysis</a></li>
+                                    <li><a href="/verify_time_step">Time Step Convergence Analysis</a></li>
+                                    <li><a href="/verify_existence_unique">Uniqueness Analysis</a></li>
                                     <li><a href="/verify_sobol_analysis">Sobol Analysis</a></li>
-                                    <li><a href="/verify_lhs-prcc">LHS-PRCC</a></li>
+                                    <li><a href="/verify_lhs-prcc">LHS-PRCC Analysis</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -55,6 +58,10 @@
                     <a href="https://www.facebook.com/COMBINE.UniCT" target="_blank" data-toggle="tooltip"
                        data-placement="top" title="Facebook Page">
                         <span class="fa fa-facebook" aria-hidden="true"></span>
+                    </a>
+                    <a href="https://github.com/COMBINE-Group/docker_verify" target="_blank" data-toggle="tooltip" data-placement="top"
+                       title="Model Verification Tools v{{ version }}">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                     </a>
                 </div>
                 <!-- /menu footer buttons -->

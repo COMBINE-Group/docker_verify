@@ -1,13 +1,4 @@
 function checkYourSimulation(name_analysis) {
-    swal({
-        title: '<i>Search Simulations</i>',
-        type: 'info',
-        showCloseButton: true,
-        showCancelButton: false,
-        showConfirmButton: true,
-        allowOutsideClick: false,
-        allowEscapeKey: true
-    });
     let data = new FormData();
     data.append("csrfmiddlewaretoken", csrf_token)
     data.append("name_analysis", name_analysis)
@@ -25,17 +16,6 @@ function checkYourSimulation(name_analysis) {
                 if (data.status === 1) {
                     $('select[name=simulation]').html('<option value="">Choose..</option>').append(data.html)
                 }
-
-                swal({
-                    title: '<i>' + data.title + '</i>',
-                    type: data.type,
-                    html: data.mess,
-                    showCloseButton: true,
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
-                })
             }
         }
     )
@@ -71,7 +51,7 @@ function download_matrix(id_sim_pat, name_file, msg) {
 
     swal({
         title: '<i>Download</i>',
-        type: 1,
+        type: 'success',
         html: html,
         showCloseButton: true,
         showCancelButton: false,
@@ -81,4 +61,57 @@ function download_matrix(id_sim_pat, name_file, msg) {
     })
 }
 
-export {showPlot, checkYourSimulation, swalError, download_matrix}
+function delete_simulation(id_sim){
+    let path_sim = media_path + 'outputs/' + appname + '/' + user_username + '/' + id_sim + '/'
+    let data = new FormData();
+    data.append("csrfmiddlewaretoken", csrf_token)
+    data.append("path_sim", path_sim)
+
+    $.ajax({
+            type: 'POST',
+            url: url_delete_simulations,
+            data: data,
+            processData: false,
+            contentType: false,
+            dataType: 'JSON',
+            async: false,
+            cache: false,
+            success: function (data) {
+                swal({
+                    title: data.title,
+                    type: data.type,
+                    html: data.mess,
+                    timer: 2500,
+                    showCloseButton: true,
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: true
+                 })
+            }
+        }
+    )
+}
+
+function prompt_delete_simulation(id_sim, name_analysis){
+    if (id_sim !== "Choose..") {
+        swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.value) {
+            $('.divPlot').attr('style', 'visibility: hidden;');
+            $('.divPrintPlot').attr('style', 'visibility: hidden;');
+            delete_simulation(id_sim);
+            checkYourSimulation(name_analysis);
+        }
+    })
+}
+}
+
+export {showPlot, checkYourSimulation, swalError, download_matrix, prompt_delete_simulation}
