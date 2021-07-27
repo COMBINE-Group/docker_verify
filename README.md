@@ -1,5 +1,5 @@
 # Setting up
-If `docker` and `docker-compose` are not installed, [install them first](https://docs.docker.com/engine/install/).
+[install docker first](https://docs.docker.com/engine/install/).
 
 # How to install MVT
 
